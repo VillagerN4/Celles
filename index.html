@@ -7,12 +7,21 @@
     <style>
 
         #board{
-            width: 1236px;
+            width: 1153;
             height: 700px;
             position: absolute;
             left: 10px;
             top: 10px;
             z-index: -1000;
+        }
+
+        #debug_hex_dis{
+            width: 44px;
+            height: 44px;
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            z-index: -1;
         }
 
         #angle_slider{
@@ -27,13 +36,23 @@
             top: 720px;
         }
 
+        #debug_hex{
+            position: absolute;
+            left: 10px;
+            top: 730px;
+        }
+
     </style>
 </head>
 <body>
-    <div>
+<div>
     <label id="angle_slider_label">Display angle:</label>
-    <input value="0" type="range" min="0" max="60" id="angle_slider" onmousemove="updatemap()">
-    <img src="assets/map/board.png" id="board">
+    <input value="0" type="range" min="0" max="35" id="angle_slider" onmousemove="updatemap()">
+    <div id="board_container">
+    <img src="assets/map/board.png" id="board" onmousemove="debug(event)">
+    <img src="assets/debug/hexagon.png" id="debug_hex_dis"  onmousemove="debug(event)">
     </div>
+    <p id="debug_hex">false</p>
+</div>
 </body>
 </html>
