@@ -7,6 +7,12 @@
         z-index: -1000;
     }
 
+    #cell_info{
+        position: absolute;
+        left: 1183px;
+        top: 10px;
+    }
+
     #debug_hex_dis{
         width: 46px;
         height: 40px;

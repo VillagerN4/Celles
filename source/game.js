@@ -11,8 +11,16 @@ const collumns = 33;
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];
 
+const edgeInfo = ["none", "river", "large river"];
+const edgeNames = ["top", "top-right", "botom-right", "bottom", "bottom-left", "top-left"];
+const terrainTypes = ["clear", "rough", "woods", "town"];
+
 const hexRadius = 23.085;
 const hexHeight = hexRadius * sqrt3 / 2;
+
+
+// ------------------------------------------------------------ //
+
 
 function degToRad(deg){
     return deg * Math.PI / 180;
@@ -71,6 +79,7 @@ function padLeft(nr, n, str){
     return Array(n - String(nr).length + 1).join(str||'0') + nr;
 }
 
+
 // ------------------------------------------------------------ //
 
 
@@ -108,10 +117,10 @@ function debug(event){
 
     let pos = getHexCenterPos(board_row, board_col);
 
-    debug_hex.style.left = mapOffsetX + pos[0] - hexRadius + "px";
+    debug_hex.style.left = mapOffsetX + pos[0] - hexRadius - 1 + "px";
     debug_hex.style.top = mapOffsetY + pos[1] - hexHeight + "px";
 
-    cell_dis.style.left = mapOffsetX + pos[0] - hexRadius + "px";
+    cell_dis.style.left = mapOffsetX + pos[0] - hexRadius - 1 + "px";
     cell_dis.style.top = mapOffsetY + pos[1] - hexHeight + "px";
 
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
