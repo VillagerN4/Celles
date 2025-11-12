@@ -1,0 +1,35 @@
+    #board{
+        width: 1153;
+        height: 700px;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        z-index: -1000;
+    }
+
+    #debug_hex_dis{
+        width: 44px;
+        height: 44px;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        z-index: -1;
+    }
+
+    #angle_slider{
+        position: absolute;
+        left: 150px;
+        top: 720px;
+    }
+
+    #angle_slider_label{
+        position: absolute;
+        left: 10px;
+        top: 720px;
+    }
+
+    #debug_hex{
+        position: absolute;
+        left: 10px;
+        top: 730px;
+    }

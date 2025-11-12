@@ -4,53 +4,15 @@
     <meta charset="UTF-8">
     <title>CELLES</title>
     <script src="source/game.js"></script>
-    <style>
-
-        #board{
-            width: 1153;
-            height: 700px;
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            z-index: -1000;
-        }
-
-        #debug_hex_dis{
-            width: 44px;
-            height: 44px;
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            z-index: -1;
-        }
-
-        #angle_slider{
-            position: absolute;
-            left: 150px;
-            top: 720px;
-        }
-
-        #angle_slider_label{
-            position: absolute;
-            left: 10px;
-            top: 720px;
-        }
-
-        #debug_hex{
-            position: absolute;
-            left: 10px;
-            top: 730px;
-        }
-
-    </style>
+    <link rel="stylesheet" href="source/styles.css">
 </head>
-<body>
+<body  id="color_debug"  onmousemove="debug(event)">
 <div>
     <label id="angle_slider_label">Display angle:</label>
     <input value="0" type="range" min="0" max="35" id="angle_slider" onmousemove="updatemap()">
     <div id="board_container">
-    <img src="assets/map/board.png" id="board" onmousemove="debug(event)">
-    <img src="assets/debug/hexagon.png" id="debug_hex_dis"  onmousemove="debug(event)">
+    <img src="assets/map/board.png" id="board">
+    <img src="assets/debug/hexagon.png" id="debug_hex_dis">
     </div>
     <p id="debug_hex">false</p>
 </div>
