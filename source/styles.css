@@ -8,13 +8,24 @@
     }
 
     #debug_hex_dis{
-        width: 44px;
-        height: 44px;
+        width: 46px;
+        height: 40px;
         position: absolute;
         left: 10px;
         top: 10px;
-        z-index: -1;
+        z-index: 5;
     }
+
+    #cell_display{
+        width: 46px;
+        height: 40px;
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        z-index: 1;
+        filter: opacity(55%);
+    }
+
 
     #angle_slider{
         position: absolute;
@@ -32,4 +43,5 @@
         position: absolute;
         left: 10px;
         top: 730px;
+        z-index: 100;
     }

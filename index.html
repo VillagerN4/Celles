@@ -10,9 +10,10 @@
 <div>
     <label id="angle_slider_label">Display angle:</label>
     <input value="0" type="range" min="0" max="35" id="angle_slider" onmousemove="updatemap()">
-    <div id="board_container">
+    <div id="board_container" onclick="debugSwitchCellDisplay()">
     <img src="assets/map/board.png" id="board">
-    <img src="assets/debug/hexagon.png" id="debug_hex_dis">
+    <img src="assets/cell/outline_white.png" id="debug_hex_dis">
+    <img src="assets/cell/allies/allies_reduced.png" id="cell_display">
     </div>
     <p id="debug_hex">false</p>
 </div>

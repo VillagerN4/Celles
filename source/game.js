@@ -1,4 +1,5 @@
 var angle = 0;
+let debCounter = 0;
 
 const sqrt3 = Math.sqrt(3);
 
@@ -6,6 +7,9 @@ const mapOffsetX = 10;
 const mapOffsetY = 10;
 const rows = 17;
 const collumns = 33;
+
+const factions = ["allies", "nazis", "brits"];
+const modes = ["reduced", "standard", "active"];
 
 const hexRadius = 23.085;
 const hexHeight = hexRadius * sqrt3 / 2;
@@ -63,6 +67,10 @@ function getHexRowCol(x, y){
     return [row, collumn];
 }
 
+function padLeft(nr, n, str){
+    return Array(n - String(nr).length + 1).join(str||'0') + nr;
+}
+
 // ------------------------------------------------------------ //
 
 
@@ -75,6 +83,15 @@ function updatemap(){
     board.style.height = "700px";
 }
 
+function debugSwitchCellDisplay(){
+    const cell_dis = document.getElementById("cell_display");
+
+    cell_dis.src = `assets/cell/${factions[Math.floor(debCounter/3)]}/${factions[Math.floor(debCounter/3)]}_${modes[debCounter % 3]}.png`
+
+    debCounter++;
+    
+    if(debCounter > 8) debCounter = 0;
+}
 
 function debug(event){
     const deb_hex = document.getElementById("debug_hex");
@@ -83,14 +100,22 @@ function debug(event){
     let cy = event.clientY - mapOffsetY + window.scrollY;
 
     const debug_hex = document.getElementById("debug_hex_dis");
+    const cell_dis = document.getElementById("cell_display");
+
     let row_col = getHexRowCol(cx, cy);
-    let pos = getHexCenterPos(Math.max(0,Math.min(row_col[0],rows-1)), Math.max(0,Math.min(row_col[1],collumns-1)));
+    let board_row = Math.max(0,Math.min(row_col[0],rows-1));
+    let board_col = Math.max(0,Math.min(row_col[1],collumns-1));
+
+    let pos = getHexCenterPos(board_row, board_col);
 
     debug_hex.style.left = mapOffsetX + pos[0] - hexRadius + "px";
     debug_hex.style.top = mapOffsetY + pos[1] - hexHeight + "px";
 
-    deb_hex.innerHTML = ""
-     + "<br>" + row_col[0] + " " + row_col[1]
+    cell_dis.style.left = mapOffsetX + pos[0] - hexRadius + "px";
+    cell_dis.style.top = mapOffsetY + pos[1] - hexHeight + "px";
+
+    deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
+     + "<br>" + board_row + " " + board_col
      + "<br>" + cx + " " + cy;
     deb_hex.style.left = cx + mapOffsetX + "px";
     deb_hex.style.top = cy + mapOffsetY + "px";
