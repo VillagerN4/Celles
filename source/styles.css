@@ -1,5 +1,5 @@
     #board{
-        width: 1153;
+        width: 1153px;
         height: 700px;
         position: absolute;
         left: 10px;
@@ -30,19 +30,6 @@
         top: 10px;
         z-index: 1;
         filter: opacity(55%);
-    }
-
-
-    #angle_slider{
-        position: absolute;
-        left: 150px;
-        top: 720px;
-    }
-
-    #angle_slider_label{
-        position: absolute;
-        left: 10px;
-        top: 720px;
     }
 
     #debug_hex{

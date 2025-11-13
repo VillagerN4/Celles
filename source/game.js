@@ -1,4 +1,3 @@
-var angle = 0;
 let debCounter = 0;
 
 const sqrt3 = Math.sqrt(3);
@@ -12,7 +11,7 @@ const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];
 
 const edgeInfo = ["none", "river", "large river"];
-const edgeNames = ["top", "top-right", "botom-right", "bottom", "bottom-left", "top-left"];
+const edgeNames = ["top-left", "top", "top-right", "botom-left", "bottom", "bottom-right"];
 const terrainTypes = ["clear", "rough", "woods", "town"];
 
 const hexRadius = 23.085;
@@ -81,16 +80,6 @@ function padLeft(nr, n, str){
 
 
 // ------------------------------------------------------------ //
-
-
-function updatemap(){
-    const angle = document.getElementById("angle_slider").value;
-    const board = document.getElementById("board_container");
-    const debug_hex = document.getElementById("debug_hex_dis");
-
-    board.style.width = "1153px";
-    board.style.height = "700px";
-}
 
 function debugSwitchCellDisplay(){
     const cell_dis = document.getElementById("cell_display");
