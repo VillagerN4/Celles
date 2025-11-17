@@ -139,7 +139,7 @@ for(let c = 0; c < collumns; c++){
         let cell = board_data.board[c][r];
         let cell_pos = getHexCenterPos(r, c);
         let x = mapOffsetX + cell_pos[0] - hexRadius - 1 + "px";
-        let y = mapOffsetY + cell_pos[1] - hexHeight - 1 + "px";
+        let y = mapOffsetY + cell_pos[1] - hexHeight + "px";
         
         if(cell.hasVillage){
             jQuery('<img>', {
@@ -164,6 +164,58 @@ for(let c = 0; c < collumns; c++){
                 top: y
             }
         }).appendTo('#board_container');
+
+        for(let i = 0; i < 6; i++) {
+            if(cell.edges[i] == 1){
+                jQuery('<img>', {
+                id: "river" + padLeft(c + 1, 2) + padLeft(r, 2) + i,
+                class: "debug_village_display",
+                src: "assets/debug/river/" + i + ".png",
+                css: {
+                    position: "absolute",
+                    left: x,
+                    top: y
+                }
+            }).appendTo('#board_container');
+            }else if(cell.edges[i] == 2){
+                jQuery('<img>', {
+                id: "large_river" + padLeft(c + 1, 2) + padLeft(r, 2) + i,
+                class: "debug_village_display",
+                src: "assets/debug/large_river/" + i + ".png",
+                css: {
+                    position: "absolute",
+                    left: x,
+                    top: y
+                }
+            }).appendTo('#board_container');
+            }
+        };
+
+        cell.highways.forEach(edge => {
+            jQuery('<img>', {
+                id: "highway" + padLeft(c + 1, 2) + padLeft(r, 2) + edge,
+                class: "debug_highway_display",
+                src: "assets/debug/highway/" + edge + ".png",
+                css: {
+                    position: "absolute",
+                    left: x,
+                    top: y
+                }
+            }).appendTo('#board_container');
+        });
+
+        cell.roads.forEach(edge => {
+            jQuery('<img>', {
+                id: "road" + padLeft(c + 1, 2) + padLeft(r, 2) + edge,
+                class: "debug_road_display",
+                src: "assets/debug/road/" + edge + ".png",
+                css: {
+                    position: "absolute",
+                    left: x,
+                    top: y
+                }
+            }).appendTo('#board_container');
+        });
     }
 }
 

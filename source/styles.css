@@ -4,7 +4,8 @@
         position: absolute;
         left: 10px;
         top: 10px;
-        z-index: -1000;
+        z-index: 5;
+        filter: opacity(15%);
     }
 
     #cell_info{
@@ -49,4 +50,16 @@
         width: 46px;
         height: 40px;
         z-index: 1;
+    }
+
+    .debug_road_display{
+        width: 46px;
+        height: 40px;
+        z-index: 2;
+    }
+
+    .debug_highway_display{
+        width: 46px;
+        height: 40px;
+        z-index: 3;
     }

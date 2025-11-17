@@ -99,7 +99,7 @@ const board_data = {
       },
       {
         "terrainType": 2, "hasVillage": false, "units": [], 
-        "edges": [0, 0, 1, 0, 0, 0],
+        "edges": [0, 0, 0, 0, 0, 1],
         "roads": [],
         "highways": []
       }
@@ -399,19 +399,19 @@ const board_data = {
       },
       {
         "terrainType": 1, "hasVillage": false, "units": [], 
-        "edges": [1, 0, 0, 1, 0, 0],
+        "edges": [0, 0, 0, 0, 0, 0],
         "roads": [2, 4],
         "highways": []
       },
       {
         "terrainType": 1, "hasVillage": false, "units": [], 
-        "edges": [1, 0, 0, 1, 0, 0],
+        "edges": [0, 0, 0, 0, 0, 0],
         "roads": [1, 5],
         "highways": []
       },
       {
         "terrainType": 2, "hasVillage": false, "units": [], 
-        "edges": [1, 0, 0, 0, 0, 0],
+        "edges": [0, 0, 0, 0, 0, 0],
         "roads": [2, 3],
         "highways": []
       }
@@ -463,7 +463,7 @@ const board_data = {
         "terrainType": 2, "hasVillage": false, "units": [], 
         "edges": [2, 2, 1, 2, 0, 0],
         "roads": [],
-        "highways": []
+        "highways": [2, 4]
       },
       {
         "terrainType": 3, "hasVillage": false, "units": [], 
@@ -608,20 +608,20 @@ const board_data = {
       {
         "terrainType": 2, "hasVillage": false, "units": [], 
         "edges": [0, 0, 0, 0, 0, 0],
-        "roads": [],
-        "highways": [0, 5]
+        "roads": [0, 5],
+        "highways": []
       },
       {
         "terrainType": 1, "hasVillage": false, "units": [], 
         "edges": [0, 0, 0, 0, 0, 0],
-        "roads": [],
-        "highways": [3, 5]
+        "roads": [3, 5],
+        "highways": []
       },
       {
         "terrainType": 1, "hasVillage": false, "units": [], 
         "edges": [0, 0, 0, 0, 0, 0],
-        "roads": [],
-        "highways": [2, 3]
+        "roads": [2, 3],
+        "highways": []
       }
 	],
 	[
@@ -1850,7 +1850,7 @@ const board_data = {
       {
         "terrainType": 0, "hasVillage": true, "units": [], 
         "edges": [0, 0, 0, 1, 1, 1],
-        "roads": [1, 2, 3, 5],
+        "roads": [1, 2, 4, 5],
         "highways": []
       },
       {
@@ -2063,7 +2063,7 @@ const board_data = {
       },
       {
         "terrainType": 2, "hasVillage": true, "units": [], 
-        "edges": [0, 0, 0, 0, 0, 0],
+        "edges": [0, 0, 0, 1, 0, 0],
         "roads": [0, 3],
         "highways": []
       },
@@ -3239,7 +3239,7 @@ const board_data = {
       },
       {
         "terrainType": 1, "hasVillage": false, "units": [], 
-        "edges": [1, 0, 0, 0, 0, 0],
+        "edges": [1, 0, 0, 0, 1, 0],
         "roads": [1, 3],
         "highways": []
       },
