@@ -2604,7 +2604,7 @@ const board_data = {
       {
         "terrainType": 0, "hasVillage": false, "units": [], 
         "edges": [0, 0, 0, 0, 0, 0],
-        "roads": [0, 3],
+        "roads": [1, 3],
         "highways": []
       },
       {
@@ -2860,8 +2860,8 @@ const board_data = {
       {
         "terrainType": 3, "hasVillage": false, "units": [], 
         "edges": [0, 0, 0, 0, 0, 0],
-        "roads": [0, 1, 2, 3, 5],
-        "highways": []
+        "roads": [],
+        "highways": [0, 1, 2, 3, 5]
       },
       {
         "terrainType": 1, "hasVillage": false, "units": [], 
