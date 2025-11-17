@@ -1,3 +1,5 @@
+$( document ).ready(function() {
+
 let debCounter = 0;
 
 const sqrt3 = Math.sqrt(3);
@@ -16,7 +18,6 @@ const terrainTypes = ["clear", "rough", "woods", "town"];
 
 const hexRadius = 23.085;
 const hexHeight = hexRadius * sqrt3 / 2;
-
 
 // ------------------------------------------------------------ //
 
@@ -92,7 +93,8 @@ function debugSwitchCellDisplay(){
 }
 
 function debug(event){
-    const deb_hex = document.getElementById("debug_hex");
+    const deb_hex = document.getElementById("debug_hex_info");
+    const cell_inf = document.getElementById("cell_info");
 
     let cx = event.clientX - mapOffsetX + window.scrollX;
     let cy = event.clientY - mapOffsetY + window.scrollY;
@@ -117,4 +119,52 @@ function debug(event){
      + "<br>" + cx + " " + cy;
     deb_hex.style.left = cx + mapOffsetX + "px";
     deb_hex.style.top = cy + mapOffsetY + "px";
+
+    let this_cell_inf = board_data.board[row_col[1]][row_col[0]];
+    cell_inf.innerHTML = ""
+    + "<br>Terrain type: " + terrainTypes[this_cell_inf.terrainType]
+    + "<br>Has village: " + this_cell_inf.hasVillage
+    + "<br>Edge info: ";
+    for(let i = 0; i < 6; i++) {
+        cell_inf.innerHTML += `<br> - ${edgeNames[i]}: ${edgeInfo[this_cell_inf.edges[i]]}`;
+    };
 }
+
+
+$(document).mousemove(debug);
+$(document).click(debugSwitchCellDisplay);
+
+for(let c = 0; c < collumns; c++){
+    for(let r = 0; r < rows; r++){
+        let cell = board_data.board[c][r];
+        let cell_pos = getHexCenterPos(r, c);
+        let x = mapOffsetX + cell_pos[0] - hexRadius - 1 + "px";
+        let y = mapOffsetY + cell_pos[1] - hexHeight - 1 + "px";
+        
+        if(cell.hasVillage){
+            jQuery('<img>', {
+                id: "village_marker" + padLeft(c + 1, 2) + padLeft(r, 2),
+                class: "debug_village_display",
+                src: "assets/debug/village.png",
+                css: {
+                    position: "absolute",
+                    left: x,
+                    top: y
+                }
+            }).appendTo('#board_container');
+        }
+
+        jQuery('<img>', {
+            id: padLeft(c + 1, 2) + padLeft(r, 2),
+            class: "debug_hex_display",
+            src: "assets/debug/terrain/" + cell.terrainType + ".png",
+            css: {
+                position: "absolute",
+                left: x,
+                top: y
+            }
+        }).appendTo('#board_container');
+    }
+}
+
+});

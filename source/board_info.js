@@ -1,4 +1,4 @@
-{
+const board_data = {
   "board": [
     [
       {
