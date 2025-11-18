@@ -134,6 +134,20 @@ function debug(event){
 $(document).mousemove(debug);
 $(document).click(debugSwitchCellDisplay);
 
+function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
+    jQuery('<img>', {
+        id: sprite + padLeft(c + 1, 2) + padLeft(r, 2) + edge,
+        class: class_name,
+        src: `assets/debug/${sprite}/base.png`,
+        css: {
+            position: "absolute",
+            transform: (edge > 2) ? `rotate(${180 - 60*(edge - 4)}deg)` : `rotate(${60*(edge - 1)}deg)`,
+            left: x,
+            top: y
+        }
+    }).appendTo(parent);
+}
+
 for(let c = 0; c < collumns; c++){
     for(let r = 0; r < rows; r++){
         let cell = board_data.board[c][r];
@@ -157,8 +171,7 @@ for(let c = 0; c < collumns; c++){
         jQuery('<img>', {
             id: padLeft(c + 1, 2) + padLeft(r, 2),
             class: "debug_hex_display",
-            src: "assets/debug/test_cell.png",
-            // src: "assets/debug/terrain/" + cell.terrainType + ".png",
+            src: "assets/debug/terrain/" + cell.terrainType + ".png",
             css: {
                 position: "absolute",
                 left: x,
@@ -168,43 +181,16 @@ for(let c = 0; c < collumns; c++){
 
         for(let i = 0; i < 6; i++) {
             if(cell.edges[i] > 0)
-                jQuery('<img>', {
-                    id: "river" + padLeft(c + 1, 2) + padLeft(r, 2) + i,
-                    class: "debug_river_display",
-                    src: (cell.edges[i] == 1) ? "assets/debug/river/base.png" : "assets/debug/large_river/base.png",
-                    css: {
-                        position: "absolute",
-                        transform: (i > 2) ? `rotate(${180 - 60*(i - 4)}deg)` : `rotate(${60*(i - 1)}deg)`,
-                        left: x,
-                        top: y
-                    }
-                }).appendTo('#board_rivers');
+                createCellEdgeDetail(x, y, "debug_river_display", "#board_rivers", (cell.edges[i] == 1) ? "river" : "large_river", i, r, c);
+
         };
 
         cell.highways.forEach(edge => {
-            jQuery('<img>', {
-                id: "highway" + padLeft(c + 1, 2) + padLeft(r, 2) + edge,
-                class: "debug_highway_display",
-                src: "assets/debug/highway/" + edge + ".png",
-                css: {
-                    position: "absolute",
-                    left: x,
-                    top: y
-                }
-            }).appendTo('#board_highways');
+           createCellEdgeDetail(x, y, "debug_highway_display", "#board_highways", "highway", edge, r, c);
         });
 
         cell.roads.forEach(edge => {
-            jQuery('<img>', {
-                id: "road" + padLeft(c + 1, 2) + padLeft(r, 2) + edge,
-                class: "debug_road_display",
-                src: "assets/debug/road/" + edge + ".png",
-                css: {
-                    position: "absolute",
-                    left: x,
-                    top: y
-                }
-            }).appendTo('#board_roads');
+           createCellEdgeDetail(x, y, "debug_road_display", "#board_roads", "road", edge, r, c);
         });
     }
 }

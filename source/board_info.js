@@ -362,7 +362,7 @@ const board_data = {
         "highways": [1, 3]
       },
       {
-        "terrainType": 2, "hasVillage": true, "units": [], 
+        "terrainType": 2, "hasVillage": false, "units": [], 
         "edges": [2, 2, 0, 0, 0, 0],
         "roads": [],
         "highways": []
@@ -1641,7 +1641,7 @@ const board_data = {
       },
       {
         "terrainType": 1, "hasVillage": false, "units": [], 
-        "edges": [0, 0, 0, 0, 0, 0],
+        "edges": [0, 0, 1, 0, 0, 0],
         "roads": [1, 3],
         "highways": []
       },
@@ -2466,7 +2466,7 @@ const board_data = {
         "highways": []
       },
       {
-        "terrainType": 2, "hasVillage": false, "units": [], 
+        "terrainType": 2, "hasVillage": true, "units": [], 
         "edges": [1, 1, 0, 1, 0, 0],
         "roads": [4],
         "highways": [0, 2]
@@ -2988,7 +2988,7 @@ const board_data = {
       {
         "terrainType": 0, "hasVillage": false, "units": [], 
         "edges": [0, 0, 0, 0, 0, 0],
-        "roads": [],
+        "roads": [3],
         "highways": [1, 4]
       },
       {
