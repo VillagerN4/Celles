@@ -192,6 +192,30 @@ for(let c = 0; c < collumns; c++){
         cell.roads.forEach(edge => {
            createCellEdgeDetail(x, y, "debug_road_display", "#board_roads", "road", edge, r, c);
         });
+
+        
+
+        jQuery('<div>', {
+            id: "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2),
+            class: "debug_cell_label_display",
+            css: {
+                position: "absolute",
+                left: x,
+                top: y
+            }
+        }).appendTo('#board_container');
+
+        jQuery('<p>', {
+            id: "label_cell" + padLeft(c + 1, 2) + padLeft(r, 2),
+            class: "debug_cell_label_text",
+            text: padLeft(c + 1, 2) + padLeft(r, 2)
+        }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
+
+        jQuery('<p>', {
+            id: "label_cell_inner" + padLeft(c + 1, 2) + padLeft(r, 2),
+            class: "debug_cell_label_text_inner",
+            text: padLeft(c + 1, 2) + padLeft(r, 2)
+        }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
     }
 }
 
