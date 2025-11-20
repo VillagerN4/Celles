@@ -9,15 +9,25 @@ const mapOffsetY = 10;
 const rows = 17;
 const collumns = 33;
 
+const boardWidth = 1153;
+const boardHeight = 700;
+
+const hexRadius = 23.085;
+const hexHeight = hexRadius * sqrt3 / 2;
+
+var zoom = 1;
+var camX = (collumns - Math.floor(collumns/2)/2) * hexRadius;
+var camY = (rows + 0.5) * hexHeight;
+
+var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+var mouseDown = false;
+
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];
 
 const edgeInfo = ["none", "river", "large river"];
 const edgeNames = ["top-left", "top", "top-right", "botom-left", "bottom", "bottom-right"];
 const terrainTypes = ["clear", "rough", "woods", "town"];
-
-const hexRadius = 23.085;
-const hexHeight = hexRadius * sqrt3 / 2;
 
 // ------------------------------------------------------------ //
 
@@ -44,21 +54,21 @@ function isPointInsideHexagon(px, py, cx, cy, radius) {
 }
 
 function getHexCenterPos(row, collumn){
-    let x = hexRadius + (1.5*collumn) * hexRadius;
-    let y = hexHeight + (2*row + collumn % 2) * hexHeight;
+    let x = (hexRadius + (1.5*collumn) * hexRadius) * zoom;
+    let y = (hexHeight + (2*row + collumn % 2) * hexHeight) * zoom;
 
     return [x, y];
 }
 
 function getHexRowCol(x, y){
-    let lx = Math.floor(x/hexRadius);
-    let ly = Math.floor(y/hexHeight);
+    let lx = Math.floor(x/(hexRadius * zoom));
+    let ly = Math.floor(y/(hexHeight * zoom));
 
     let collumn = Math.floor(lx / 1.5);
     let row = Math.floor(ly / 2 - (collumn % 2)/2);
 
     let thisCenterPos = getHexCenterPos(row, collumn);
-    let isInHex = isPointInsideHexagon(x, y, thisCenterPos[0], thisCenterPos[1], hexRadius);
+    let isInHex = isPointInsideHexagon(x, y, thisCenterPos[0], thisCenterPos[1], hexRadius * zoom);
 
     if(!isInHex){
         let row_diff = y - thisCenterPos[1];
@@ -95,9 +105,19 @@ function debugSwitchCellDisplay(){
 function debug(event){
     const deb_hex = document.getElementById("debug_hex_info");
     const cell_inf = document.getElementById("cell_info");
+    const board_img = document.getElementById("board");
 
-    let cx = event.clientX - mapOffsetX + window.scrollX;
-    let cy = event.clientY - mapOffsetY + window.scrollY;
+    pos1 = pos3 - event.clientX;
+    pos2 = pos4 - event.clientY;
+    pos3 = event.clientX;
+    pos4 = event.clientY;
+    if(mouseDown){
+        camX -= pos1;
+        camY -= pos2;
+    }
+
+    let cx = event.clientX - mapOffsetX + window.scrollX - camX + boardWidth * zoom/2;
+    let cy = event.clientY - mapOffsetY + window.scrollY - camY + boardHeight * zoom/2;
 
     const debug_hex = document.getElementById("debug_hex_dis");
     const cell_dis = document.getElementById("cell_display");
@@ -108,17 +128,17 @@ function debug(event){
 
     let pos = getHexCenterPos(board_row, board_col);
 
-    debug_hex.style.left = mapOffsetX + pos[0] - hexRadius - 1 + "px";
-    debug_hex.style.top = mapOffsetY + pos[1] - hexHeight + "px";
+    debug_hex.style.left = mapOffsetX + camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
+    debug_hex.style.top = mapOffsetY + camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
 
-    cell_dis.style.left = mapOffsetX + pos[0] - hexRadius - 1 + "px";
-    cell_dis.style.top = mapOffsetY + pos[1] - hexHeight + "px";
+    cell_dis.style.left = mapOffsetX + camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
+    cell_dis.style.top = mapOffsetY + camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
 
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
      + "<br>" + board_row + " " + board_col
      + "<br>" + cx + " " + cy;
-    deb_hex.style.left = cx + mapOffsetX + "px";
-    deb_hex.style.top = cy + mapOffsetY + "px";
+    deb_hex.style.left = event.clientX + mapOffsetX + "px";
+    deb_hex.style.top = event.clientY + mapOffsetY + "px";
 
     let this_cell_inf = board_data.board[board_col][board_row];
     cell_inf.innerHTML = ""
@@ -128,11 +148,33 @@ function debug(event){
     for(let i = 0; i < 6; i++) {
         cell_inf.innerHTML += `<br> - ${edgeNames[i]}: ${edgeInfo[this_cell_inf.edges[i]]}`;
     };
+
+    board_img.style.width = boardWidth * zoom + "px";
+    board_img.style.height = boardHeight * zoom + "px";
+
+    debug_hex.style.width = 46 * zoom + "px";
+    debug_hex.style.height = 40 * zoom + "px";
+
+    cell_dis.style.width = 46 * zoom + "px";
+    cell_dis.style.height = 40 * zoom + "px";
+
+    board_img.style.top = mapOffsetY + camY - boardHeight * zoom/2 + "px";
+    board_img.style.left = mapOffsetX + camX - boardWidth * zoom/2 + "px";
 }
 
-
 $(document).mousemove(debug);
+$(document).mousedown(function(){mouseDown = true;});
+$(document).mouseup(function(){mouseDown = false;});
 $(document).click(debugSwitchCellDisplay);
+
+
+$(window).on("wheel", function(event){
+    const e = event.originalEvent;
+    
+    zoom -= e.deltaY * 0.001;
+
+    zoom = Math.min(Math.max(zoom,1),3)
+});
 
 function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
     jQuery('<img>', {
@@ -148,6 +190,7 @@ function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
     }).appendTo(parent);
 }
 
+function createDebugMap(){
 for(let c = 0; c < collumns; c++){
     for(let r = 0; r < rows; r++){
         let cell = board_data.board[c][r];
@@ -217,6 +260,6 @@ for(let c = 0; c < collumns; c++){
             text: padLeft(c + 1, 2) + padLeft(r, 2)
         }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
     }
-}
+}}
 
 });
