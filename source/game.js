@@ -16,8 +16,8 @@ const hexRadius = 23.085;
 const hexHeight = hexRadius * sqrt3 / 2;
 
 var zoom = 1;
-var camX = (collumns - Math.floor(collumns/2)/2) * hexRadius;
-var camY = (rows + 0.5) * hexHeight;
+var camX = boardWidth/2;
+var camY = boardHeight/2;
 
 var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
 var mouseDown = false;
@@ -111,9 +111,22 @@ function debug(event){
     pos2 = pos4 - event.clientY;
     pos3 = event.clientX;
     pos4 = event.clientY;
-    if(mouseDown){
+    if(mouseDown && (pos3 + window.scrollX) >= mapOffsetX && (pos3 + window.scrollX) <= (mapOffsetX + boardWidth) && (pos4 + window.scrollY) >= mapOffsetY && (pos4 + window.scrollY) <= (mapOffsetY + boardHeight)){
         camX -= pos1;
         camY -= pos2;
+    }
+    
+    if(camX < boardWidth/2 - (boardWidth/2)*(zoom - 1)){
+        camX = boardWidth/2 - (boardWidth/2)*(zoom - 1);
+    }
+    if(camX > boardWidth/2 + (boardWidth/2)*(zoom - 1)){
+        camX = boardWidth/2 + (boardWidth/2)*(zoom - 1);
+    }
+    if(camY < boardHeight/2 - (boardHeight/2)*(zoom - 1)){
+        camY = boardHeight/2 - (boardHeight/2)*(zoom - 1);
+    }
+    if(camY > boardHeight/2 + (boardHeight/2)*(zoom - 1)){
+        camY = boardHeight/2 + (boardHeight/2)*(zoom - 1);
     }
 
     let cx = event.clientX - mapOffsetX + window.scrollX - camX + boardWidth * zoom/2;
@@ -128,11 +141,11 @@ function debug(event){
 
     let pos = getHexCenterPos(board_row, board_col);
 
-    debug_hex.style.left = mapOffsetX + camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
-    debug_hex.style.top = mapOffsetY + camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
+    debug_hex.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
+    debug_hex.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
 
-    cell_dis.style.left = mapOffsetX + camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
-    cell_dis.style.top = mapOffsetY + camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
+    cell_dis.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
+    cell_dis.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
 
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
      + "<br>" + board_row + " " + board_col
@@ -158,22 +171,19 @@ function debug(event){
     cell_dis.style.width = 46 * zoom + "px";
     cell_dis.style.height = 40 * zoom + "px";
 
-    board_img.style.top = mapOffsetY + camY - boardHeight * zoom/2 + "px";
-    board_img.style.left = mapOffsetX + camX - boardWidth * zoom/2 + "px";
+    board_img.style.top = camY - boardHeight * zoom/2 + "px";
+    board_img.style.left = camX - boardWidth * zoom/2 + "px";
 }
 
 $(document).mousemove(debug);
 $(document).mousedown(function(){mouseDown = true;});
 $(document).mouseup(function(){mouseDown = false;});
 $(document).click(debugSwitchCellDisplay);
-
-
-$(window).on("wheel", function(event){
-    const e = event.originalEvent;
-    
-    zoom -= e.deltaY * 0.001;
-
-    zoom = Math.min(Math.max(zoom,1),3)
+$(document).dblclick(function(){
+    if(zoom == 1)
+        zoom = 3;
+    else
+        zoom = 1;
 });
 
 function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
