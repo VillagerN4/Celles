@@ -9,31 +9,6 @@ const mapOffsetY = 10;
 const rows = 17;
 const collumns = 33;
 
-const sizeFactor = 0.7;
-
-const boardWidth = 1153 * sizeFactor;
-const boardHeight = 700 * sizeFactor;
-
-const hexRadius = 23.085 * sizeFactor;
-const hexHeight = hexRadius * sqrt3 / 2;
-
-const container = document.getElementById("board_container");
-container.style.width = boardWidth + "px";
-container.style.height = boardHeight + "px";
-
-var zoom = 1;
-var camX = boardWidth/2;
-var camY = boardHeight/2;
-
-var leftBoundry = 0;
-var rightBoundry = 0;
-var topBoundry = 0;
-var bottomBoundry = 0;
-
-var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-var cx = 0, cy = 0;
-var mouseDown = false;
-
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];
 
@@ -41,29 +16,11 @@ const edgeInfo = ["none", "river", "large river"];
 const edgeNames = ["top-left", "top", "top-right", "botom-left", "bottom", "bottom-right"];
 const terrainTypes = ["clear", "rough", "woods", "town"];
 
+const hexRadius = 23.085;
+const hexHeight = hexRadius * sqrt3 / 2;
+
 // ------------------------------------------------------------ //
 
-function updateMapBoundry(){
-    leftBoundry = boardWidth/2 - (boardWidth/2)*(zoom - 1);
-    rightBoundry = boardWidth/2 + (boardWidth/2)*(zoom - 1);
-    topBoundry = boardHeight/2 - (boardHeight/2)*(zoom - 1);
-    bottomBoundry = boardHeight/2 + (boardHeight/2)*(zoom - 1);
-
-    if(camX < leftBoundry){
-        camX = leftBoundry;
-    }
-    if(camX > rightBoundry){
-        camX = rightBoundry;
-    }
-    if(camY < topBoundry){
-        camY = topBoundry;
-    }
-    if(camY > bottomBoundry){
-        camY = bottomBoundry;
-    }
-
-    console.log(camX, camY);
-}
 
 function degToRad(deg){
     return deg * Math.PI / 180;
@@ -87,21 +44,21 @@ function isPointInsideHexagon(px, py, cx, cy, radius) {
 }
 
 function getHexCenterPos(row, collumn){
-    let x = (hexRadius + (1.5*collumn) * hexRadius) * zoom;
-    let y = (hexHeight + (2*row + collumn % 2) * hexHeight) * zoom;
+    let x = hexRadius + (1.5*collumn) * hexRadius;
+    let y = hexHeight + (2*row + collumn % 2) * hexHeight;
 
     return [x, y];
 }
 
 function getHexRowCol(x, y){
-    let lx = Math.floor(x/(hexRadius * zoom));
-    let ly = Math.floor(y/(hexHeight * zoom));
+    let lx = Math.floor(x/hexRadius);
+    let ly = Math.floor(y/hexHeight);
 
     let collumn = Math.floor(lx / 1.5);
     let row = Math.floor(ly / 2 - (collumn % 2)/2);
 
     let thisCenterPos = getHexCenterPos(row, collumn);
-    let isInHex = isPointInsideHexagon(x, y, thisCenterPos[0], thisCenterPos[1], hexRadius * zoom);
+    let isInHex = isPointInsideHexagon(x, y, thisCenterPos[0], thisCenterPos[1], hexRadius);
 
     if(!isInHex){
         let row_diff = y - thisCenterPos[1];
@@ -128,7 +85,7 @@ function padLeft(nr, n, str){
 function debugSwitchCellDisplay(){
     const cell_dis = document.getElementById("cell_display");
 
-    cell_dis.src = `assets/cell/${factions[Math.floor(debCounter/3)]}/${factions[Math.floor(debCounter/3)]}_${modes[debCounter % 3]}.png`
+    // cell_dis.src = `assets/cell/${factions[Math.floor(debCounter/3)]}/${factions[Math.floor(debCounter/3)]}_${modes[debCounter % 3]}.png`
 
     debCounter++;
     
@@ -138,21 +95,9 @@ function debugSwitchCellDisplay(){
 function debug(event){
     const deb_hex = document.getElementById("debug_hex_info");
     const cell_inf = document.getElementById("cell_info");
-    const board_img = document.getElementById("board");
 
-    pos1 = pos3 - event.clientX;
-    pos2 = pos4 - event.clientY;
-    pos3 = event.clientX;
-    pos4 = event.clientY;
-    if(mouseDown && (pos3 + window.scrollX) >= mapOffsetX && (pos3 + window.scrollX) <= (mapOffsetX + boardWidth) && (pos4 + window.scrollY) >= mapOffsetY && (pos4 + window.scrollY) <= (mapOffsetY + boardHeight)){
-        camX -= pos1;
-        camY -= pos2;
-    }
-    
-    updateMapBoundry();
-
-    cx = event.clientX - mapOffsetX + window.scrollX - camX + boardWidth * zoom/2;
-    cy = event.clientY - mapOffsetY + window.scrollY - camY + boardHeight * zoom/2;
+    let cx = event.clientX - mapOffsetX + window.scrollX;
+    let cy = event.clientY - mapOffsetY + window.scrollY;
 
     const debug_hex = document.getElementById("debug_hex_dis");
     const cell_dis = document.getElementById("cell_display");
@@ -163,17 +108,17 @@ function debug(event){
 
     let pos = getHexCenterPos(board_row, board_col);
 
-    debug_hex.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
-    debug_hex.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
+    debug_hex.style.left = mapOffsetX + pos[0] - hexRadius - 1 + "px";
+    debug_hex.style.top = mapOffsetY + pos[1] - hexHeight + "px";
 
-    cell_dis.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
-    cell_dis.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
+    cell_dis.style.left = mapOffsetX + pos[0] - hexRadius - 1 + "px";
+    cell_dis.style.top = mapOffsetY + pos[1] - hexHeight + "px";
 
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
      + "<br>" + board_row + " " + board_col
      + "<br>" + cx + " " + cy;
-    deb_hex.style.left = event.clientX + 25 + "px";
-    deb_hex.style.top = event.clientY + 25 + "px";
+    deb_hex.style.left = cx + mapOffsetX + "px";
+    deb_hex.style.top = cy + mapOffsetY + "px";
 
     let this_cell_inf = board_data.board[board_col][board_row];
     cell_inf.innerHTML = ""
@@ -183,38 +128,11 @@ function debug(event){
     for(let i = 0; i < 6; i++) {
         cell_inf.innerHTML += `<br> - ${edgeNames[i]}: ${edgeInfo[this_cell_inf.edges[i]]}`;
     };
-
-    board_img.style.width = boardWidth * zoom + "px";
-    board_img.style.height = boardHeight * zoom + "px";
-
-    debug_hex.style.width = hexRadius*2 * zoom + "px";
-    debug_hex.style.height = hexHeight*2 * zoom + "px";
-
-    cell_dis.style.width = hexRadius*2  * zoom + "px";
-    cell_dis.style.height = hexHeight*2 * zoom + "px";
-
-    board_img.style.top = camY - boardHeight * zoom/2 + "px";
-    board_img.style.left = camX - boardWidth * zoom/2 + "px";
 }
 
+
 $(document).mousemove(debug);
-$(document).mousedown(function(){mouseDown = true;});
-$(document).mouseup(function(){mouseDown = false;});
 $(document).click(debugSwitchCellDisplay);
-$(document).dblclick(function(){
-    let ix = (boardWidth - cx/zoom);
-    let iy = (boardHeight - cy/zoom);
-
-    if(zoom == 1)
-        zoom = 3;
-    else
-        zoom = 1;
-
-    camX = ix*zoom - (boardWidth/2) * (zoom - 1);
-    camY = iy*zoom - (boardHeight/2) * (zoom - 1);
-    
-    updateMapBoundry();
-});
 
 function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
     jQuery('<img>', {
@@ -230,13 +148,13 @@ function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
     }).appendTo(parent);
 }
 
-function createDebugMap(){
+
 for(let c = 0; c < collumns; c++){
     for(let r = 0; r < rows; r++){
         let cell = board_data.board[c][r];
         let cell_pos = getHexCenterPos(r, c);
-        let x = cell_pos[0] - hexRadius + "px";
-        let y = cell_pos[1] - hexHeight + "px";
+        let x = mapOffsetX + cell_pos[0] - hexRadius + "px";
+        let y = mapOffsetY + cell_pos[1] - hexHeight + "px";
         
         if(cell.hasVillage){
             jQuery('<img>', {
@@ -261,6 +179,30 @@ for(let c = 0; c < collumns; c++){
                 top: y
             }
         }).appendTo('#board_container');
+
+        if (cell.units && cell.units.length > 0) {
+
+            let unit = cell.units.find(u =>
+                ["nazis", "brits", "us"].includes(u.faction)
+            );
+
+            if (unit) {
+                let faction = unit.faction;
+
+                jQuery('<img>', {
+                    id: "unit_" + padLeft(c + 1, 2) + padLeft(r, 2),
+                    class: "unit_display",
+                    src: `assets/cell/${faction}/${faction}_standard.png`,
+                    css: {
+                        position: "absolute",
+                        left: x,
+                        top: y,
+                        width: "46px",
+                        pointerEvents: "none"
+                    }
+                }).appendTo('#board_container');
+            }
+        }
 
         for(let i = 0; i < 6; i++) {
             if(cell.edges[i] > 0)
@@ -300,8 +242,6 @@ for(let c = 0; c < collumns; c++){
             text: padLeft(c + 1, 2) + padLeft(r, 2)
         }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
     }
-}}
-
-createDebugMap()
+}
 
 });
