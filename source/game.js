@@ -30,16 +30,24 @@ var rightBoundry = 0;
 var topBoundry = 0;
 var bottomBoundry = 0;
 
-var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-var cx = 0, cy = 0;
+var pos1 = 0;
+var pos2 = 0;
+var pos3 = 0;
+var pos4 = 0;
+var cx = 0;
+var cy = 0;
 var mouseDown = false;
 
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];
 
 const edgeInfo = ["none", "river", "large river"];
-const edgeNames = ["top-left", "top", "top-right", "botom-left", "bottom", "bottom-right"];
+const edgeNames = ["top-left", "top", "top-right", "bottom-left", "bottom", "bottom-right"];
 const terrainTypes = ["clear", "rough", "woods", "town"];
+
+$("#debug_hex_dis").hide();
+$("#debug_hex_info").hide();
+$("#cell_display").hide();
 
 // ------------------------------------------------------------ //
 
@@ -48,8 +56,6 @@ function updateMapBoundry(){
     rightBoundry = boardWidth/2 + (boardWidth/2)*(zoom - 1);
     topBoundry = boardHeight/2 - (boardHeight/2)*(zoom - 1);
     bottomBoundry = boardHeight/2 + (boardHeight/2)*(zoom - 1);
-const hexRadius = 23.085;
-const hexHeight = hexRadius * sqrt3 / 2;
 
     if(camX < leftBoundry){
         camX = leftBoundry;
@@ -63,10 +69,11 @@ const hexHeight = hexRadius * sqrt3 / 2;
     if(camY > bottomBoundry){
         camY = bottomBoundry;
     }
+}
+
+
 // ------------------------------------------------------------ //
 
-    console.log(camX, camY);
-}
 
 function degToRad(deg){
     return deg * Math.PI / 180;
@@ -92,8 +99,6 @@ function isPointInsideHexagon(px, py, cx, cy, radius) {
 function getHexCenterPos(row, collumn){
     let x = (hexRadius + (1.5*collumn) * hexRadius) * zoom;
     let y = (hexHeight + (2*row + collumn % 2) * hexHeight) * zoom;
-    let x = hexRadius + (1.5*collumn) * hexRadius;
-    let y = hexHeight + (2*row + collumn % 2) * hexHeight;
 
     return [x, y];
 }
@@ -101,15 +106,12 @@ function getHexCenterPos(row, collumn){
 function getHexRowCol(x, y){
     let lx = Math.floor(x/(hexRadius * zoom));
     let ly = Math.floor(y/(hexHeight * zoom));
-    let lx = Math.floor(x/hexRadius);
-    let ly = Math.floor(y/hexHeight);
 
     let collumn = Math.floor(lx / 1.5);
     let row = Math.floor(ly / 2 - (collumn % 2)/2);
 
     let thisCenterPos = getHexCenterPos(row, collumn);
     let isInHex = isPointInsideHexagon(x, y, thisCenterPos[0], thisCenterPos[1], hexRadius * zoom);
-    let isInHex = isPointInsideHexagon(x, y, thisCenterPos[0], thisCenterPos[1], hexRadius);
 
     if(!isInHex){
         let row_diff = y - thisCenterPos[1];
@@ -136,8 +138,7 @@ function padLeft(nr, n, str){
 function debugSwitchCellDisplay(){
     const cell_dis = document.getElementById("cell_display");
 
-    cell_dis.src = `assets/cell/${factions[Math.floor(debCounter/3)]}/${factions[Math.floor(debCounter/3)]}_${modes[debCounter % 3]}.png`
-    // cell_dis.src = `assets/cell/${factions[Math.floor(debCounter/3)]}/${factions[Math.floor(debCounter/3)]}_${modes[debCounter % 3]}.png`
+    cell_dis.src = `assets/cell/${factions[Math.floor(debCounter/3)]}/${factions[Math.floor(debCounter/3)]}_${modes[debCounter % 3]}.png`;
 
     debCounter++;
 
@@ -148,11 +149,17 @@ function debug(event){
     const deb_hex = document.getElementById("debug_hex_info");
     const cell_inf = document.getElementById("cell_info");
     const board_img = document.getElementById("board");
+    const debug_board = document.getElementById("debug_board_container");
 
     pos1 = pos3 - event.clientX;
     pos2 = pos4 - event.clientY;
     pos3 = event.clientX;
     pos4 = event.clientY;
+
+    $("#debug_hex_dis").show();
+    $("#debug_hex_info").show();
+    $("#cell_display").show();
+
     if(mouseDown && (pos3 + window.scrollX) >= mapOffsetX && (pos3 + window.scrollX) <= (mapOffsetX + boardWidth) && (pos4 + window.scrollY) >= mapOffsetY && (pos4 + window.scrollY) <= (mapOffsetY + boardHeight)){
         camX -= pos1;
         camY -= pos2;
@@ -162,8 +169,6 @@ function debug(event){
 
     cx = event.clientX - mapOffsetX + window.scrollX - camX + boardWidth * zoom/2;
     cy = event.clientY - mapOffsetY + window.scrollY - camY + boardHeight * zoom/2;
-    let cx = event.clientX - mapOffsetX + window.scrollX;
-    let cy = event.clientY - mapOffsetY + window.scrollY;
 
     const debug_hex = document.getElementById("debug_hex_dis");
     const cell_dis = document.getElementById("cell_display");
@@ -176,21 +181,15 @@ function debug(event){
 
     debug_hex.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
     debug_hex.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
-    debug_hex.style.left = mapOffsetX + pos[0] - hexRadius - 1 + "px";
-    debug_hex.style.top = mapOffsetY + pos[1] - hexHeight + "px";
 
     cell_dis.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
     cell_dis.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
-    cell_dis.style.left = mapOffsetX + pos[0] - hexRadius - 1 + "px";
-    cell_dis.style.top = mapOffsetY + pos[1] - hexHeight + "px";
 
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
      + "<br>" + board_row + " " + board_col
      + "<br>" + cx + " " + cy;
-    deb_hex.style.left = event.clientX + 25 + "px";
-    deb_hex.style.top = event.clientY + 25 + "px";
-    deb_hex.style.left = cx + mapOffsetX + "px";
-    deb_hex.style.top = cy + mapOffsetY + "px";
+    deb_hex.style.left = event.clientX + 15 + "px";
+    deb_hex.style.top = event.clientY + 15 + "px";
 
     let this_cell_inf = board_data.board[board_col][board_row];
     cell_inf.innerHTML = ""
@@ -203,15 +202,17 @@ function debug(event){
 
     board_img.style.width = boardWidth * zoom + "px";
     board_img.style.height = boardHeight * zoom + "px";
+    board_img.style.top = camY - boardHeight * zoom/2 + "px";
+    board_img.style.left = camX - boardWidth * zoom/2 + "px";
+
+    debug_board.style.top = camY - boardHeight * zoom/2 + "px";
+    debug_board.style.left = camX - boardWidth * zoom/2 + "px";
 
     debug_hex.style.width = hexRadius*2 * zoom + "px";
     debug_hex.style.height = hexHeight*2 * zoom + "px";
 
     cell_dis.style.width = hexRadius*2  * zoom + "px";
     cell_dis.style.height = hexHeight*2 * zoom + "px";
-
-    board_img.style.top = camY - boardHeight * zoom/2 + "px";
-    board_img.style.left = camX - boardWidth * zoom/2 + "px";
 }
 
 
@@ -232,6 +233,7 @@ $(document).dblclick(function(){
     camY = iy*zoom - (boardHeight/2) * (zoom - 1);
     
     updateMapBoundry();
+    updateDebugMap();
 });
 
 function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
@@ -243,111 +245,188 @@ function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
             position: "absolute",
             transform: (edge > 2) ? `rotate(${180 - 60*(edge - 4)}deg)` : `rotate(${60*(edge - 1)}deg)`,
             left: x,
-            top: y
+            top: y,
+            width: hexRadius*2 + "px",
+            height: hexHeight*2 + "px"
         }
     }).appendTo(parent);
 }
 
 function createDebugMap(){
+    for(let c = 0; c < collumns; c++){
+        for(let r = 0; r < rows; r++){
+            let cell = board_data.board[c][r];
+            let cell_pos = getHexCenterPos(r, c);
+            let x = cell_pos[0] - hexRadius*zoom + "px";
+            let y = cell_pos[1] - hexHeight*zoom  + "px";
 
-for(let c = 0; c < collumns; c++){
-    for(let r = 0; r < rows; r++){
-        let cell = board_data.board[c][r];
-        let cell_pos = getHexCenterPos(r, c);
-        let x = cell_pos[0] - hexRadius + "px";
-        let y = cell_pos[1] - hexHeight + "px";
-        let x = mapOffsetX + cell_pos[0] - hexRadius + "px";
-        let y = mapOffsetY + cell_pos[1] - hexHeight + "px";
-
-        if(cell.hasVillage){
-            jQuery('<img>', {
-                id: "village_marker" + padLeft(c + 1, 2) + padLeft(r, 2),
-                class: "debug_village_display",
-                src: "assets/debug/village.png",
-                css: {
-                    position: "absolute",
-                    left: x,
-                    top: y
-                }
-            }).appendTo('#board_container');
-        }
-
-        jQuery('<img>', {
-            id: padLeft(c + 1, 2) + padLeft(r, 2),
-            class: "debug_hex_display",
-            src: "assets/debug/terrain/" + cell.terrainType + ".png",
-            css: {
-                position: "absolute",
-                left: x,
-                top: y
-            }
-        }).appendTo('#board_container');
-
-        if (cell.units && cell.units.length > 0) {
-
-            let unit = cell.units.find(u =>
-                ["nazis", "brits", "us"].includes(u.faction)
-            );
-
-            if (unit) {
-                let faction = unit.faction;
-
+            if(cell.hasVillage){
                 jQuery('<img>', {
-                    id: "unit_" + padLeft(c + 1, 2) + padLeft(r, 2),
-                    class: "unit_display",
-                    src: `assets/cell/${faction}/${faction}_standard.png`,
+                    id: "village_marker" + padLeft(c + 1, 2) + padLeft(r, 2),
+                    class: "debug_village_display",
+                    src: "assets/debug/village.png",
                     css: {
                         position: "absolute",
                         left: x,
                         top: y,
-                        width: "46px",
-                        pointerEvents: "none"
+                        width: hexRadius*2 + "px",
+                        height: hexHeight*2 + "px"
                     }
-                }).appendTo('#board_container');
+                }).appendTo('#debug_board_container');
             }
+
+            jQuery('<img>', {
+                id: padLeft(c + 1, 2) + padLeft(r, 2),
+                class: "debug_hex_display",
+                src: "assets/debug/terrain/" + cell.terrainType + ".png",
+                css: {
+                    position: "absolute",
+                    left: x,
+                    top: y,
+                    width: hexRadius*2 + "px",
+                    height: hexHeight*2 + "px"
+                }
+            }).appendTo('#debug_board_container');
+
+            if (cell.units && cell.units.length > 0) {
+
+                let unit = cell.units.find(u =>
+                    ["nazis", "brits", "us"].includes(u.faction)
+                );
+
+                if (unit) {
+                    let faction = unit.faction;
+
+                    jQuery('<img>', {
+                        id: "unit_" + padLeft(c + 1, 2) + padLeft(r, 2),
+                        class: "unit_display",
+                        src: `assets/cell/${faction}/${faction}_standard.png`,
+                        css: {
+                            position: "absolute",
+                            left: x,
+                            top: y,
+                            pointerEvents: "none",
+                            width: hexRadius*2 + "px",
+                            height: hexHeight*2 + "px"
+                        }
+                    }).appendTo('#debug_board_container');
+                }
+            }
+
+            for(let i = 0; i < 6; i++) {
+                if(cell.edges[i] > 0)
+                    createCellEdgeDetail(x, y, "debug_river_display", "#board_rivers", (cell.edges[i] == 1) ? "river" : "large_river", i, r, c);
+
+            };
+
+            cell.highways.forEach(edge => {
+            createCellEdgeDetail(x, y, "debug_highway_display", "#board_highways", "highway", edge, r, c);
+            });
+
+            cell.roads.forEach(edge => {
+            createCellEdgeDetail(x, y, "debug_road_display", "#board_roads", "road", edge, r, c);
+            });
+
+
+
+            jQuery('<div>', {
+                id: "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2),
+                class: "debug_cell_label_display",
+                css: {
+                    position: "absolute",
+                    left: x,
+                    top: y,
+                    width: hexRadius*2 + "px",
+                    height: hexHeight*2 + "px"
+                }
+            }).appendTo('#debug_board_container');
+
+            jQuery('<p>', {
+                id: "label_cell" + padLeft(c + 1, 2) + padLeft(r, 2),
+                class: "debug_cell_label_text",
+                text: padLeft(c + 1, 2) + padLeft(r, 2),
+                css: {
+                    width: hexRadius*2 + "px",
+                    'font-size': "8px"
+                }
+            }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
+
+            jQuery('<p>', {
+                id: "label_cell_inner" + padLeft(c + 1, 2) + padLeft(r, 2),
+                class: "debug_cell_label_text_inner",
+                text: padLeft(c + 1, 2) + padLeft(r, 2),
+                css: {
+                    width: hexRadius*2 + "px",
+                    'font-size': "8px"
+                }
+            }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
         }
-
-        for(let i = 0; i < 6; i++) {
-            if(cell.edges[i] > 0)
-                createCellEdgeDetail(x, y, "debug_river_display", "#board_rivers", (cell.edges[i] == 1) ? "river" : "large_river", i, r, c);
-
-        };
-
-        cell.highways.forEach(edge => {
-           createCellEdgeDetail(x, y, "debug_highway_display", "#board_highways", "highway", edge, r, c);
-        });
-
-        cell.roads.forEach(edge => {
-           createCellEdgeDetail(x, y, "debug_road_display", "#board_roads", "road", edge, r, c);
-        });
-
-
-
-        jQuery('<div>', {
-            id: "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2),
-            class: "debug_cell_label_display",
-            css: {
-                position: "absolute",
-                left: x,
-                top: y
-            }
-        }).appendTo('#board_container');
-
-        jQuery('<p>', {
-            id: "label_cell" + padLeft(c + 1, 2) + padLeft(r, 2),
-            class: "debug_cell_label_text",
-            text: padLeft(c + 1, 2) + padLeft(r, 2)
-        }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
-
-        jQuery('<p>', {
-            id: "label_cell_inner" + padLeft(c + 1, 2) + padLeft(r, 2),
-            class: "debug_cell_label_text_inner",
-            text: padLeft(c + 1, 2) + padLeft(r, 2)
-        }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
     }
-}}
-
-createDebugMap()
 }
+
+function updateDebugMap(){
+    for(let c = 0; c < collumns; c++){
+        for(let r = 0; r < rows; r++){
+            let cell = board_data.board[c][r];
+            let cell_pos = getHexCenterPos(r, c);
+            let x = cell_pos[0] - hexRadius*zoom + "px";
+            let y = cell_pos[1] - hexHeight*zoom  + "px";
+            $("#village_marker" + padLeft(c + 1, 2) + padLeft(r, 2)).css({
+                "width": hexRadius*2*zoom + "px",
+                "height": hexHeight*2*zoom + "px", 
+                "left": x,
+                "top": y
+            });
+            $("#" + padLeft(c + 1, 2) + padLeft(r, 2)).css({
+                "width": hexRadius*2*zoom + "px", 
+                "height": hexHeight*2*zoom + "px", 
+                "left": x,
+                "top": y
+            });
+            for(let i = 0; i < 6; i++) {
+                if(cell.edges[i] > 0){
+                    $("#" + (cell.edges[i] == 1 ? "river" : "large_river") + padLeft(c + 1, 2) + padLeft(r, 2) + i).css({
+                        "width": hexRadius*2*zoom + "px", 
+                        "height": hexHeight*2*zoom + "px", 
+                        "left": x,
+                        "top": y
+                    });
+                }
+            };
+            cell.highways.forEach(edge => {
+            $("#" + "highway" + padLeft(c + 1, 2) + padLeft(r, 2) + edge).css({
+                "width": hexRadius*2*zoom + "px", 
+                "height": hexHeight*2*zoom + "px", 
+                "left": x,
+                "top": y
+            });
+            });
+            cell.roads.forEach(edge => {
+            $("#" + "road" + padLeft(c + 1, 2) + padLeft(r, 2) + edge).css({
+                "width": hexRadius*2*zoom + "px", 
+                "height": hexHeight*2*zoom + "px", 
+                "left": x,
+                "top": y
+            });
+            });
+            $("#labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2)).css({
+                "width": hexRadius*2*zoom + "px", 
+                "height": hexHeight*2*zoom + "px", 
+                "left": x,
+                "top": y
+            });
+            $("#label_cell" + padLeft(c + 1, 2) + padLeft(r, 2)).css({
+                "width": hexRadius*2*zoom + "px",
+                "font-size": 8*Math.sqrt(zoom) + "px"
+            });
+            $("#label_cell_inner" + padLeft(c + 1, 2) + padLeft(r, 2)).css({
+                "width": hexRadius*2*zoom + "px",
+                "font-size": 8*Math.sqrt(zoom)  + "px"
+            });
+        }
+    }
+}
+
+createDebugMap();
 
 });
