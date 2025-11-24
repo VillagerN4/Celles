@@ -1,0 +1,121 @@
+[
+  {
+    "name": "116 Panzer",
+    "faction": "nazis",
+    "class": "armor",
+    "variants": [
+      { "attack": 11, "defense": 8, "movement": 9, "steps": 2 },
+      { "attack": 7, "defense": 5, "movement": 9, "steps": 1 },
+      { "attack": 6, "defense": 4, "movement": 9, "steps": 1 },
+      { "attack": 3, "defense": 2, "movement": 0, "steps": 1 },
+      { "attack": 3, "defense": 3, "movement": 0, "steps": 1 },
+      { "attack": 6, "defense": 5, "movement": 0, "steps": 2 }
+    ]
+  },
+  {
+    "name": "2 Panzer",
+    "faction": "nazis",
+    "class": "armor",
+    "variants": [
+      { "attack": 11, "defense": 8, "movement": 9, "steps": 2 },
+      { "attack": 7, "defense": 5, "movement": 9, "steps": 1 },
+      { "attack": 6, "defense": 4, "movement": 9, "steps": 1 },
+      { "attack": 3, "defense": 3, "movement": 0, "steps": 1 },
+      { "attack": 3, "defense": 2, "movement": 0, "steps": 1 },
+      { "attack": 6, "defense": 5, "movement": 0, "steps": 2 }
+    ]
+  },
+  {
+    "name": "9 Panzer",
+    "faction": "nazis",
+    "class": "armor",
+    "variants": [
+      { "attack": 12, "defense": 9, "movement": 9, "steps": 2 },
+      { "attack": 7, "defense": 5, "movement": 9, "steps": 1 },
+      { "attack": 6, "defense": 5, "movement": 9, "steps": 1 },
+      { "attack": 3, "defense": 3, "movement": 0, "steps": 1 },
+      { "attack": 7, "defense": 6, "movement": 0, "steps": 2 }
+    ]
+  },
+  {
+    "name": "FBB",
+    "faction": "nazis",
+    "class": "armor",
+    "variants": [
+      { "attack": 12, "defense": 10, "movement": 9, "steps": 2 },
+      { "attack": 6, "defense": 5, "movement": 9, "steps": 1 },
+      { "attack": 3, "defense": 3, "movement": 0, "steps": 1 },
+      { "attack": 6, "defense": 6, "movement": 0, "steps": 2 }
+    ]
+  },
+  {
+    "name": "Pz Lehr",
+    "faction": "nazis",
+    "class": "armor",
+    "variants": [
+      { "attack": 11, "defense": 8, "movement": 9, "steps": 2 },
+      { "attack": 7, "defense": 5, "movement": 9, "steps": 1 },
+      { "attack": 6, "defense": 4, "movement": 9, "steps": 1 },
+      { "attack": 3, "defense": 2, "movement": 0, "steps": 1 },
+      { "attack": 3, "defense": 3, "movement": 0, "steps": 1 },
+      { "attack": 6, "defense": 5, "movement": 0, "steps": 2 }
+    ]
+  },
+  {
+    "name": "2 Armor",
+    "faction": "allies",
+    "class": "armor",
+    "variants": [
+      { "attack": 15, "defense": 12, "movement": 9, "steps": 2 },
+      { "attack": 8, "defense": 6, "movement": 9, "steps": 1 },
+      { "attack": 6, "defense": 5, "movement": 9, "steps": 1 },
+      { "attack": 3, "defense": 3, "movement": 0, "steps": 1 },
+      { "attack": 8, "defense": 8, "movement": 0, "steps": 2 },
+      { "attack": 4, "defense": 4, "movement": 0, "steps": 1 }
+    ]
+  },
+  {
+    "name": "4 Cavalry",
+    "faction": "allies",
+    "class": "recon",
+    "variants": [
+      { "attack": 4, "defense": 4, "movement": 9, "steps": 1 },
+      { "attack": 2, "defense": 2, "movement": 0, "steps": 1 }
+    ]
+  },
+  {
+    "name": "3 Armor",
+    "faction": "allies",
+    "class": "armor",
+    "variants": [
+      { "attack": 0, "defense": 4, "movement": 0, "steps": 1 }
+    ]
+  },
+  {
+    "name": "29 Armor",
+    "faction": "allies",
+    "class": "armor",
+       "variants": [
+      { "attack": 8, "defense": 6, "movement": 9, "steps": 1 },
+      { "attack": 4, "defense": 4, "movement": 0, "steps": 1 }
+    ]
+  },
+  {
+    "name": "84 Infantry",
+    "faction": "allies",
+    "class": "infantry",
+    "variants": [
+      { "attack": 5, "defense": 7, "movement": 3, "steps": 1 },
+      { "attack": 2, "defense": 4, "movement": 0, "steps": 1 }
+    ]
+  },
+  {
+    "name": "84 Infantry Trucks",
+    "faction": "allies",
+    "class": "truck",
+    "variants": [
+      { "attack": 0, "defense": 0, "movement": 9, "steps": 1 },
+      { "attack": 2, "defense": 4, "movement": 0, "steps": 1 }
+    ]
+  }
+]
