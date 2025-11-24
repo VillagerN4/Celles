@@ -9,17 +9,29 @@ const mapOffsetY = 10;
 const rows = 17;
 const collumns = 33;
 
-const boardWidth = 1153;
-const boardHeight = 700;
+const sizeFactor = 0.7;
 
-const hexRadius = 23.085;
+const boardWidth = 1153 * sizeFactor;
+const boardHeight = 700 * sizeFactor;
+
+const hexRadius = 23.085 * sizeFactor;
 const hexHeight = hexRadius * sqrt3 / 2;
+
+const container = document.getElementById("board_container");
+container.style.width = boardWidth + "px";
+container.style.height = boardHeight + "px";
 
 var zoom = 1;
 var camX = boardWidth/2;
 var camY = boardHeight/2;
 
+var leftBoundry = 0;
+var rightBoundry = 0;
+var topBoundry = 0;
+var bottomBoundry = 0;
+
 var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+var cx = 0, cy = 0;
 var mouseDown = false;
 
 const factions = ["allies", "nazis", "brits"];
@@ -31,6 +43,27 @@ const terrainTypes = ["clear", "rough", "woods", "town"];
 
 // ------------------------------------------------------------ //
 
+function updateMapBoundry(){
+    leftBoundry = boardWidth/2 - (boardWidth/2)*(zoom - 1);
+    rightBoundry = boardWidth/2 + (boardWidth/2)*(zoom - 1);
+    topBoundry = boardHeight/2 - (boardHeight/2)*(zoom - 1);
+    bottomBoundry = boardHeight/2 + (boardHeight/2)*(zoom - 1);
+
+    if(camX < leftBoundry){
+        camX = leftBoundry;
+    }
+    if(camX > rightBoundry){
+        camX = rightBoundry;
+    }
+    if(camY < topBoundry){
+        camY = topBoundry;
+    }
+    if(camY > bottomBoundry){
+        camY = bottomBoundry;
+    }
+
+    console.log(camX, camY);
+}
 
 function degToRad(deg){
     return deg * Math.PI / 180;
@@ -116,21 +149,10 @@ function debug(event){
         camY -= pos2;
     }
     
-    if(camX < boardWidth/2 - (boardWidth/2)*(zoom - 1)){
-        camX = boardWidth/2 - (boardWidth/2)*(zoom - 1);
-    }
-    if(camX > boardWidth/2 + (boardWidth/2)*(zoom - 1)){
-        camX = boardWidth/2 + (boardWidth/2)*(zoom - 1);
-    }
-    if(camY < boardHeight/2 - (boardHeight/2)*(zoom - 1)){
-        camY = boardHeight/2 - (boardHeight/2)*(zoom - 1);
-    }
-    if(camY > boardHeight/2 + (boardHeight/2)*(zoom - 1)){
-        camY = boardHeight/2 + (boardHeight/2)*(zoom - 1);
-    }
+    updateMapBoundry();
 
-    let cx = event.clientX - mapOffsetX + window.scrollX - camX + boardWidth * zoom/2;
-    let cy = event.clientY - mapOffsetY + window.scrollY - camY + boardHeight * zoom/2;
+    cx = event.clientX - mapOffsetX + window.scrollX - camX + boardWidth * zoom/2;
+    cy = event.clientY - mapOffsetY + window.scrollY - camY + boardHeight * zoom/2;
 
     const debug_hex = document.getElementById("debug_hex_dis");
     const cell_dis = document.getElementById("cell_display");
@@ -150,8 +172,8 @@ function debug(event){
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
      + "<br>" + board_row + " " + board_col
      + "<br>" + cx + " " + cy;
-    deb_hex.style.left = event.clientX + mapOffsetX + "px";
-    deb_hex.style.top = event.clientY + mapOffsetY + "px";
+    deb_hex.style.left = event.clientX + 25 + "px";
+    deb_hex.style.top = event.clientY + 25 + "px";
 
     let this_cell_inf = board_data.board[board_col][board_row];
     cell_inf.innerHTML = ""
@@ -165,11 +187,11 @@ function debug(event){
     board_img.style.width = boardWidth * zoom + "px";
     board_img.style.height = boardHeight * zoom + "px";
 
-    debug_hex.style.width = 46 * zoom + "px";
-    debug_hex.style.height = 40 * zoom + "px";
+    debug_hex.style.width = hexRadius*2 * zoom + "px";
+    debug_hex.style.height = hexHeight*2 * zoom + "px";
 
-    cell_dis.style.width = 46 * zoom + "px";
-    cell_dis.style.height = 40 * zoom + "px";
+    cell_dis.style.width = hexRadius*2  * zoom + "px";
+    cell_dis.style.height = hexHeight*2 * zoom + "px";
 
     board_img.style.top = camY - boardHeight * zoom/2 + "px";
     board_img.style.left = camX - boardWidth * zoom/2 + "px";
@@ -180,10 +202,18 @@ $(document).mousedown(function(){mouseDown = true;});
 $(document).mouseup(function(){mouseDown = false;});
 $(document).click(debugSwitchCellDisplay);
 $(document).dblclick(function(){
+    let ix = (boardWidth - cx/zoom);
+    let iy = (boardHeight - cy/zoom);
+
     if(zoom == 1)
         zoom = 3;
     else
         zoom = 1;
+
+    camX = ix*zoom - (boardWidth/2) * (zoom - 1);
+    camY = iy*zoom - (boardHeight/2) * (zoom - 1);
+    
+    updateMapBoundry();
 });
 
 function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
@@ -205,8 +235,8 @@ for(let c = 0; c < collumns; c++){
     for(let r = 0; r < rows; r++){
         let cell = board_data.board[c][r];
         let cell_pos = getHexCenterPos(r, c);
-        let x = mapOffsetX + cell_pos[0] - hexRadius + "px";
-        let y = mapOffsetY + cell_pos[1] - hexHeight + "px";
+        let x = cell_pos[0] - hexRadius + "px";
+        let y = cell_pos[1] - hexHeight + "px";
         
         if(cell.hasVillage){
             jQuery('<img>', {
@@ -271,5 +301,7 @@ for(let c = 0; c < collumns; c++){
         }).appendTo('#' + "labeldiv" + padLeft(c + 1, 2) + padLeft(r, 2));
     }
 }}
+
+createDebugMap()
 
 });
