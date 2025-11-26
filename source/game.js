@@ -508,9 +508,9 @@ function updateDebugMap(){
 const gameState = {
   turn: 1,
   phase: 'token',
-  activePlayer: 'german',
-  actionTokens: { german: [], allies: [] },
-  availableActions: { german: 0, allies: 0 },
+  activePlayer: 'nazis',
+  actionTokens: { nazis: [], allies: [] },
+  availableActions: { nazis: 0, allies: 0 },
   units: {},
   formations: {},
   board: board_data.board,
@@ -556,7 +556,7 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
 }
 
 function seedUnitsExample() {
-  gameState.units['u_01_01'] = createUnit('u_01_01', 'german', 'armor', 0, 0, 2, 9, 7, 5, true);
+  gameState.units['u_01_01'] = createUnit('u_01_01', 'nazis', 'armor', 0, 0, 2, 9, 7, 5, true);
   gameState.units['u_10_05'] = createUnit('u_10_05', 'allies', 'infantry', 9, 4, 2, 4, 3, 4, false);
 }
 seedUnitsExample();
@@ -623,7 +623,7 @@ function executeMovementPath(unitId, path) {
   const u = gameState.units[unitId];
   if (!u) return { ok:false, msg:'Brak jednostki' };
   u.movementLeft = applySupplyAndDisruptionMovement(u.movement, u);
-  const ez = getZOCForFaction(u.faction === 'german' ? 'allies' : 'german');
+  const ez = getZOCForFaction(u.faction === 'nazis' ? 'allies' : 'nazis');
   for (let i=0;i<path.length;i++){
     const [r,c] = path[i];
     const pr = (i===0) ? u.row : path[i-1][0];
@@ -734,7 +734,7 @@ function attemptRetreat(unit, steps, fromRow, fromCol) {
   if (!unit) return false;
   if (!gameState.units[unit.id]) return false;
 
-  const enemyZoc = getZOCForFaction(unit.faction === 'german' ? 'allies' : 'german');
+  const enemyZoc = getZOCForFaction(unit.faction === 'nazis' ? 'allies' : 'nazis');
   let curRow = unit.row, curCol = unit.col;
 
   for (let step = 0; step < steps; step++) {
@@ -796,7 +796,7 @@ function matchesPreferredDirection(faction, dr, dc) {
     if (dr > 0 && dc < 0) return true;
     return false;
   }
-  if (faction === 'german') {
+  if (faction === 'nazis') {
     if (dr > 0) return true;
     if (dr > 0 && dc > 0) return true;
     return false;
