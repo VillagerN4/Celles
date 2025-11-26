@@ -75,6 +75,14 @@
         z-index: 3;
     }
 
+    .debug_house_display{
+        z-index: 0;
+    }
+
+    .debug_tree_display{
+        z-index: 5;
+    }
+
     .debug_cell_label_display{
         z-index: 25;
         margin: 0;

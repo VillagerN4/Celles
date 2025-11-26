@@ -7,7 +7,7 @@ const sqrt3 = Math.sqrt(3);
 const mapOffsetX = 10;
 const mapOffsetY = 10;
 const rows = 17;
-const collumns = 33;
+const columns = 33;
 
 const sizeFactor = 0.7;
 
@@ -37,6 +37,8 @@ var pos4 = 0;
 var cx = 0;
 var cy = 0;
 var mouseDown = false;
+var selectedRow;
+var selectedColumn;
 
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];
@@ -96,9 +98,9 @@ function isPointInsideHexagon(px, py, cx, cy, radius) {
         && -sqrt3 * dx - sqrt3 < dy;
 }
 
-function getHexCenterPos(row, collumn){
-    let x = (hexRadius + (1.5*collumn) * hexRadius) * zoom;
-    let y = (hexHeight + (2*row + collumn % 2) * hexHeight) * zoom;
+function getHexCenterPos(row, column){
+    let x = (hexRadius + (1.5*column) * hexRadius) * zoom;
+    let y = (hexHeight + (2*row + column % 2) * hexHeight) * zoom;
 
     return [x, y];
 }
@@ -107,10 +109,10 @@ function getHexRowCol(x, y){
     let lx = Math.floor(x/(hexRadius * zoom));
     let ly = Math.floor(y/(hexHeight * zoom));
 
-    let collumn = Math.floor(lx / 1.5);
-    let row = Math.floor(ly / 2 - (collumn % 2)/2);
+    let column = Math.floor(lx / 1.5);
+    let row = Math.floor(ly / 2 - (column % 2)/2);
 
-    let thisCenterPos = getHexCenterPos(row, collumn);
+    let thisCenterPos = getHexCenterPos(row, column);
     let isInHex = isPointInsideHexagon(x, y, thisCenterPos[0], thisCenterPos[1], hexRadius * zoom);
 
     if(!isInHex){
@@ -122,10 +124,10 @@ function getHexRowCol(x, y){
             row += r1;
         }
 
-        collumn += col_diff / Math.abs(col_diff);
+        column += col_diff / Math.abs(col_diff);
     }
 
-    return [row, collumn];
+    return [row, column];
 }
 
 function padLeft(nr, n, str){
@@ -134,6 +136,10 @@ function padLeft(nr, n, str){
 
 
 // ------------------------------------------------------------ //
+
+function isMouseInBoard(){
+    return (pos3 + window.scrollX) >= mapOffsetX && (pos3 + window.scrollX) <= (mapOffsetX + boardWidth) && (pos4 + window.scrollY) >= mapOffsetY && (pos4 + window.scrollY) <= (mapOffsetY + boardHeight);
+}
 
 function debugSwitchCellDisplay(){
     const cell_dis = document.getElementById("cell_display");
@@ -145,12 +151,16 @@ function debugSwitchCellDisplay(){
     if(debCounter > 8) debCounter = 0;
 }
 
-function debug(event){
-    const deb_hex = document.getElementById("debug_hex_info");
-    const cell_inf = document.getElementById("cell_info");
-    const board_img = document.getElementById("board");
-    const debug_board = document.getElementById("debug_board_container");
+function handleClick(){
+    if(isMouseInBoard()){
+        let row_col = getHexRowCol(cx, cy);
 
+        selectedRow = Math.max(0,Math.min(row_col[0],rows-1));
+        selectedColumn = Math.max(0,Math.min(row_col[1],columns-1));
+    }
+}
+
+function handleMouseMovement(event){
     pos1 = pos3 - event.clientX;
     pos2 = pos4 - event.clientY;
     pos3 = event.clientX;
@@ -158,38 +168,47 @@ function debug(event){
 
     $("#debug_hex_dis").show();
     $("#debug_hex_info").show();
-    $("#cell_display").show();
+    // $("#cell_display").show();
 
-    if(mouseDown && (pos3 + window.scrollX) >= mapOffsetX && (pos3 + window.scrollX) <= (mapOffsetX + boardWidth) && (pos4 + window.scrollY) >= mapOffsetY && (pos4 + window.scrollY) <= (mapOffsetY + boardHeight)){
+    if(mouseDown && isMouseInBoard()){
         camX -= pos1;
         camY -= pos2;
     }
     
     updateMapBoundry();
+    moveMap();
+}
 
-    cx = event.clientX - mapOffsetX + window.scrollX - camX + boardWidth * zoom/2;
-    cy = event.clientY - mapOffsetY + window.scrollY - camY + boardHeight * zoom/2;
+function moveMap(){
+    cx = pos3 - mapOffsetX + window.scrollX - camX + boardWidth * zoom/2;
+    cy = pos4 - mapOffsetY + window.scrollY - camY + boardHeight * zoom/2;
+
+    const deb_hex = document.getElementById("debug_hex_info");
+    const cell_inf = document.getElementById("cell_info");
+    const board_img = document.getElementById("board");
+    const debug_board = document.getElementById("debug_board_container");
 
     const debug_hex = document.getElementById("debug_hex_dis");
     const cell_dis = document.getElementById("cell_display");
 
     let row_col = getHexRowCol(cx, cy);
     let board_row = Math.max(0,Math.min(row_col[0],rows-1));
-    let board_col = Math.max(0,Math.min(row_col[1],collumns-1));
+    let board_col = Math.max(0,Math.min(row_col[1],columns-1));
 
     let pos = getHexCenterPos(board_row, board_col);
+    let sel_pos = getHexCenterPos(selectedRow, selectedColumn);
 
-    debug_hex.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
-    debug_hex.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
+    debug_hex.style.left = camX - boardWidth * zoom/2 + sel_pos[0] - hexRadius * zoom + "px";
+    debug_hex.style.top = camY - boardHeight * zoom/2 + sel_pos[1] - hexHeight * zoom + "px";
 
-    cell_dis.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
-    cell_dis.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
+    // cell_dis.style.left = camX - boardWidth * zoom/2 + sel_pos[0] - hexRadius * zoom + "px";
+    // cell_dis.style.top = camY - boardHeight * zoom/2 + sel_pos[1] - hexHeight * zoom + "px";
 
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
      + "<br>" + board_row + " " + board_col
      + "<br>" + cx + " " + cy;
-    deb_hex.style.left = event.clientX + 15 + "px";
-    deb_hex.style.top = event.clientY + 15 + "px";
+    deb_hex.style.left = pos3 + 15 + "px";
+    deb_hex.style.top = pos4 + 15 + "px";
 
     let this_cell_inf = board_data.board[board_col][board_row];
     cell_inf.innerHTML = ""
@@ -216,12 +235,13 @@ function debug(event){
 }
 
 
-$(document).mousemove(debug);
+$(document).mousemove(handleMouseMovement);
 $(document).mousedown(function(){mouseDown = true;});
 $(document).mouseup(function(){mouseDown = false;});
-$(document).click(debugSwitchCellDisplay);
-$(document).dblclick(function(){
-    let ix = (boardWidth - cx/zoom);
+$(document).click(handleClick);
+$(document).keyup(function(e){
+   if(e.keyCode == 32){
+       let ix = (boardWidth - cx/zoom);
     let iy = (boardHeight - cy/zoom);
 
     if(zoom == 1)
@@ -234,6 +254,8 @@ $(document).dblclick(function(){
     
     updateMapBoundry();
     updateDebugMap();
+    moveMap();
+   }
 });
 
 function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
@@ -253,12 +275,13 @@ function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
 }
 
 function createDebugMap(){
-    for(let c = 0; c < collumns; c++){
+    for(let c = 0; c < columns; c++){
         for(let r = 0; r < rows; r++){
             let cell = board_data.board[c][r];
             let cell_pos = getHexCenterPos(r, c);
             let x = cell_pos[0] - hexRadius*zoom + "px";
             let y = cell_pos[1] - hexHeight*zoom  + "px";
+            let uncoveredHouses = [0, 0, 0, 0, 0, 0];
 
             if(cell.hasVillage){
                 jQuery('<img>', {
@@ -287,6 +310,21 @@ function createDebugMap(){
                     height: hexHeight*2 + "px"
                 }
             }).appendTo('#debug_board_container');
+
+            if(cell.terrainType == 2){
+            jQuery('<img>', {
+                id: padLeft(c + 1, 2) + padLeft(r, 2),
+                class: "debug_tree_display",
+                src: "assets/debug/terrain/2_" + Math.round(Math.random()) + ".png",
+                css: {
+                    position: "absolute",
+                    left: x,
+                    top: y,
+                    width: hexRadius*2 + "px",
+                    height: hexHeight*2 + "px"
+                }
+            }).appendTo('#debug_board_container');
+            }
 
             if (cell.units && cell.units.length > 0) {
 
@@ -321,12 +359,31 @@ function createDebugMap(){
 
             cell.highways.forEach(edge => {
             createCellEdgeDetail(x, y, "debug_highway_display", "#board_highways", "highway", edge, r, c);
+            uncoveredHouses[edge] += 1;
             });
 
             cell.roads.forEach(edge => {
             createCellEdgeDetail(x, y, "debug_road_display", "#board_roads", "road", edge, r, c);
+            uncoveredHouses[edge] += 1;
             });
 
+
+            for(let i = 0; i < 6; i++) {
+                if(uncoveredHouses[i] == 0 && cell.terrainType == 3)
+                    jQuery('<img>', {
+                        id: "houses" + padLeft(c + 1, 2) + padLeft(r, 2) + i,
+                        class: "debug_house_display",
+                        src: `assets/debug/terrain/3_${i}.png`,
+                        css: {
+                            position: "absolute",
+                            left: x,
+                            top: y,
+                            width: hexRadius*2 + "px",
+                            height: hexHeight*2 + "px"
+                        }
+                    }).appendTo("#debug_board_container");
+
+            };
 
 
             jQuery('<div>', {
@@ -365,7 +422,7 @@ function createDebugMap(){
 }
 
 function updateDebugMap(){
-    for(let c = 0; c < collumns; c++){
+    for(let c = 0; c < columns; c++){
         for(let r = 0; r < rows; r++){
             let cell = board_data.board[c][r];
             let cell_pos = getHexCenterPos(r, c);
@@ -392,7 +449,16 @@ function updateDebugMap(){
                         "top": y
                     });
                 }
-            };
+
+                if(cell.terrainType == 3){
+                    $("#" + "houses" + padLeft(c + 1, 2) + padLeft(r, 2) + i).css({
+                        "width": hexRadius*2*zoom + "px", 
+                        "height": hexHeight*2*zoom + "px", 
+                        "left": x,
+                        "top": y
+                    });
+                }
+            }
             cell.highways.forEach(edge => {
             $("#" + "highway" + padLeft(c + 1, 2) + padLeft(r, 2) + edge).css({
                 "width": hexRadius*2*zoom + "px", 
