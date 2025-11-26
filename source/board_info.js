@@ -2,7 +2,7 @@ const board_data = {
   "board": [
     [
       {
-        "terrainType": 0, "hasVillage": false, "units": [], 
+        "terrainType": 0, "hasVillage": false, "units": ["allies"], 
         "edges": [0, 0, 0, 0, 0, 0],
         "roads": [],
         "highways": []
