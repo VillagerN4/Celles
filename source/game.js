@@ -37,8 +37,8 @@ var pos4 = 0;
 var cx = 0;
 var cy = 0;
 var mouseDown = false;
-var selectedRow;
-var selectedColumn;
+var selectedRow = null;
+var selectedColumn = null;
 
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];
@@ -151,7 +151,7 @@ function debugSwitchCellDisplay(){
     if(debCounter > 8) debCounter = 0;
 }
 
-function handleClick(){
+function handleClick(event){
     if(isMouseInBoard()){
         let row_col = getHexRowCol(cx, cy);
 
@@ -166,8 +166,13 @@ function handleMouseMovement(event){
     pos3 = event.clientX;
     pos4 = event.clientY;
 
-    $("#debug_hex_dis").show();
     $("#debug_hex_info").show();
+
+    if(selectedColumn == null || selectedRow == null){
+        $("#debug_hex_dis").hide();
+    }else{
+        $("#debug_hex_dis").show();
+    }
     // $("#cell_display").show();
 
     if(mouseDown && isMouseInBoard()){
@@ -236,11 +241,11 @@ function moveMap(){
 
 
 $(document).mousemove(handleMouseMovement);
-$(document).mousedown(function(){mouseDown = true;});
+$(document).mousedown(function(event){mouseDown = true && event.which == 2;});
 $(document).mouseup(function(){mouseDown = false;});
 $(document).click(handleClick);
-$(document).keyup(function(e){
-   if(e.keyCode == 32){
+$(document).keyup(function(event){
+   if(event.keyCode == 32){
        let ix = (boardWidth - cx/zoom);
     let iy = (boardHeight - cy/zoom);
 
@@ -256,6 +261,9 @@ $(document).keyup(function(e){
     updateDebugMap();
     moveMap();
    }
+});
+$(document).on("contextmenu", function(event) {
+    event.preventDefault();
 });
 
 function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
@@ -313,7 +321,7 @@ function createDebugMap(){
 
             if(cell.terrainType == 2){
             jQuery('<img>', {
-                id: padLeft(c + 1, 2) + padLeft(r, 2),
+                id: "trees" + padLeft(c + 1, 2) + padLeft(r, 2),
                 class: "debug_tree_display",
                 src: "assets/debug/terrain/2_" + Math.round(Math.random()) + ".png",
                 css: {
@@ -435,6 +443,12 @@ function updateDebugMap(){
                 "top": y
             });
             $("#" + padLeft(c + 1, 2) + padLeft(r, 2)).css({
+                "width": hexRadius*2*zoom + "px", 
+                "height": hexHeight*2*zoom + "px", 
+                "left": x,
+                "top": y
+            });
+            $("#trees" + padLeft(c + 1, 2) + padLeft(r, 2)).css({
                 "width": hexRadius*2*zoom + "px", 
                 "height": hexHeight*2*zoom + "px", 
                 "left": x,
