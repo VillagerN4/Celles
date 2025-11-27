@@ -5,7 +5,14 @@
     <title>CELLES</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="source/board_info.js"></script>
-    <script src="source/game.js"></script>
+    <script src="source/factions_info.js"></script>    
+
+    <script src="source/generic.js"></script>
+    <script src="source/board.js"></script>
+    <script src="source/game_variables"></script>
+    <script src="source/game_logic.js"></script>
+    <script src="source/units.js"></script>
+
     <link rel="stylesheet" href="source/styles.css">
 </head>
 <body  id="color_debug">
@@ -18,11 +25,12 @@
             <div id="board_highways"></div>
             <div id="board_rivers"></div>
         </div>
-        <img src="assets/cell/outline_white.png" id="debug_hex_dis">
+        <img src="assets/cell/selection_white.png" id="debug_hex_dis">
         <img src="assets/cell/allies/allies_reduced.png" id="cell_display">
     </div>
 
     <p id="cell_info">-</p>
+    <p id="cost_info">-</p>
     <p id="debug_hex_info">-</p>
 </div>
 </body>

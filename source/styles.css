@@ -119,3 +119,10 @@
         filter: opacity(55%);
         z-index: 100;
     }
+
+    .unit_outline_display {
+        position: absolute;
+        filter: opacity(75%);
+        z-index: 101;
+    }
+
