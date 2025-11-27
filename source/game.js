@@ -9,7 +9,7 @@ const mapOffsetY = 10;
 const rows = 17;
 const columns = 33;
 
-const sizeFactor = 0.7;
+const sizeFactor = 1;
 
 const boardWidth = 1153 * sizeFactor;
 const boardHeight = 700 * sizeFactor;
@@ -20,6 +20,8 @@ const hexHeight = hexRadius * sqrt3 / 2;
 const container = document.getElementById("board_container");
 container.style.width = boardWidth + "px";
 container.style.height = boardHeight + "px";
+container.style.top = mapOffsetY + "px";
+container.style.left = mapOffsetX + "px";
 
 var zoom = 1;
 var camX = boardWidth/2;
@@ -237,6 +239,12 @@ function moveMap(){
 
     cell_dis.style.width = hexRadius*2  * zoom + "px";
     cell_dis.style.height = hexHeight*2 * zoom + "px";
+    
+    if(selectedColumn == null || selectedRow == null){
+        $("#debug_hex_dis").hide();
+    }else{
+        $("#debug_hex_dis").show();
+    }
 }
 
 
@@ -472,6 +480,7 @@ function updateDebugMap(){
                     });
                 }
             }
+            
             cell.highways.forEach(edge => {
             $("#" + "highway" + padLeft(c + 1, 2) + padLeft(r, 2) + edge).css({
                 "width": hexRadius*2*zoom + "px", 
@@ -502,9 +511,24 @@ function updateDebugMap(){
                 "width": hexRadius*2*zoom + "px",
                 "font-size": 8*Math.sqrt(zoom)  + "px"
             });
+
+            for (let id in gameState.units) {
+              const u = gameState.units[id];
+              const pos = getHexCenterPos(u.row, u.col);
+              const ux = pos[0] - hexRadius * zoom + "px";
+              const uy = pos[1] - hexHeight * zoom + "px";
+
+              $("#unit_" + id).css({
+                "width": hexRadius*2*zoom + "px", 
+                "height": hexHeight*2*zoom + "px", 
+                "left": ux,
+                "top": uy
+            });
+          }
         }
     }
 }
+
 const gameState = {
   turn: 1,
   phase: 'token',
@@ -521,7 +545,7 @@ const gameState = {
 function drawUnits() {
     $(".unit_display").remove();
 
-    for (const id in gameState.units) {
+    for (let id in gameState.units) {
         const u = gameState.units[id];
         const pos = getHexCenterPos(u.row, u.col);
         const x = pos[0] - hexRadius * zoom + "px";
@@ -536,9 +560,7 @@ function drawUnits() {
                 left: x,
                 top: y,
                 width: hexRadius * 2 * zoom + "px",
-                height: hexHeight * 2 * zoom + "px",
-                pointerEvents: "none",
-                zIndex: 1000
+                height: hexHeight * 2 * zoom + "px"
             }
         });
 
@@ -561,9 +583,10 @@ function seedUnitsExample() {
 }
 seedUnitsExample();
 
-const terrainCost = { clear: { mot:1, inf:1 }, rough:{ mot:2, inf:3 }, woods:{ mot:2, inf:3 }, town:{ mot:1, inf:2 } };
-const roadCost = 0.5;
-const highwayCost = 0.5;
+const terrainCost = { clear: { mot:2, inf:1 }, rough:{ mot:3, inf:2 }, woods:{ mot:4, inf:3 }, town:{ mot:2, inf:1 } };
+const roadCost = { mot:1, inf:1 };
+const highwayCost = { mot:0.5, inf:1 };
+const edgeCost = { none: { mot:0, inf:0 },  river: { mot:2, inf:1 }, "large river": { mot:999999999, inf:999999999 }};
 const enterOccupiedMotorizedExtra = 2;
 
 function applySupplyAndDisruptionMovement(baseMovement, unit) {
@@ -600,15 +623,48 @@ function getHexNeighbors(r, c) {
 
 function getMovementCostForEntry(unit, fromRow, fromCol, toRow, toCol) {
   const to = gameState.board[toCol][toRow];
-  const terrain = ['clear','rough','woods','town'][to.terrainType] || 'clear';
+  const from = gameState.board[fromCol][fromRow];
+  const terrain = terrainTypes[to.terrainType] || terrainTypes[0];
+  const thisroad = from.roads && from.roads.length;
+  const thishwy = from.highways && from.highways.length;
   const road = to.roads && to.roads.length;
   const hwy = to.highways && to.highways.length;
-  if (road || hwy) return roadCost;
   const typ = unit.motorized ? 'mot' : 'inf';
-  let cost = terrainCost[terrain][typ];
+  const fact = unit.faction;
+
+  let currentCellPos = getHexCenterPos(fromRow,fromCol)
+  let nextCellPos = getHexCenterPos(toRow, toCol);
+  let yDif = nextCellPos[1] - currentCellPos[1];
+  let xDif = nextCellPos[0] - currentCellPos[0];
+
+  if(yDif == 0) return -1;
+
+  let movementDirectionEdge = (xDif == 0 ? 0 : xDif/Math.abs(xDif)) + 1 + (yDif/Math.abs(yDif) + 1)*1.5;
+
+  let cost = -1;
+
+  if(thisroad){
+    from.roads.forEach(edge => {
+      if(edge == movementDirectionEdge){
+        cost = roadCost[typ];
+      }
+    });
+  }
+  if(thishwy){
+    from.highways.forEach(edge => {
+      if(edge == movementDirectionEdge){ 
+        cost = highwayCost[typ];
+      }
+    });
+  }
+  if(cost > 0 && ((from.edges[movementDirectionEdge] == 0 && fact == "nazis") || fact != "nazis")) return cost;
+
+  cost = terrainCost[terrain][typ];
   const occ = unitAt(toRow, toCol);
   if (occ && occ.motorized && unit.motorized) cost += enterOccupiedMotorizedExtra;
-  return cost;
+  console.log("base cost: ", cost);
+  console.log("additional cost: ", edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ]);
+  return cost + edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ];
 }
 
 function unitAt(r, c) {
@@ -621,7 +677,8 @@ function unitAt(r, c) {
 
 function executeMovementPath(unitId, path) {
   const u = gameState.units[unitId];
-  if (!u) return { ok:false, msg:'Brak jednostki' };
+  let pathCost = 0;
+  if (!u) return { ok:false, msg:'Brak jednostki', cost: 0 };
   u.movementLeft = applySupplyAndDisruptionMovement(u.movement, u);
   const ez = getZOCForFaction(u.faction === 'nazis' ? 'allies' : 'nazis');
   for (let i=0;i<path.length;i++){
@@ -629,23 +686,28 @@ function executeMovementPath(unitId, path) {
     const pr = (i===0) ? u.row : path[i-1][0];
     const pc = (i===0) ? u.col : path[i-1][1];
     const cost = getMovementCostForEntry(u, pr, pc, r, c);
+    if(cost == -1) return { ok:false, msg:'Nieprawidłowa ścieżka', cost: pathCost };
+    pathCost += cost;
+    console.log(cost);
     const fromKey = pr+':'+pc, toKey = r+':'+c;
     const fz = ez.has(fromKey), tz = ez.has(toKey);
     if (u.motorized && fz && tz) {
       const extra = 2;
-      if (u.movementLeft < cost + extra) return { ok:false, msg:'Brak punktów ruchu' };
+      if (u.movementLeft < cost + extra) return { ok:false, msg:'Brak punktów ruchu', cost: pathCost };
       const die = rollD10();
       const mod = 0;
       const res = die + mod;
       if (res >= 5) { u.movementLeft -= (cost + extra); u.row = r; u.col = c; }
-      else { u.movementLeft = 0; u.disrupted = true; return { ok:false, msg:'Infiltracja nieudana' }; }
+      else { u.movementLeft = 0; u.disrupted = true; return { ok:false, msg:'Infiltracja nieudana', cost: pathCost }; }
     } else {
-      if (u.movementLeft < cost) return { ok:false, msg:'Brak punktów ruchu' };
+      if (u.movementLeft < cost) return { ok:false, msg:'Brak punktów ruchu', cost: pathCost };
       u.movementLeft -= cost; u.row = r; u.col = c;
     }
+    selectedRow = path[i][0];
+    selectedColumn = path[i][1];
   }
   u.used = true;
-  return { ok:true, msg:'Ruch wykonany' };
+  return { ok:true, msg:'Ruch wykonany', cost: pathCost };
 }
 
 function rollD10(){ return Math.floor(Math.random()*10); }
@@ -829,12 +891,20 @@ $(document).keyup(function (e) {
     if (selectedUnitId) {
       const u = gameState.units[selectedUnitId];
       if (!u) return;
-      const targetRow = u.row;
-      const targetCol = Math.min(gameState.columns - 1, u.col + 1);
+
+      let rowcol = getHexRowCol(cx, cy);
+      let row = rowcol[0];
+      let col = rowcol[1];
+
+      const targetRow = row;
+      const targetCol = col;
       const res = executeMovementPath(selectedUnitId, [[targetRow, targetCol]]);
-      console.log(res.msg);
+      
       if (typeof updateDebugMap === 'function') updateDebugMap();
+      if (typeof drawUnits === 'function') drawUnits();
       if (typeof moveMap === 'function') moveMap();
+
+      $("#cost_info").text("Movement cost: " + res.cost);
     }
   }
   if (e.key === 'C' || e.key === 'c') {
@@ -851,6 +921,7 @@ $(document).keyup(function (e) {
       const res = resolveCombat([selectedUnitId], enemies, 'medium');
       console.log('Combat result:', res);
       if (typeof updateDebugMap === 'function') updateDebugMap();
+      if (typeof drawUnits === 'function') drawUnits();
       if (typeof moveMap === 'function') moveMap();
     }
   }

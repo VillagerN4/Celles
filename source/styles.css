@@ -14,8 +14,6 @@
 
     #board_container{
         position: absolute;
-        left: 10px;
-        top: 10px;
         overflow: hidden;
     }
     
@@ -35,6 +33,12 @@
         position: absolute;
         left: 1183px;
         top: 10px;
+    }
+
+    #cost_info{
+        position: absolute;
+        left: 1183px;
+        top: 350px;
     }
 
     #debug_hex_dis{
@@ -80,7 +84,7 @@
     }
 
     .debug_tree_display{
-        z-index: 5;
+        z-index: 0;
     }
 
     .debug_cell_label_display{
@@ -111,6 +115,7 @@
     }
 
     .unit_display {
-    position: absolute;
-    z-index: 1000000000;
+        position: absolute;
+        filter: opacity(55%);
+        z-index: 100;
     }
