@@ -85,8 +85,8 @@ function handleKeyboardInput(event){
 
       const targetRow = row;
       const targetCol = col;
-      const res = executeMovementPath(selectedUnitId, [[targetRow, targetCol]]);
-      
+      const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
+      console.log(res);
       if (typeof updateDebugMap === 'function') updateDebugMap();
       if (typeof drawUnits === 'function') drawUnits();
       if (typeof moveMap === 'function') moveMap();
