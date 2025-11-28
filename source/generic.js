@@ -42,3 +42,23 @@ function drawActionToken(f) {
   if (!c.length) return null;
   return c[Math.floor(Math.random()*c.length)].id;
 }
+
+function fadeAudio(audio, startVolume, endVolume, duration, callback) {
+    const steps = 30;
+    const stepTime = duration / steps;
+    const volumeStep = (endVolume - startVolume) / steps;
+
+    let currentStep = 0;
+    audio.volume = startVolume;
+
+    let fadeInterval = setInterval(() => {
+        currentStep++;
+        audio.volume = startVolume + volumeStep * currentStep;
+
+        if (currentStep >= steps) {
+            clearInterval(fadeInterval);
+            if (endVolume === 0) audio.pause();
+            if (callback) callback();
+        }
+    }, stepTime);
+}

@@ -15,23 +15,39 @@
 
     <link rel="stylesheet" href="source/styles.css">
 </head>
-<body  id="color_debug">
+<body>
+
+<audio id="menu_music" src="assets/audio/Military Precision.mp3" loop></audio>
+<audio id="m_hover" src="assets/audio/buttonrollover.wav"></audio>
+<audio id="m_click" src="assets/audio/buttonclick.wav"></audio>
+<audio id="m_click_rel" src="assets/audio/buttonclickrelease.wav"></audio>
+
+<div id="page_tap">
+    <p id="tap_anywhere">Press &lt;Left Mouse Buttom&gt; to START</p>
+</div>
+
 <div id="page_menu">
     <img src="assets/ui/celles.png" id="title">
     
     <nav id="menu_buttons">
-        <p id="begin" class="menu_button">BEGIN</p>
-        <p id="controls" class="menu_button">CONTROLS</p>
-        <p id="config" class="menu_button">DISPLAY CONFIG</p>
+        <p id="begin" class="menu_button button">BEGIN</p>
+        <p id="controls" class="menu_button button">CONTROLS</p>
+        <p id="config" class="menu_button button">DISPLAY CONFIG</p>
     </nav>
 </div>
 
 <div id="page_controls">
+    <p>CONTROLS</p>
 
+    
+    <p class="menu_button button to_menu">BACK</p>
 </div>
 
 <div id="page_displayconfig">
+    <p>CONFIG</p>
 
+    
+    <p class="menu_button button to_menu">BACK</p>
 </div>
 
 <div id="page_game">

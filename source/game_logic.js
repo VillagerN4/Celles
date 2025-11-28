@@ -1,5 +1,9 @@
 $( document ).ready(function() {
 
+const menuMusic = document.getElementById("menu_music");
+const mHover = document.getElementById("m_hover");
+const mClick = document.getElementById("m_click");
+const mClickRelease = document.getElementById("m_click_rel");
 const container = document.getElementById("board_container");
 container.style.width = boardWidth + "px";
 container.style.height = boardHeight + "px";
@@ -15,7 +19,7 @@ $("#cell_display").hide();
 
 
 function handleClick(event){
-    if(isMouseInBoard()){
+    if(isMouseInBoard() && gameState.page == "game"){
         let row_col = getHexRowCol(cx, cy);
         const row = Math.max(0, Math.min(row_col[0], gameState.rows - 1));
         const col = Math.max(0, Math.min(row_col[1], gameState.columns - 1));
@@ -28,6 +32,7 @@ function handleClick(event){
 }
 
 function handleMouseMovement(event){
+  if(gameState.page == "game"){
     pos1 = pos3 - event.clientX;
     pos2 = pos4 - event.clientY;
     pos3 = event.clientX;
@@ -49,11 +54,13 @@ function handleMouseMovement(event){
     
     updateMapBoundry();
     moveMap();
+  }
 }
 
 function handleKeyboardInput(event){
-   if(event.keyCode == 32){
-       let ix = (boardWidth - cx/zoom);
+  if(gameState.page == "game"){
+    if(event.keyCode == 32){
+        let ix = (boardWidth - cx/zoom);
     let iy = (boardHeight - cy/zoom);
 
     if(zoom == 1)
@@ -67,49 +74,50 @@ function handleKeyboardInput(event){
     updateMapBoundry();
     updateDebugMap();
     moveMap();
-   }
-  if (event.key === 'A' || event.key === 'a') {
-    if (selectedUnitId) {
-      const res = activateUnit(selectedUnitId);
-      console.log(res.msg);
     }
-  }
-  if (event.key === 'M' || event.key === 'm') {
-    if (selectedUnitId) {
-      const u = gameState.units[selectedUnitId];
-      if (!u) return;
-
-      let rowcol = getHexRowCol(cx, cy);
-      let row = rowcol[0];
-      let col = rowcol[1];
-
-      const targetRow = row;
-      const targetCol = col;
-      const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
-      console.log(res);
-      if (typeof updateDebugMap === 'function') updateDebugMap();
-      if (typeof drawUnits === 'function') drawUnits();
-      if (typeof moveMap === 'function') moveMap();
-
-      $("#cost_info").text("Movement cost: " + res.cost);
+    if (event.key === 'A' || event.key === 'a') {
+      if (selectedUnitId) {
+        const res = activateUnit(selectedUnitId);
+        console.log(res.msg);
+      }
     }
-  }
-  if (event.key === 'C' || event.key === 'c') {
-    if (selectedUnitId) {
-      const u = gameState.units[selectedUnitId];
-      if (!u) return;
-      const neigh = getHexNeighbors(u.row, u.col);
-      const enemies = [];
-      neigh.forEach(n => {
-        const victim = unitAt(n[0], n[1]);
-        if (victim && victim.faction !== u.faction) enemies.push(victim.id);
-      });
-      if (enemies.length === 0) { console.log('Brak sąsiednich wrogów'); return; }
-      const res = resolveCombat([selectedUnitId], enemies, 'medium');
-      console.log('Combat result:', res);
-      if (typeof updateDebugMap === 'function') updateDebugMap();
-      if (typeof drawUnits === 'function') drawUnits();
-      if (typeof moveMap === 'function') moveMap();
+    if (event.key === 'M' || event.key === 'm') {
+      if (selectedUnitId) {
+        const u = gameState.units[selectedUnitId];
+        if (!u) return;
+
+        let rowcol = getHexRowCol(cx, cy);
+        let row = rowcol[0];
+        let col = rowcol[1];
+
+        const targetRow = row;
+        const targetCol = col;
+        const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
+        console.log(res);
+        if (typeof updateDebugMap === 'function') updateDebugMap();
+        if (typeof drawUnits === 'function') drawUnits();
+        if (typeof moveMap === 'function') moveMap();
+
+        $("#cost_info").text("Movement cost: " + res.cost);
+      }
+    }
+    if (event.key === 'C' || event.key === 'c') {
+      if (selectedUnitId) {
+        const u = gameState.units[selectedUnitId];
+        if (!u) return;
+        const neigh = getHexNeighbors(u.row, u.col);
+        const enemies = [];
+        neigh.forEach(n => {
+          const victim = unitAt(n[0], n[1]);
+          if (victim && victim.faction !== u.faction) enemies.push(victim.id);
+        });
+        if (enemies.length === 0) { console.log('Brak sąsiednich wrogów'); return; }
+        const res = resolveCombat([selectedUnitId], enemies, 'medium');
+        console.log('Combat result:', res);
+        if (typeof updateDebugMap === 'function') updateDebugMap();
+        if (typeof drawUnits === 'function') drawUnits();
+        if (typeof moveMap === 'function') moveMap();
+      }
     }
   }
 }
@@ -127,5 +135,92 @@ seedUnitsExample();
 createDebugMap();
 drawUnits();
 
+$(document).one("click", function(){
+    pageAnimating = true;
+    menuMusic.play();
+    mClick.currentTime = 0;
+    mClick.play();
+
+    musicStarted = true;
+
+    $("body").css("background-color", "white");
+    $("#tap_anywhere").fadeOut(500);
+
+    $("#title").fadeIn(3500, function(){
+      $("#menu_buttons").addClass("slide");
+      pageAnimating = false;
+    });
+
+    $("#page_menu").show();
+});
+
+$("#begin").click(function(event){
+  if(!pageAnimating){
+
+    pageAnimating = true;
+    gameState.page = "game";
+
+    fadeAudio(menuMusic, menuMusic.volume, 0, 2000);
+
+    $("#page_menu").fadeOut(pageFadeTime, function(){$("#page_game").fadeIn(pageFadeTime, function(){pageAnimating=false})});
+  }
+});
+
+$("#controls").click(function(event){
+  if(!pageAnimating){
+
+    pageAnimating = true;
+    gameState.page = "controls";
+
+    $("#page_menu").fadeOut(pageFadeTime, function(){$("#page_controls").fadeIn(pageFadeTime, function(){pageAnimating=false})});
+  }
+});
+
+$("#config").click(function(event){
+  if(!pageAnimating){
+
+    pageAnimating = true;
+    gameState.page = "config";
+
+    $("#page_menu").fadeOut(pageFadeTime, function(){$("#page_displayconfig").fadeIn(pageFadeTime, function(){pageAnimating=false})});
+  }
+});
+
+$(".to_menu").click(function(event){
+  if(!pageAnimating){
+
+    pageAnimating = true;
+
+    $(gameState.page == "config" ? "#page_displayconfig" : "#page_controls").fadeOut(pageFadeTime, function(){$("#page_menu").fadeIn(pageFadeTime, function(){pageAnimating=false})});
+    
+    gameState.page = "menu";
+  }
+});
+
+$(".button").mouseover(function(event){
+  if(!pageAnimating){
+    mHover.currentTime = 0;
+    mHover.play();
+  }
+});
+
+$(".button").mousedown(function(event){
+  if(!pageAnimating && event.which == 1){
+    mClick.currentTime = 0;
+    mClick.play();
+  }
+});
+
+$(".button").mouseup(function(event){
+  if(!pageAnimating && event.which == 1){
+    mClickRelease.currentTime = 0;
+    mClickRelease.play();
+  }
+});
+
 $("#page_game").hide();
+$("#page_controls").hide();
+$("#page_displayconfig").hide();
+$("#page_menu").hide();
+$("#title").hide();
 });

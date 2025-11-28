@@ -1,4 +1,9 @@
+var pageAnimating = false;
+var pageFadeTime = 1500;
+var musicStarted = false;
+
 const gameState = {
+  page: 'menu',
   turn: 1,
   phase: 'token',
   activePlayer: 'nazis',
