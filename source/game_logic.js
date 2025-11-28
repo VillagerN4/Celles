@@ -126,4 +126,6 @@ $(document).on("contextmenu", function(event) {
 seedUnitsExample();
 createDebugMap();
 drawUnits();
+
+$("#page_game").hide();
 });

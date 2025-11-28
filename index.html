@@ -9,15 +9,32 @@
 
     <script src="source/generic.js"></script>
     <script src="source/board.js"></script>
-    <script src="source/game_variables"></script>
+    <script src="source/game_variables.js"></script>
     <script src="source/game_logic.js"></script>
     <script src="source/units.js"></script>
 
     <link rel="stylesheet" href="source/styles.css">
 </head>
 <body  id="color_debug">
-<div>
+<div id="page_menu">
+    <img src="assets/ui/celles.png" id="title">
+    
+    <nav id="menu_buttons">
+        <p id="begin" class="menu_button">BEGIN</p>
+        <p id="controls" class="menu_button">CONTROLS</p>
+        <p id="config" class="menu_button">DISPLAY CONFIG</p>
+    </nav>
+</div>
 
+<div id="page_controls">
+
+</div>
+
+<div id="page_displayconfig">
+
+</div>
+
+<div id="page_game">
     <div id="board_container">
         <img src="assets/map/board.png" id="board">
         <div id="debug_board_container">

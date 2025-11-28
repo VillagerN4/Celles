@@ -12,6 +12,12 @@
         overflow: hidden
     }
 
+    #title{
+        width: 70vw;
+        display: block;
+        margin: auto;
+    }
+
     #board_container{
         position: absolute;
         overflow: hidden;
@@ -126,3 +132,43 @@
         z-index: 101;
     }
 
+    #menu_buttons{
+        padding: 5%;
+    }
+
+    .menu_button{
+        letter-spacing: 0.5vw;  
+        padding-left: 0.5vw;
+        font-size: 0.8vw;
+        font-family: 'Trebuchet MS';
+        width: 25vw;
+        cursor: pointer;
+        color: black;
+        transition: color .5s ease;
+        z-index: 0;
+        position: relative;
+        overflow: hidden;
+        font-weight: bold;
+    }
+
+    .menu_button:hover {
+        color: white;
+    }
+
+    .menu_button::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(to left,
+            rgba(31,38,31,0),
+            rgb(31, 38, 31)
+        );
+        opacity: 0;
+        transition: opacity .5s ease;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .menu_button:hover::before {
+        opacity: 1;
+    }

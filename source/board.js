@@ -143,7 +143,7 @@ function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c){
     jQuery('<img>', {
         id: sprite + padLeft(c + 1, 2) + padLeft(r, 2) + edge,
         class: class_name,
-        src: `assets/debug/${sprite}/base.png`,
+        src: `assets/map/${sprite}/base.png`,
         css: {
             position: "absolute",
             transform: (edge > 2) ? `rotate(${180 - 60*(edge - 4)}deg)` : `rotate(${60*(edge - 1)}deg)`,
@@ -186,7 +186,7 @@ function createDebugMap(){
                 jQuery('<img>', {
                     id: "village_marker" + padLeft(c + 1, 2) + padLeft(r, 2),
                     class: "debug_village_display",
-                    src: "assets/debug/village_houses_" + Math.round(Math.random() * 2) + ".png",
+                    src: "assets/map/village_houses_" + Math.round(Math.random() * 2) + ".png",
                     css: {
                         position: "absolute",
                         transform: `rotate(${60 * (-1 + Math.floor(Math.random())*2)}deg)`,
@@ -201,7 +201,7 @@ function createDebugMap(){
             jQuery('<img>', {
                 id: padLeft(c + 1, 2) + padLeft(r, 2),
                 class: "debug_hex_display",
-                src: "assets/debug/terrain/" + cell.terrainType + (cell.terrainType == 0 ? "_" + Math.floor((forests + roughs)/2) : "") + ".png",
+                src: "assets/map/terrain/" + cell.terrainType + (cell.terrainType == 0 ? "_" + Math.floor((forests + roughs)/2) : "") + ".png",
                 css: {
                     position: "absolute",
                     left: x,
@@ -215,7 +215,7 @@ function createDebugMap(){
                 jQuery('<img>', {
                     id: "trees" + padLeft(c + 1, 2) + padLeft(r, 2),
                     class: "debug_tree_display",
-                    src: "assets/debug/terrain/2_" + Math.round(Math.random() * 2) + "_" + forests + ".png",
+                    src: "assets/map/terrain/2_" + Math.round(Math.random() * 2) + "_" + forests + ".png",
                     css: {
                         position: "absolute",
                         left: x,
@@ -230,7 +230,7 @@ function createDebugMap(){
                     jQuery('<img>', {
                         id: "trees" + padLeft(c + 1, 2) + padLeft(r, 2),
                         class: "debug_tree_display",
-                        src: "assets/debug/terrain/_" + Math.round(Math.random() * 2) + "_" + Math.floor(forests) + ".png",
+                        src: "assets/map/terrain/_" + Math.round(Math.random() * 2) + "_" + Math.floor(forests) + ".png",
                         css: {
                             position: "absolute",
                             left: x,
@@ -283,7 +283,7 @@ function createDebugMap(){
                     jQuery('<img>', {
                         id: "houses" + padLeft(c + 1, 2) + padLeft(r, 2) + i,
                         class: "debug_house_display",
-                        src: `assets/debug/terrain/3_${i}.png`,
+                        src: `assets/map/terrain/3_${i}.png`,
                         css: {
                             position: "absolute",
                             left: x,
