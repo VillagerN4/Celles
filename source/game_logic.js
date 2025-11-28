@@ -54,6 +54,8 @@ function handleMouseMovement(event){
     
     updateMapBoundry();
     moveMap();
+  }else{
+    applyMenuParallax(event);
   }
 }
 
@@ -138,8 +140,8 @@ drawUnits();
 $(document).one("click", function(){
     pageAnimating = true;
     menuMusic.play();
-    mClick.currentTime = 0;
-    mClick.play();
+    mHover.currentTime = 0;
+    mHover.play();
 
     musicStarted = true;
 
@@ -152,6 +154,7 @@ $(document).one("click", function(){
     });
 
     $("#page_menu").show();
+    $("#menu_panorama").fadeIn(1500);
 });
 
 $("#begin").click(function(event){
@@ -162,6 +165,7 @@ $("#begin").click(function(event){
 
     fadeAudio(menuMusic, menuMusic.volume, 0, 2000);
 
+    $("#menu_panorama").fadeOut(pageFadeTime);
     $("#page_menu").fadeOut(pageFadeTime, function(){$("#page_game").fadeIn(pageFadeTime, function(){pageAnimating=false})});
   }
 });
@@ -223,4 +227,6 @@ $("#page_controls").hide();
 $("#page_displayconfig").hide();
 $("#page_menu").hide();
 $("#title").hide();
+$("#menu_panorama").hide();
+$("#cover").hide();
 });

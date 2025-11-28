@@ -205,3 +205,64 @@
         50%  { color: #ffffff67; }
         100% { color: white; }
     }
+
+    .panorama{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 50vw;
+        opacity: 0.33;
+        transition: transform 0.05s linear;
+        will-change: transform;
+    }
+
+    #menu_pan_0{
+        z-index: 0;
+    }
+
+    #menu_pan_1{
+        z-index: 1;
+    }
+
+    #menu_pan_2{
+        z-index: 2;
+    }
+
+    #menu_panorama{
+        position: relative;
+        z-index: 0;
+    }
+
+    #page_menu{
+        position: relative;
+        z-index: 1;
+    }
+
+    #page_controls{
+        position: relative;
+        z-index: 1;
+    }
+
+    #page_displayconfig{
+        position: relative;
+        z-index: 1;
+    }
+
+    #page_game{
+        position: relative;
+        z-index: 1;
+    }
+
+    #page_tap{
+        position: relative;
+        z-index: 1;
+    }
+
+    #cover{
+        position: relative;
+        background-color: #000000;
+        z-index: 1000000;
+        width: 100%;
+        height: 100%;
+    }

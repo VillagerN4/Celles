@@ -62,3 +62,25 @@ function fadeAudio(audio, startVolume, endVolume, duration, callback) {
         }
     }, stepTime);
 }
+
+function applyMenuParallax(event) {
+
+    const speed = [
+        10,
+        30,
+        50
+    ];
+
+    let centerX = window.innerWidth / 2;
+    let centerY = window.innerHeight / 2;
+
+    let offsetX = (event.clientX - centerX) / centerX;
+    let offsetY = (event.clientY - centerY) / centerY;
+
+    $(".panorama").each(function(index){
+        let moveX = offsetX * speed[index];
+        let moveY = offsetY * speed[index];
+
+        $(this).css("transform", `translate(${moveX}px, ${moveY}px)`);
+    });
+}
