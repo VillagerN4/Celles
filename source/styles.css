@@ -20,12 +20,6 @@
         ); */
     }
 
-    #title{
-        width: 70vw;
-        display: block;
-        margin: auto;
-    }
-
     #board_container{
         position: absolute;
         overflow: hidden;
@@ -146,6 +140,11 @@
         transform: translateX(-10vw);
         opacity: 0;
         transition: transform 2s ease, opacity 3s ease;
+        background-image: linear-gradient(to left,
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 0.511)
+        );
+        width: 28vw;
     }
 
     #menu_buttons.slide{
@@ -166,6 +165,32 @@
         position: relative;
         overflow: hidden;
         font-weight: bold;
+    }
+
+    .page_header{
+        letter-spacing: 0.5vw;  
+        padding-left: 0.5vw;
+        font-size: 1.2vw;
+        font-family: 'Trebuchet MS';
+        width: 25vw;
+        color: black;
+        z-index: 0;
+        font-weight: bold;
+    }
+
+    .menu_text{
+        letter-spacing: 0.5vw;  
+        padding-left: 0.5vw;
+        font-size: 1vw;
+        font-family: 'Trebuchet MS';
+        width: 25vw;
+        color: black;
+        z-index: 0;
+        font-weight: bold;
+    }
+
+    .button{
+        padding-left: 0.5vw;
     }
 
     .menu_button:hover {
@@ -236,7 +261,42 @@
 
     #page_menu{
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         z-index: 1;
+        height: 100%;
+    }
+
+    #subtitle_holder{
+        width: 70vw;
+        margin: auto;
+        overflow: hidden;
+    }
+
+    #title_holder{
+        width: 70vw;
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+    }
+
+    #title{
+        width: 70vw;
+        margin: auto;
+    }
+
+    #subtitle{
+        position: absolute;
+        width: 70vw;
+        transform: translateY(-35%);
+    }
+
+    #subtitle_over{
+        position: absolute;
+        width: 70vw;
+        transform: translateY(-35%);
     }
 
     #page_controls{
@@ -265,4 +325,17 @@
         z-index: 1000000;
         width: 100%;
         height: 100%;
+    }
+
+    #board_placeholder{
+        position: absolute;
+    }
+    
+    #board_size{
+        width: 8vw;
+    }
+
+    #settings{
+        display: flex;
+        flex-direction: row;
     }

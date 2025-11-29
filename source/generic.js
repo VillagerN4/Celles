@@ -58,7 +58,6 @@ function fadeAudio(audio, startVolume, endVolume, duration, callback) {
         if (currentStep >= steps) {
             clearInterval(fadeInterval);
             if (endVolume === 0) audio.pause();
-            if (callback) callback();
         }
     }, stepTime);
 }
@@ -72,7 +71,7 @@ function applyMenuParallax(event) {
     ];
 
     let centerX = window.innerWidth / 2;
-    let centerY = window.innerHeight / 2;
+    let centerY = window.innerHeight / 1.2;
 
     let offsetX = (event.clientX - centerX) / centerX;
     let offsetY = (event.clientY - centerY) / centerY;

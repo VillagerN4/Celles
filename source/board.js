@@ -1,15 +1,15 @@
-const mapOffsetX = 10;
-const mapOffsetY = 10;
+var mapOffsetX = 10;
+var mapOffsetY = 100;
 const rows = 17;
 const columns = 33;
 
-const sizeFactor = 0.9;
+var sizeFactor = 0.7;
 
-const boardWidth = 1153 * sizeFactor;
-const boardHeight = 700 * sizeFactor;
+var boardWidth = 1153 * sizeFactor;
+var boardHeight = 700 * sizeFactor;
 
-const hexRadius = 23.085 * sizeFactor;
-const hexHeight = hexRadius * sqrt3 / 2;
+var hexRadius = 23.085 * sizeFactor;
+var hexHeight = hexRadius * sqrt3 / 2;
 
 var zoom = 1;
 var camX = boardWidth/2;
@@ -19,6 +19,31 @@ var leftBoundry = 0;
 var rightBoundry = 0;
 var topBoundry = 0;
 var bottomBoundry = 0;
+
+
+
+function updateDisplayParams(){
+    boardWidth = 1153 * sizeFactor;
+    boardHeight = 700 * sizeFactor;
+    
+    mapOffsetY = window.innerHeight/2 - boardHeight/2;
+
+    hexRadius = 23.085 * sizeFactor;
+    hexHeight = hexRadius * sqrt3 / 2;
+
+    $("#board_placeholder").css({
+        "width": boardWidth + "px", 
+        "height": boardHeight + "px", 
+        "left": window.innerWidth/2 - mapOffsetX - boardWidth/2,
+        "top": mapOffsetY
+    });
+    $("#board_container").css({
+        "width": boardWidth + "px", 
+        "height": boardHeight + "px", 
+        "left": mapOffsetX,
+        "top": mapOffsetY
+    });
+}
 
 
 
@@ -100,8 +125,8 @@ function moveMap(){
     debug_hex.style.left = camX - boardWidth * zoom/2 + sel_pos[0] - hexRadius * zoom + "px";
     debug_hex.style.top = camY - boardHeight * zoom/2 + sel_pos[1] - hexHeight * zoom + "px";
 
-    // cell_dis.style.left = camX - boardWidth * zoom/2 + sel_pos[0] - hexRadius * zoom + "px";
-    // cell_dis.style.top = camY - boardHeight * zoom/2 + sel_pos[1] - hexHeight * zoom + "px";
+    cell_dis.style.left = camX - boardWidth * zoom/2 + pos[0] - hexRadius * zoom + "px";
+    cell_dis.style.top = camY - boardHeight * zoom/2 + pos[1] - hexHeight * zoom + "px";
 
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
      + "<br>" + board_row + " " + board_col

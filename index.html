@@ -25,6 +25,7 @@
 </div>
 
 <audio id="menu_music" src="assets/audio/Military Precision.mp3" loop></audio>
+<audio id="game_music" src="assets/audio/Electric Guitar Ambience.mp3" loop></audio>
 <audio id="m_hover" src="assets/audio/buttonrollover.wav"></audio>
 <audio id="m_click" src="assets/audio/buttonclick.wav"></audio>
 <audio id="m_click_rel" src="assets/audio/buttonclickrelease.wav"></audio>
@@ -34,27 +35,48 @@
 </div>
 
 <div id="page_menu">
+    <div id="title_holder">
     <img src="assets/ui/celles.png" id="title">
+    <!-- <div id="subtitle_holder">
+        <img src="assets/ui/battle.png" id="subtitle">
+        <img src="assets/ui/battle_over.png" id="subtitle_over">
+    </div> -->
+    </div>
     
     <nav id="menu_buttons">
         <p id="begin" class="menu_button button">BEGIN</p>
         <p id="controls" class="menu_button button">CONTROLS</p>
-        <p id="config" class="menu_button button">DISPLAY CONFIG</p>
+        <p id="config" class="menu_button button">OPTIONS</p>
+        <p id="quit" class="menu_button button">QUIT</p>
     </nav>
 </div>
 
 <div id="page_controls">
-    <p>CONTROLS</p>
+    <p class="page_header">CONTROLS</p>
 
     
     <p class="menu_button button to_menu">BACK</p>
 </div>
 
 <div id="page_displayconfig">
-    <p>CONFIG</p>
+    <p class="page_header">OPTIONS</p>
 
-    
-    <p class="menu_button button to_menu">BACK</p>
+    <div id="settings">
+        <section>
+            <p class="menu_button button to_menu">BACK</p>
+
+            <label for="board_size" class="menu_text">BOARD SIZE:</label>
+            <input type="range" min="0.5" max="0.7" step="0.01" value="0.7" name="board_size" id="board_size">
+        
+        </section>
+        <aside>
+
+            <p id="board_preview" class="menu_text">PREVIEW:</p>
+
+            <img src="assets/ui/board_placeholder.png" id="board_placeholder">
+        
+        </aside>
+    </div>
 </div>
 
 <div id="page_game">
@@ -66,7 +88,7 @@
             <div id="board_rivers"></div>
         </div>
         <img src="assets/cell/selection_white.png" id="debug_hex_dis">
-        <img src="assets/cell/allies/allies_reduced.png" id="cell_display">
+        <img src="assets/cell/selection_white.png" id="cell_display">
     </div>
 
     <p id="cell_info">-</p>

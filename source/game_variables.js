@@ -1,5 +1,7 @@
+const debugMode = true;
+
 var pageAnimating = false;
-var pageFadeTime = 1500;
+var pageFadeTime = !debugMode ? 1500 : 1;
 var musicStarted = false;
 
 const gameState = {
