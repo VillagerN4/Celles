@@ -128,7 +128,7 @@ function handleKeyboardInput(event){
         const targetRow = row;
         const targetCol = col;
         const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
-        setCellInfPar(res);
+        setCellInfPar(res.msg);
         if (typeof updateDebugMap === 'function') updateDebugMap();
         if (typeof moveMap === 'function') moveMap();
 
@@ -154,13 +154,12 @@ function handleKeyboardInput(event){
     }
     if (event.key === 'F' || event.key === 'f') {
       const res = endPhase();
-      setCellInfPar("PHASE:" + gameState.phase + res);
+      setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase + "<br>" + "PHASE:" + gameState.phase + res);
 
       if (typeof updateDebugMap === 'function') updateDebugMap();
       if (typeof moveMap === 'function') moveMap();
 
     $("body").css({"background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff"});
-    setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase);
     }
   }
 }
