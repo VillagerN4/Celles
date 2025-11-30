@@ -43,22 +43,6 @@
         top: 10px;
     }
 
-    #controls_content{
-        width:100vh;
-        letter-spacing: 0.5vw;  
-        padding-left: 0.5vw;
-        font-size: 1.2vw;
-        font-family: 'Trebuchet MS';
-        color: black;
-        z-index: 0;
-        font-weight: bold;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        background-color: whitesmoke;
-        border-radius: 0px 10px 10px 0;
-        opacity: 0.8;
-    }
     #controls_content > div {
         width: 50%;
     }
