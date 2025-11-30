@@ -21,6 +21,11 @@ var topBoundry = 0;
 var bottomBoundry = 0;
 
 
+function setCellInfPar(message){
+    const cell_inf = document.getElementById("cell_info");
+    cell_inf.innerHTML = message;
+}
+
 
 function updateDisplayParams(){
     boardWidth = 1153 * sizeFactor;
@@ -108,7 +113,6 @@ function moveMap(){
     cy = pos4 - mapOffsetY + window.scrollY - camY + boardHeight * zoom/2;
 
     const deb_hex = document.getElementById("debug_hex_info");
-    const cell_inf = document.getElementById("cell_info");
     const board_img = document.getElementById("board");
     const debug_board = document.getElementById("debug_board_container");
 
@@ -133,15 +137,6 @@ function moveMap(){
      + "<br>" + cx + " " + cy;
     deb_hex.style.left = pos3 + 15 + "px";
     deb_hex.style.top = pos4 + 15 + "px";
-
-    let this_cell_inf = board_data.board[board_col][board_row];
-    cell_inf.innerHTML = ""
-    + "<br>Terrain type: " + terrainTypes[this_cell_inf.terrainType]
-    + "<br>Has village: " + this_cell_inf.hasVillage
-    + "<br>Edge info: ";
-    for(let i = 0; i < 6; i++) {
-        cell_inf.innerHTML += `<br> - ${edgeNames[i]}: ${edgeInfo[this_cell_inf.edges[i]]}`;
-    };
 
     board_img.style.width = boardWidth * zoom + "px";
     board_img.style.height = boardHeight * zoom + "px";

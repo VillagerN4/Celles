@@ -76,6 +76,7 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
 function seedUnitsExample() {
   gameState.units['u_01_01'] = createUnit('u_01_01', 'nazis', 'armor', 0, 0, 2, 9, 7, 5, true, "panzer3");
   gameState.units['u_10_05'] = createUnit('u_10_05', 'allies', 'infantry', 9, 4, 2, 4, 3, 4, false, "sherman");
+  gameState.units['u_05_05'] = createUnit('u_05_05', 'brits', 'armor', 14, 8, 2, 4, 3, 4, false, "sherman");
 }
 
 function resolveCombat(aIds, dIds, attackType) {
@@ -301,8 +302,8 @@ function getMovementCostForEntry(unit, fromRow, fromCol, toRow, toCol) {
   cost = terrainCost[terrain][typ];
   const occ = unitAt(toRow, toCol);
   if (occ && occ.motorized && unit.motorized) cost += enterOccupiedMotorizedExtra;
-  console.log("base cost: ", cost);
-  console.log("additional cost: ", edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ]);
+  // console.log("base cost: ", cost);
+  // console.log("additional cost: ", edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ]);
   return cost + edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ];
 }
 
@@ -343,7 +344,7 @@ function executeMovementPath(unitId, path) {
     const edge = getMovementDirection(u, pr, pc, r, c);
     const cost = getMovementCostForEntry(u, pr, pc, r, c);
     pathCost += cost;
-    console.log(cost);
+    // console.log(cost);
     const fromKey = pr + ':' + pc, toKey = r + ':' + c;
     const fz = ez.has(fromKey), tz = ez.has(toKey);
     if (u.motorized && fz && tz) {

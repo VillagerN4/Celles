@@ -91,21 +91,21 @@ function handleKeyboardInput(event){
 
       if (event.key === 'A' || event.key === 'a') {
           if (gameState.phase !== 'movement') { 
-            console.log("Nie można aktywować jednostki poza fazą ruchu"); 
+            setCellInfPar("Nie można aktywować jednostki poza fazą ruchu"); 
             return; 
           }
       }
 
       if (event.key === 'M' || event.key === 'm') {
           if (gameState.phase !== 'movement') { 
-            console.log("Ruch tylko w fazie movement"); 
+            setCellInfPar("Ruch tylko w fazie movement"); 
             return; 
           }
       }
 
       if (event.key === 'C' || event.key === 'c') {
           if (gameState.phase !== 'combat') { 
-            console.log("Walka tylko w fazie combat"); 
+            setCellInfPar("Walka tylko w fazie combat"); 
             return; 
           }
       }
@@ -113,13 +113,13 @@ function handleKeyboardInput(event){
     if (event.key === 'A' || event.key === 'a') {
       if (selectedUnitId) {
         const res = activateUnit(selectedUnitId);
-        console.log(res.msg);
+        setCellInfPar(res.msg);
       }
     }
     if (event.key === 'M' || event.key === 'm') {
       if (selectedUnitId) {
         const u = gameState.units[selectedUnitId];
-        if (!u) return;
+        if (!u || (u.faction == "nazis" && u.faction != gameState.activePlayer) || (u.faction != "nazis" && "nazis" == gameState.activePlayer)) return;
 
         let rowcol = getHexRowCol(cx, cy);
         let row = rowcol[0];
@@ -128,7 +128,7 @@ function handleKeyboardInput(event){
         const targetRow = row;
         const targetCol = col;
         const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
-        console.log(res);
+        setCellInfPar(res);
         if (typeof updateDebugMap === 'function') updateDebugMap();
         if (typeof moveMap === 'function') moveMap();
 
@@ -145,20 +145,22 @@ function handleKeyboardInput(event){
           const victim = unitAt(n[0], n[1]);
           if (victim && victim.faction !== u.faction) enemies.push(victim.id);
         });
-        if (enemies.length === 0) { console.log('Brak sąsiednich wrogów'); return; }
+        if (enemies.length === 0) { setCellInfPar('Brak sąsiednich wrogów'); return; }
         const res = resolveCombat([selectedUnitId], enemies, 'medium');
-        console.log('Combat result:', res);
+        setCellInfPar('Combat result:' + res);
         if (typeof updateDebugMap === 'function') updateDebugMap();
         if (typeof moveMap === 'function') moveMap();
       }
     }
     if (event.key === 'F' || event.key === 'f') {
       const res = endPhase();
-      console.log("PHASE:", gameState.phase, res);
+      setCellInfPar("PHASE:" + gameState.phase + res);
 
-      drawUnits();
       if (typeof updateDebugMap === 'function') updateDebugMap();
       if (typeof moveMap === 'function') moveMap();
+
+    $("body").css({"background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff"});
+    setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase);
     }
   }
 }
@@ -449,7 +451,7 @@ function goToNextUnit() {
     queueIndex++;
 
     if (queueIndex >= unitQueue.length) {
-        console.log("Brak kolejnych jednostek – zakończ fazę klawiszem F.");
+        setCellInfPar("Brak kolejnych jednostek – zakończ fazę klawiszem F.");
         selectedUnitId = null;
         return;
     }
@@ -458,7 +460,7 @@ function goToNextUnit() {
     selectedUnitId = nextId;
     const u = gameState.units[nextId];
 
-    console.log("Przechodzisz do kolejnej jednostki:", nextId, "na polu", u.row, u.col);
+    setCellInfPar("Przechodzisz do kolejnej jednostki:" + nextId + "na polu" + u.row + u.col);
 }
 
 globalThis.onUnitFinishedMovement = function(unitId) {
@@ -467,24 +469,25 @@ globalThis.onUnitFinishedMovement = function(unitId) {
 
     u.used = true;
 
-    console.log("Jednostka zakończyła ruch:", unitId);
+    setCellInfPar("Jednostka zakończyła ruch:" + unitId);
 
     goToNextUnit();
 }
 
 function startTurnWithQueue(player) {
-    console.log("TURN:", gameState.turn, "PLAYER:", gameState.activePlayer, "PHASE:", gameState.phase);
+    $("body").css({"background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff"});
+    setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase);
     startTurn(player);
     buildUnitQueue();
 
     if (unitQueue.length === 0) {
-        console.log("Brak jednostek dla gracza:", player);
+        setCellInfPar("Brak jednostek dla gracza:" + player);
         return;
     }
 
     selectedUnitId = unitQueue[0];
     const u = gameState.units[selectedUnitId];
-    console.log("Tura gracza:", player, "– pierwsza jednostka:", selectedUnitId);
+    setCellInfPar("Tura gracza:" + player + "– pierwsza jednostka:" + selectedUnitId);
 }
 
 $("#music_volume").mousemove(function(){
