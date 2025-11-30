@@ -35,7 +35,7 @@ function updateDisplayParams(){
         "width": boardWidth + "px", 
         "height": boardHeight + "px", 
         "left": window.innerWidth/2 - mapOffsetX - boardWidth/2,
-        "top": mapOffsetY
+        "top": window.innerHeight - 20 - boardHeight
     });
     $("#board_container").css({
         "width": boardWidth + "px", 
@@ -441,6 +441,18 @@ function updateDebugMap(){
                 "top": uy
             });
             $("#unit_" + id + "_outline").css({
+                "width": hexRadius*2*zoom + "px", 
+                "height": hexHeight*2*zoom + "px", 
+                "left": ux,
+                "top": uy
+            });
+            $("#unit_" + id + "_hull").css({
+                "width": hexRadius*2*zoom + "px", 
+                "height": hexHeight*2*zoom + "px", 
+                "left": ux,
+                "top": uy
+            });
+            $("#unit_" + id + "_turret").css({
                 "width": hexRadius*2*zoom + "px", 
                 "height": hexHeight*2*zoom + "px", 
                 "left": ux,

@@ -106,7 +106,6 @@ function handleKeyboardInput(event){
         const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
         console.log(res);
         if (typeof updateDebugMap === 'function') updateDebugMap();
-        if (typeof drawUnits === 'function') drawUnits();
         if (typeof moveMap === 'function') moveMap();
 
         $("#cost_info").text("Movement cost: " + res.cost);
@@ -126,7 +125,6 @@ function handleKeyboardInput(event){
         const res = resolveCombat([selectedUnitId], enemies, 'medium');
         console.log('Combat result:', res);
         if (typeof updateDebugMap === 'function') updateDebugMap();
-        if (typeof drawUnits === 'function') drawUnits();
         if (typeof moveMap === 'function') moveMap();
       }
     }
@@ -145,6 +143,7 @@ $(document).on("contextmenu", function(event) {
 $(document).one("click", function(){
     pageAnimating = true;
     menuMusic.play();
+    menuMusic.volume = musicVolume;
     mHover.currentTime = 0;
     mHover.play();
 
@@ -172,7 +171,7 @@ $("#begin").click(function(event){
     gameMusic.play();
 
     fadeAudio(menuMusic, menuMusic.volume, 0, 2000);
-    fadeAudio(gameMusic, gameMusic.volume, 1, 4000);
+    fadeAudio(gameMusic, gameMusic.volume, musicVolume, 4000);
 
     $("#menu_panorama").fadeOut(pageFadeTime);
     $("#page_menu").fadeOut(pageFadeTime, function(){$("#page_game").fadeIn(pageFadeTime, function(){pageAnimating=false})});
@@ -180,7 +179,9 @@ $("#begin").click(function(event){
     seedUnitsExample();
     updateDisplayParams();
     createDebugMap();
-    drawUnits();
+    for (let id in gameState.units) {
+      drawUnit(id);
+    }
 
     blurMenu();
   }
@@ -232,6 +233,25 @@ $(".to_menu").click(function(event){
   }
 });
 
+$(".to_options").click(function(event){
+  if(!pageAnimating){
+
+    pageAnimating = true;
+
+    $("#preview").fadeOut(pageFadeTime, function(){$("#settings_p").fadeIn(pageFadeTime, function(){pageAnimating=false})});
+  }
+});
+
+$("#to_preview").click(function(event){
+  if(!pageAnimating){    
+
+    pageAnimating = true;
+
+    $("#settings_p").fadeOut(pageFadeTime, function(){$("#preview").fadeIn(pageFadeTime, function(){pageAnimating=false})});
+
+  }
+});
+
 $(".button").mouseover(function(event){
   if(!pageAnimating){
     mHover.currentTime = 0;
@@ -259,11 +279,17 @@ $("#board_size").mousemove(function(){
   updateDisplayParams();
 });
 
+$("#music_volume").mousemove(function(){
+  musicVolume = $(this).val();
+  menuMusic.volume = musicVolume;
+});
+
 $("#page_game").hide();
 $("#page_controls").hide();
 $("#page_displayconfig").hide();
 $("#page_menu").hide();
 $("#title_holder").hide();
+$("#preview").hide();
 $("#menu_panorama").hide();
 $("#cover").hide();
 });

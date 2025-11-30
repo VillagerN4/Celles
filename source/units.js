@@ -1,56 +1,81 @@
-function drawUnits() {
-  $(".unit_display").remove();
-  $(".unit_outline_display").remove();
+function drawUnit(id) {
+  const u = gameState.units[id];
+  const model = u.model;
+  const pos = getHexCenterPos(u.row, u.col);
+  const x = pos[0] - hexRadius * zoom + "px";
+  const y = pos[1] - hexHeight * zoom + "px";
 
-  for (let id in gameState.units) {
-    const u = gameState.units[id];
-    const pos = getHexCenterPos(u.row, u.col);
-    const x = pos[0] - hexRadius * zoom + "px";
-    const y = pos[1] - hexHeight * zoom + "px";
+  const img1 = $("<img>", {
+    id: "unit_" + id,
+    class: "unit_display",
+    src: `assets/cell/${u.faction}/${u.faction}_standard.png`,
+    css: {
+      position: "absolute",
+      left: x,
+      top: y,
+      width: hexRadius * 2 * zoom + "px",
+      height: hexHeight * 2 * zoom + "px"
+    }
+  });
 
-    const img1 = $("<img>", {
-      id: "unit_" + id,
-      class: "unit_display",
-      src: `assets/cell/${u.faction}/${u.faction}_standard.png`,
-      css: {
-        position: "absolute",
-        left: x,
-        top: y,
-        width: hexRadius * 2 * zoom + "px",
-        height: hexHeight * 2 * zoom + "px"
-      }
-    });
+  const img2 = $("<img>", {
+    id: "unit_" + id + "_outline",
+    class: "unit_outline_display",
+    src: `assets/cell/outline_white.png`,
+    css: {
+      position: "absolute",
+      left: x,
+      top: y,
+      width: hexRadius * 2 * zoom + "px",
+      height: hexHeight * 2 * zoom + "px"
+    }
+  });
 
-    const img2 = $("<img>", {
-      id: "unit_" + id + "_outline",
-      class: "unit_outline_display",
-      src: `assets/cell/outline_white.png`,
-      css: {
-        position: "absolute",
-        left: x,
-        top: y,
-        width: hexRadius * 2 * zoom + "px",
-        height: hexHeight * 2 * zoom + "px"
-      }
-    });
+  const img3 = $("<img>", {
+    id: "unit_" + id + "_hull",
+    class: "unit_hull_display",
+    src: `assets/unit/${u.faction}/${model}_hull.png`,
+    css: {
+      position: "absolute",
+      left: x,
+      top: y,
+      width: hexRadius * 2 * zoom + "px",
+      height: hexHeight * 2 * zoom + "px"
+    }
+  });
 
-    $("#debug_board_container").append(img1);
-    $("#debug_board_container").append(img2);
-  }
+  const img4 = $("<img>", {
+    id: "unit_" + id + "_turret",
+    class: "unit_turret_display",
+    src: `assets/unit/${u.faction}/${model}_turret.png`,
+    css: {
+      position: "absolute",
+      left: x,
+      top: y,
+      width: hexRadius * 2 * zoom + "px",
+      height: hexHeight * 2 * zoom + "px"
+    }
+  });
+
+  $("#debug_board_container").append(img1);
+  $("#debug_board_container").append(img2);
+  $("#debug_board_container").append(img3);
+  $("#debug_board_container").append(img4);
 }
 
-function createUnit(id, faction, type, col, row, levels, movement, attack, defense, motorized) {
+function createUnit(id, faction, type, col, row, levels, movement, attack, defense, motorized, model) {
   return {
     id, faction, type, col, row, levels,
     movement, movementLeft: movement, attack, defense,
     motorized: !!motorized, used: false,
-    supplyState: 'supplied', disrupted: false
+    supplyState: 'supplied', disrupted: false,
+    model
   };
 }
 
 function seedUnitsExample() {
-  gameState.units['u_01_01'] = createUnit('u_01_01', 'nazis', 'armor', 0, 0, 2, 9, 7, 5, true);
-  gameState.units['u_10_05'] = createUnit('u_10_05', 'allies', 'infantry', 9, 4, 2, 4, 3, 4, false);
+  gameState.units['u_01_01'] = createUnit('u_01_01', 'nazis', 'armor', 0, 0, 2, 9, 7, 5, true, "panzer3");
+  gameState.units['u_10_05'] = createUnit('u_10_05', 'allies', 'infantry', 9, 4, 2, 4, 3, 4, false, "sherman");
 }
 
 function resolveCombat(aIds, dIds, attackType) {
@@ -281,6 +306,22 @@ function getMovementCostForEntry(unit, fromRow, fromCol, toRow, toCol) {
   return cost + edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ];
 }
 
+function getMovementDirection(unit, fromRow, fromCol, toRow, toCol) {
+  const to = gameState.board[toCol][toRow];
+  const from = gameState.board[fromCol][fromRow];
+
+  let currentCellPos = getHexCenterPos(fromRow, fromCol)
+  let nextCellPos = getHexCenterPos(toRow, toCol);
+  let yDif = nextCellPos[1] - currentCellPos[1];
+  let xDif = nextCellPos[0] - currentCellPos[0];
+
+  if (yDif == 0) return 0;
+
+  let movementDirectionEdge = (xDif == 0 ? 0 : xDif / Math.abs(xDif)) + 1 + (yDif / Math.abs(yDif) + 1) * 1.5;
+
+  return movementDirectionEdge;
+}
+
 function unitAt(r, c) {
   for (const id in gameState.units) {
     const u = gameState.units[id];
@@ -299,6 +340,7 @@ function executeMovementPath(unitId, path) {
     const [r, c] = path[i];
     const pr = (i === 0) ? u.row : path[i - 1][0];
     const pc = (i === 0) ? u.col : path[i - 1][1];
+    const edge = getMovementDirection(u, pr, pc, r, c);
     const cost = getMovementCostForEntry(u, pr, pc, r, c);
     pathCost += cost;
     console.log(cost);
@@ -316,6 +358,15 @@ function executeMovementPath(unitId, path) {
       if (u.movementLeft < cost) return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost };
       u.movementLeft -= cost; u.row = r; u.col = c;
     }
+
+    $("#unit_" + unitId + "_turret").css({
+        "transform": (edge > 2) ? `rotate(${180 - 60*(edge - 4)}deg)` : `rotate(${60*(edge - 1)}deg)`
+    });
+
+    $("#unit_" + unitId + "_hull").css({
+        "transform": (edge > 2) ? `rotate(${180 - 60*(edge - 4)}deg)` : `rotate(${60*(edge - 1)}deg)`
+    });
+
     selectedRow = path[i][0];
     selectedColumn = path[i][1];
   }

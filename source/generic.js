@@ -68,12 +68,12 @@ function applyMenuParallax(event) {
         0,
         3,
         10,
-        30,
-        50
+        20,
+        30
     ];
 
     let centerX = window.innerWidth / 2;
-    let centerY = window.innerHeight / 1.2;
+    let centerY = window.innerHeight / 2;
 
     let offsetX = (event.clientX - centerX) / centerX;
     let offsetY = (event.clientY - centerY) / centerY;

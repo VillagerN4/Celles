@@ -11,14 +11,16 @@ const factions_data = {
           {"reduced": { "attack": 6, "defense": 4, "movement": 9, "steps": 1 }},
           {"active": { "attack": 6, "defense": 5, "movement": 0, "steps": 2 }},
           {"reduced_active": { "attack": 3, "defense": 2, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer3"
       },
       {
         "class": "recon",
         "variants": [
           {"standard": { "attack": 7, "defense": 5, "movement": 9, "steps": 1 }},
           {"active": { "attack": 3, "defense": 3, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer2"
       }
     ]
   },
@@ -33,21 +35,24 @@ const factions_data = {
           {"reduced": { "attack": 6, "defense": 4, "movement": 9, "steps": 1 }},
           {"active": { "attack": 6, "defense": 5, "movement": 0, "steps": 2 }},
           {"reduced_active": { "attack": 3, "defense": 2, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer3"
       },
       {
         "class": "recon",
         "variants": [
           {"standard": { "attack": 11, "defense": 8, "movement": 9, "steps": 2 }},
           {"active": { "attack": 3, "defense": 3, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer2"
       },
       {
         "class": "sp/at",
         "variants": [
           {"standard": { "attack": 7, "defense": 5, "movement": 9, "steps": 2 }},
           {"active": { "attack": 3, "defense": 3, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer3"
       }
     ]
   },
@@ -62,14 +67,16 @@ const factions_data = {
           {"reduced": { "attack": 6, "defense": 5, "movement": 9, "steps": 1 }},
           {"active": { "attack": 7, "defense": 6, "movement": 0, "steps": 2 }},
           {"reduced_active": { "attack": 3, "defense": 3, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer3"
       },
       {
         "class": "recon",
         "variants": [
           {"standard": { "attack": 7, "defense": 5, "movement": 9, "steps": 1 }},
           {"active": { "attack": 3, "defense": 3, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer2"
       }
     ]
   },
@@ -84,7 +91,8 @@ const factions_data = {
           {"reduced": { "attack": 6, "defense": 5, "movement": 9, "steps": 1 }},
           {"active": { "attack": 6, "defense": 6, "movement": 0, "steps": 2 }},
           {"reduced_active": { "attack": 3, "defense": 3, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer3"
       }
     ]
   },
@@ -99,14 +107,16 @@ const factions_data = {
           {"reduced": { "attack": 6, "defense": 4, "movement": 9, "steps": 1 }},
           {"active": { "attack": 6, "defense": 5, "movement": 0, "steps": 2 }},
           {"reduced_active": { "attack": 3, "defense": 2, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer3"
       },
       {
         "class": "recon",
         "variants": [
           {"standard": { "attack": 7, "defense": 5, "movement": 9, "steps": 1 }},
           {"active": { "attack": 3, "defense": 3, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "panzer2"
       }
     ]
   },
@@ -121,14 +131,16 @@ const factions_data = {
           {"reduced": { "attack": 8, "defense": 6, "movement": 9, "steps": 1 }},
           {"active": { "attack": 8, "defense": 8, "movement": 0, "steps": 2 }},
           {"reduced_active": { "attack": 4, "defense": 4, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "sherman"
       },
       {
         "class": "recon",
         "variants": [
           {"standard": { "attack": 6, "defense": 5, "movement": 9, "steps": 1 }},
           {"active": { "attack": 3, "defense": 3, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "comet"
       }
     ]
   },
@@ -141,7 +153,8 @@ const factions_data = {
         "variants": [
           {"standard": { "attack": 4, "defense": 4, "movement": 9, "steps": 1 }},
           {"active": { "attack": 2, "defense": 2, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "comet"
       }
     ]
   },
@@ -153,7 +166,8 @@ const factions_data = {
         "class": "armor",
         "variants": [
           {"standard": { "attack": 0, "defense": 4, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "sherman"
       }
     ]
   },
@@ -166,7 +180,8 @@ const factions_data = {
         "variants": [
           {"standard": { "attack": 8, "defense": 6, "movement": 9, "steps": 1 }},
           {"active": { "attack": 4, "defense": 4, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "sherman"
       }
     ]
   },
@@ -179,13 +194,15 @@ const factions_data = {
         "variants": [
           {"standard": { "attack": 5, "defense": 7, "movement": 3, "steps": 1 }},
           {"active": { "attack": 2, "defense": 4, "movement": 0, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "infantry"
       },
       {
         "class": "trucks",
         "variants": [
           {"standard": { "attack": 0, "defense": 0, "movement": 9, "steps": 1 }}
-        ]
+        ],
+        "modelDisplay": "truck"
       }
     ]
   }
