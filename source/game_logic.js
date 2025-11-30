@@ -42,7 +42,7 @@ function handleMouseMovement(event){
     pos3 = event.clientX;
     pos4 = event.clientY;
 
-    $("#debug_hex_info").show();
+    // $("#debug_hex_info").show();
 
     if(selectedColumn == null || selectedRow == null){
         $("#debug_hex_dis").hide();
@@ -181,6 +181,8 @@ $("#begin").click(function(event){
     updateDisplayParams();
     createDebugMap();
     drawUnits();
+
+    blurMenu();
   }
 });
 
@@ -191,6 +193,8 @@ $("#controls").click(function(event){
     gameState.page = "controls";
 
     $("#page_menu").fadeOut(pageFadeTime, function(){$("#page_controls").fadeIn(pageFadeTime, function(){pageAnimating=false})});
+
+    blurMenu();
   }
 });
 
@@ -210,6 +214,8 @@ $("#config").click(function(event){
     updateDisplayParams();
 
     $("#page_menu").fadeOut(pageFadeTime, function(){$("#page_displayconfig").fadeIn(pageFadeTime, function(){pageAnimating=false})});
+
+    blurMenu();
   }
 });
 
@@ -221,6 +227,8 @@ $(".to_menu").click(function(event){
     $(gameState.page == "config" ? "#page_displayconfig" : "#page_controls").fadeOut(pageFadeTime, function(){$("#page_menu").fadeIn(pageFadeTime, function(){pageAnimating=false})});
     
     gameState.page = "menu";
+
+    blurMenu();
   }
 });
 

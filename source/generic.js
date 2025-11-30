@@ -65,6 +65,8 @@ function fadeAudio(audio, startVolume, endVolume, duration, callback) {
 function applyMenuParallax(event) {
 
     const speed = [
+        0,
+        3,
         10,
         30,
         50
@@ -80,6 +82,17 @@ function applyMenuParallax(event) {
         let moveX = offsetX * speed[index];
         let moveY = offsetY * speed[index];
 
-        $(this).css("transform", `translate(${moveX}px, ${moveY}px)`);
+        $(this).css({
+            top: `${moveY}px`,
+            left: `${centerX - $(this).width()/2 + moveX}px`
+        });
     });
+}
+
+function blurMenu(){
+    $(".panorama").each(function(){
+        $(this).css({
+            filter: `blur(${gameState.page == "menu" ? 0 : 5}px) brightness(${gameState.page == "menu" ? 100 : 150}%)`
+        });
+    });   
 }
