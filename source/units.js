@@ -319,7 +319,7 @@ function executeMovementPath(unitId, path) {
     selectedRow = path[i][0];
     selectedColumn = path[i][1];
   }
-  u.used = true;
+  onUnitFinishedMovement(unitId);
   return { ok: true, msg: 'Ruch wykonany', cost: pathCost };
 }
 
