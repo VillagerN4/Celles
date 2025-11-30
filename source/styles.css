@@ -39,13 +39,32 @@
 
     #cell_info{
         position: absolute;
-        left: 1153px;
+        left: 1183px;
         top: 10px;
     }
 
+    #controls_content{
+        width:100vh;
+        letter-spacing: 0.5vw;  
+        padding-left: 0.5vw;
+        font-size: 1.2vw;
+        font-family: 'Trebuchet MS';
+        color: black;
+        z-index: 0;
+        font-weight: bold;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        background-color: whitesmoke;
+        border-radius: 0px 10px 10px 0;
+        opacity: 0.8;
+    }
+    #controls_content > div {
+        width: 50%;
+    }
     #cost_info{
         position: absolute;
-        left: 1153px;
+        left: 1183px;
         top: 350px;
     }
 
@@ -126,18 +145,6 @@
         position: absolute;
         filter: opacity(55%);
         z-index: 100;
-    }
-
-    .unit_hull_display {
-        position: absolute;
-        z-index: 102;
-        transition: transform 4s ease;
-    }
-
-    .unit_turret_display {
-        position: absolute;
-        z-index: 103;
-        transition: transform 2s ease;
     }
 
     .unit_outline_display {
@@ -248,7 +255,7 @@
         top: 0;
         left: 0;
         width: 110vw;
-        height: 60vw;
+        height: 55vw;
         transition: transform 0.05s linear;
         transition: filter 3s ease;
         will-change: transform;
@@ -349,19 +356,7 @@
 
     #settings{
         display: flex;
-        flex-direction: column;
-        height: 90%;
-    }
-
-    #settings_p{
-        height: 100vw;
-    }
-
-    #set_list{
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        height: 50%;
+        flex-direction: row;
     }
 
     .page_background{
@@ -377,7 +372,7 @@
         top: -100px;
     }
 
-    .slider {
+    #board_size {
         -webkit-appearance: none;
         appearance: none;
 
@@ -389,19 +384,19 @@
         cursor: pointer;
     }
 
-    .slider::-webkit-slider-runnable-track {
+    #board_size::-webkit-slider-runnable-track {
         height: 0.6vw;
         background: #303c32;
         border-radius: 4px;
     }
 
-    .slider::-moz-range-track {
+    #board_size::-moz-range-track {
         height: 0.6vw;
         background: #303c32;
         border-radius: 4px;
     }
 
-    .slider::-webkit-slider-thumb {
+    #board_size::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
         height: 20px;
@@ -413,7 +408,7 @@
         transition: 0.2s;
     }
 
-    .slider::-moz-range-thumb {
+    #board_size::-moz-range-thumb {
         height: 20px;
         width: 20px;
         background: #d9e8dc;
