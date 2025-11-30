@@ -69,6 +69,7 @@ function handleMouseMovement(event){
 }
 
 function handleKeyboardInput(event){
+
   if(gameState.page == "game"){
     if(event.keyCode == 32){
         let ix = (boardWidth - cx/zoom);
@@ -85,6 +86,29 @@ function handleKeyboardInput(event){
     updateMapBoundry();
     updateDebugMap();
     moveMap();
+    }
+    if (gameState.page == "game") {
+
+      if (event.key === 'A' || event.key === 'a') {
+          if (gameState.phase !== 'movement') { 
+            console.log("Nie można aktywować jednostki poza fazą ruchu"); 
+            return; 
+          }
+      }
+
+      if (event.key === 'M' || event.key === 'm') {
+          if (gameState.phase !== 'movement') { 
+            console.log("Ruch tylko w fazie movement"); 
+            return; 
+          }
+      }
+
+      if (event.key === 'C' || event.key === 'c') {
+          if (gameState.phase !== 'combat') { 
+            console.log("Walka tylko w fazie combat"); 
+            return; 
+          }
+      }
     }
     if (event.key === 'A' || event.key === 'a') {
       if (selectedUnitId) {
@@ -127,6 +151,14 @@ function handleKeyboardInput(event){
         if (typeof updateDebugMap === 'function') updateDebugMap();
         if (typeof moveMap === 'function') moveMap();
       }
+    }
+    if (event.key === 'F' || event.key === 'f') {
+      const res = endPhase();
+      console.log("PHASE:", gameState.phase, res);
+
+      drawUnits();
+      if (typeof updateDebugMap === 'function') updateDebugMap();
+      if (typeof moveMap === 'function') moveMap();
     }
   }
 }
@@ -182,6 +214,7 @@ $("#begin").click(function(event){
     for (let id in gameState.units) {
       drawUnit(id);
     }
+    startTurnWithQueue("nazis");
 
     blurMenu();
   }
@@ -278,6 +311,181 @@ $("#board_size").mousemove(function(){
 
   updateDisplayParams();
 });
+function startTurn(player) {
+  gameState.activePlayer = player;
+  gameState.phase = 'movement';
+  for (const id in gameState.units) {
+    const u = gameState.units[id];
+    if (u.faction === player) {
+      u.used = false;
+      u.movementLeft = applySupplyAndDisruptionMovement(u.movement, u);
+    }
+  }
+}
+
+function startPhase(phase) {
+  gameState.phase = phase;
+  if (phase === 'movement') {
+    for (const id in gameState.units) {
+      const u = gameState.units[id];
+      if (u.faction === gameState.activePlayer) {
+        u.movementLeft = applySupplyAndDisruptionMovement(u.movement, u);
+      }
+    }
+  }
+}
+
+function collectEngagements() {
+  const engagements = [];
+  const seen = new Set();
+  for (const id in gameState.units) {
+    const u = gameState.units[id];
+    if (u.faction !== gameState.activePlayer) continue;
+    const neigh = getHexNeighbors(u.row, u.col);
+    for (const [r, c] of neigh) {
+      const enemy = unitAt(r, c);
+      if (enemy && enemy.faction !== u.faction) {
+        const key = [u.id, enemy.id].sort().join(':');
+        if (!seen.has(key)) {
+          engagements.push({ attacker: u.id, defender: enemy.id });
+          seen.add(key);
+        }
+      }
+    }
+  }
+  return engagements;
+}
+
+function resolveAllEngagements() {
+  const engagements = collectEngagements();
+  for (const e of engagements) {
+    const atk = [e.attacker];
+    const defNeighbors = [];
+    const aUnit = gameState.units[e.attacker];
+    if (!aUnit) continue;
+    const neigh = getHexNeighbors(aUnit.row, aUnit.col);
+    for (const [r, c] of neigh) {
+      const v = unitAt(r, c);
+      if (v && v.faction !== aUnit.faction) defNeighbors.push(v.id);
+    }
+    if (defNeighbors.length === 0) continue;
+    resolveCombat(atk, defNeighbors, 'medium');
+  }
+  if (typeof updateDebugMap === 'function') updateDebugMap();
+  if (typeof moveMap === 'function') moveMap();
+}
+
+function isUnitInSupply(unit) {
+  const cell = gameState.board[unit.col][unit.row];
+  if (!cell) return false;
+  if (cell.hasVillage) return true;
+  if (cell.terrainType === 3) return true;
+  if (unit.col === 0 || unit.col === gameState.columns - 1) return true;
+  return false;
+}
+
+function supplyAndRecoveryPhase() {
+  for (const id in gameState.units) {
+    const u = gameState.units[id];
+    if (u.faction !== gameState.activePlayer) continue;
+    if (isUnitInSupply(u)) u.supplyState = 'supplied';
+    else u.supplyState = 'out';
+    if (u.disrupted) {
+      const die = rollD10();
+      if (die >= 4) u.disrupted = false;
+    }
+  }
+}
+
+function endPhase() {
+  if (gameState.phase === 'movement') {
+    gameState.phase = 'combat';
+    return { ok:true, phase:'combat' };
+  } else if (gameState.phase === 'combat') {
+    resolveAllEngagements();
+    gameState.phase = 'supply';
+    return { ok:true, phase:'supply' };
+  } else if (gameState.phase === 'supply') {
+    supplyAndRecoveryPhase();
+    endTurn();
+    return { ok:true, phase:'end' };
+  }
+  return { ok:false };
+}
+
+function endTurn() {
+  const prev = gameState.activePlayer;
+  const next = (prev === 'nazis') ? 'allies' : 'nazis';
+  gameState.activePlayer = next;
+  gameState.phase = 'movement';
+  for (const id in gameState.units) {
+    const u = gameState.units[id];
+    if (u.faction === next) {
+      u.used = false;
+      u.movementLeft = applySupplyAndDisruptionMovement(u.movement, u);
+    }
+  }
+  if (next === 'nazis') gameState.turn += 1;
+  if (typeof updateDebugMap === 'function') updateDebugMap();
+  if (typeof moveMap === 'function') moveMap();
+}
+
+let unitQueue = [];
+let queueIndex = 0;
+
+function buildUnitQueue() {
+    unitQueue = [];
+    for (const id in gameState.units) {
+        const u = gameState.units[id];
+        if (u.faction === gameState.activePlayer) {
+            if (!u.used) unitQueue.push(id);
+        }
+    }
+    queueIndex = 0;
+}
+
+
+function goToNextUnit() {
+    queueIndex++;
+
+    if (queueIndex >= unitQueue.length) {
+        console.log("Brak kolejnych jednostek – zakończ fazę klawiszem F.");
+        selectedUnitId = null;
+        return;
+    }
+
+    const nextId = unitQueue[queueIndex];
+    selectedUnitId = nextId;
+    const u = gameState.units[nextId];
+
+    console.log("Przechodzisz do kolejnej jednostki:", nextId, "na polu", u.row, u.col);
+}
+
+globalThis.onUnitFinishedMovement = function(unitId) {
+    const u = gameState.units[unitId];
+    if (!u) return;
+
+    u.used = true;
+
+    console.log("Jednostka zakończyła ruch:", unitId);
+
+    goToNextUnit();
+}
+
+function startTurnWithQueue(player) {
+    console.log("TURN:", gameState.turn, "PLAYER:", gameState.activePlayer, "PHASE:", gameState.phase);
+    startTurn(player);
+    buildUnitQueue();
+
+    if (unitQueue.length === 0) {
+        console.log("Brak jednostek dla gracza:", player);
+        return;
+    }
+
+    selectedUnitId = unitQueue[0];
+    const u = gameState.units[selectedUnitId];
+    console.log("Tura gracza:", player, "– pierwsza jednostka:", selectedUnitId);
+}
 
 $("#music_volume").mousemove(function(){
   musicVolume = $(this).val();
