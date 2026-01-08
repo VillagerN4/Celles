@@ -203,8 +203,8 @@ $("#begin").click(function(event){
     gameMusic.volume = 0;
     gameMusic.play();
 
-    fadeAudio(menuMusic, menuMusic.volume, 0, 2000);
-    fadeAudio(gameMusic, gameMusic.volume, musicVolume, 4000);
+    fadeAudio(menuMusic, menuMusic.volume, 0, 5);
+    gameMusic.volume = musicVolume;
 
     $("#menu_panorama").fadeOut(pageFadeTime);
     $("#page_menu").fadeOut(pageFadeTime, function(){$("#page_game").fadeIn(pageFadeTime, function(){pageAnimating=false})});

@@ -6,12 +6,12 @@ function drawUnit(id) {
   const y = pos[1] - hexHeight * zoom + "px";
 
   const u_css = {
-      position: "absolute",
-      left: x,
-      top: y,
-      width: hexRadius * 2 * zoom + "px",
-      height: hexHeight * 2 * zoom + "px"
-    }
+    position: "absolute",
+    left: x,
+    top: y,
+    width: hexRadius * 2 * zoom + "px",
+    height: hexHeight * 2 * zoom + "px"
+  };
 
   const img1 = $("<img>", {
     id: "unit_" + id,
