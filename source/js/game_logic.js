@@ -21,7 +21,7 @@ $(document).ready(function () {
   $(document).mousemove(handleMouseMovement);
   $(document).mousedown(function (event) { mouseDown = true && event.which == 2; });
   $(document).mouseup(function () { mouseDown = false; });
-  $(document).click(handleClick);
+  $(document).mousedown(handleClick);
   $(document).keyup(handleKeyboardInput);
   $(document).on("contextmenu", function (event) {
     event.preventDefault();

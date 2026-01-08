@@ -5,9 +5,25 @@ function handleClick(event) {
         const col = Math.max(0, Math.min(row_col[1], gameState.columns - 1));
         const u = unitAt(row, col);
 
-        selectedRow = row;
-        selectedColumn = col;
-        selectedUnitId = u ? u.id : null;
+        if(event.button == 0){
+            
+            if(u && u.id && gameState.units[u.id].faction == gameState.activePlayer){
+                selectedUnitId = u ? u.id : null;
+            }
+        }else if(event.button == 2){
+            if(!u){
+                selectedRow = row;
+                selectedColumn = col;
+            }
+        }
+
+        if(selectedColumn!=null && selectedRow!=null && selectedUnitId!=null && gameState.phase == "movement"){
+            let su = gameState.units[selectedUnitId];
+            let path = findBestPath(su.row, su.col, selectedRow, selectedColumn, su);
+            if(path){
+                createPathVizualizer([...path], "help");
+            }
+        }
 
         updateMapBoundry();
         moveMap();
@@ -97,16 +113,12 @@ function handleKeyboardInput(event) {
             }
         }
         if (event.key === 'M' || event.key === 'm') {
-            if (selectedUnitId) {
+            if (selectedUnitId!=null && selectedColumn!=null && selectedRow!=null) {
                 const u = gameState.units[selectedUnitId];
                 if (!u || (u.faction == "nazis" && u.faction != gameState.activePlayer) || (u.faction != "nazis" && "nazis" == gameState.activePlayer)) return;
 
-                let rowcol = getHexRowCol(cx, cy);
-                let row = rowcol[0];
-                let col = rowcol[1];
-
-                const targetRow = row;
-                const targetCol = col;
+                const targetRow = selectedRow;
+                const targetCol = selectedColumn;
                 const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
                 setCellInfPar(res.msg);
                 if (typeof updateDebugMap === 'function') updateDebugMap();
@@ -133,6 +145,9 @@ function handleKeyboardInput(event) {
             }
         }
         if (event.key === 'F' || event.key === 'f') {
+            selectedUnitId = null;
+            selectedRow = null;
+            selectedColumn = null;
             const res = endPhase();
             setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase + "<br>" + "PHASE:" + gameState.phase + res);
 

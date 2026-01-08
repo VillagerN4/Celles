@@ -117,6 +117,7 @@ function moveMap() {
     const debug_board = document.getElementById("debug_board_container");
 
     const debug_hex = document.getElementById("debug_hex_dis");
+    const debug_uhex = document.getElementById("debug_unithex_dis");
     const cell_dis = document.getElementById("cell_display");
 
     let row_col = getHexRowCol(cx, cy);
@@ -124,10 +125,14 @@ function moveMap() {
     let board_col = Math.max(0, Math.min(row_col[1], columns - 1));
 
     let pos = getHexCenterPos(board_row, board_col);
+    let sel_u_pos = !selectedUnitId ? [0,0] : getHexCenterPos(gameState.units[selectedUnitId].row, gameState.units[selectedUnitId].col);
     let sel_pos = getHexCenterPos(selectedRow, selectedColumn);
 
     debug_hex.style.left = camX - boardWidth * zoom / 2 + sel_pos[0] - hexRadius * zoom + "px";
     debug_hex.style.top = camY - boardHeight * zoom / 2 + sel_pos[1] - hexHeight * zoom + "px";
+
+    debug_uhex.style.left = camX - boardWidth * zoom / 2 + sel_u_pos[0] - hexRadius * zoom + "px";
+    debug_uhex.style.top = camY - boardHeight * zoom / 2 + sel_u_pos[1] - hexHeight * zoom + "px";
 
     cell_dis.style.left = camX - boardWidth * zoom / 2 + pos[0] - hexRadius * zoom + "px";
     cell_dis.style.top = camY - boardHeight * zoom / 2 + pos[1] - hexHeight * zoom + "px";
@@ -143,19 +148,28 @@ function moveMap() {
     board_img.style.top = camY - boardHeight * zoom / 2 + "px";
     board_img.style.left = camX - boardWidth * zoom / 2 + "px";
 
-    debug_board.style.top = camY - boardHeight * zoom / 2 + "px";
-    debug_board.style.left = camX - boardWidth * zoom / 2 + "px";
+    debug_board.style.top = board_img.style.top;
+    debug_board.style.left = board_img.style.left;
 
     debug_hex.style.width = hexRadius * 2 * zoom + "px";
     debug_hex.style.height = hexHeight * 2 * zoom + "px";
 
-    cell_dis.style.width = hexRadius * 2 * zoom + "px";
-    cell_dis.style.height = hexHeight * 2 * zoom + "px";
+    debug_uhex.style.width = debug_hex.style.width;
+    debug_uhex.style.height = debug_uhex.style.height;
+
+    cell_dis.style.width = debug_hex.style.width;
+    cell_dis.style.height = debug_uhex.style.height;
 
     if (selectedColumn == null || selectedRow == null) {
         $("#debug_hex_dis").hide();
     } else {
         $("#debug_hex_dis").show();
+    }
+
+    if (selectedUnitId == null) {
+        $("#debug_unithex_dis").hide();
+    } else {
+        $("#debug_unithex_dis").show();
     }
 }
 

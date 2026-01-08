@@ -35,7 +35,9 @@ function findBestPath(sr, sc, tr, tc, unit) {
 
     let cur = tr + ":" + tc;
 
-    if (!prev[cur] && cur !== (sr + ":" + sc)) return null;
+    if (!prev[cur] && cur !== (sr + ":" + sc)){
+        return null;
+    }
 
     const path = [];
 
@@ -62,10 +64,14 @@ function getMovementCostForEntry(unit, fromRow, fromCol, toRow, toCol) {
     const typ = unit.motorized ? 'mot' : 'inf';
     const fact = unit.faction;
 
+    let occupied = false
+
     let currentCellPos = getHexCenterPos(fromRow, fromCol)
     let nextCellPos = getHexCenterPos(toRow, toCol);
     let yDif = nextCellPos[1] - currentCellPos[1];
     let xDif = nextCellPos[0] - currentCellPos[0];
+
+    occupied = unitAt(toRow, toCol) != null;
 
     if (yDif == 0) return -1;
 
@@ -87,14 +93,12 @@ function getMovementCostForEntry(unit, fromRow, fromCol, toRow, toCol) {
             }
         });
     }
-    if (cost > 0 && ((from.edges[movementDirectionEdge] == 0 && fact == "nazis") || fact != "nazis")) return cost;
+    if (cost > 0 && ((from.edges[movementDirectionEdge] == 0 && fact == "nazis") || fact != "nazis")) return cost + (occupied ? 999999 : 0);
 
     cost = terrainCost[terrain][typ];
-    const occ = unitAt(toRow, toCol);
-    if (occ && occ.motorized && unit.motorized) cost += enterOccupiedMotorizedExtra;
     // console.log("base cost: ", cost);
     // console.log("additional cost: ", edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ]);
-    return cost + edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ];
+    return cost + edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ] + (occupied ? 999999 : 0);
 }
 
 function getMovementDirection(fromRow, fromCol, toRow, toCol) {
@@ -143,9 +147,6 @@ function executeMovementPath(unitId, path) {
 
         visualizePath[i] = path[i];
 
-        selectedRow = pr;
-        selectedColumn = pc;
-
         if (u.motorized && fz && tz) {
             const extra = 2;
             if (u.movementLeft < cost + extra){ 
@@ -176,10 +177,11 @@ function executeMovementPath(unitId, path) {
             "transform": (edge > 2) ? `rotate(${180 - 60 * (edge - 4)}deg)` : `rotate(${60 * (edge - 1)}deg)`
         });
 
-        selectedRow = r;
-        selectedColumn = c;
-
-        console.log(selectedRow,selectedColumn)
+        selectedUnitId = unitId;
+        if(r==selectedRow && c==selectedColumn){
+            selectedRow = null;
+            selectedColumn = null;
+        }
         
     }
     onUnitFinishedMovement(unitId);

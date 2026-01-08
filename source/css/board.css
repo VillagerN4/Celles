@@ -11,6 +11,11 @@
     z-index: 500;
 }
 
+#debug_unithex_dis{
+    position: absolute;
+    z-index: 500;
+}
+
 #cell_display{
     position: absolute;
     z-index: 100;

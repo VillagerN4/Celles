@@ -69,32 +69,13 @@ function buildUnitQueue() {
     queueIndex = 0;
 }
 
-
-function goToNextUnit() {
-    queueIndex++;
-
-    if (queueIndex >= unitQueue.length) {
-        setCellInfPar("Brak kolejnych jednostek – zakończ fazę klawiszem F.");
-        selectedUnitId = null;
-        return;
-    }
-
-    const nextId = unitQueue[queueIndex];
-    selectedUnitId = nextId;
-    const u = gameState.units[nextId];
-
-    setCellInfPar("Przechodzisz do kolejnej jednostki:" + nextId + "na polu" + u.row + u.col);
-}
-
 onUnitFinishedMovement = function (unitId) {
     const u = gameState.units[unitId];
     if (!u) return;
 
     u.used = true;
 
-    setCellInfPar("Jednostka zakończyła ruch:" + unitId);
-
-    goToNextUnit();
+    setCellInfPar("Jednostka zakończyła ruch:" + unitId)
 }
 
 function startTurnWithQueue(player) {
@@ -108,7 +89,5 @@ function startTurnWithQueue(player) {
         return;
     }
 
-    selectedUnitId = unitQueue[0];
-    const u = gameState.units[selectedUnitId];
-    setCellInfPar("Tura gracza:" + player + "– pierwsza jednostka:" + selectedUnitId);
+    setCellInfPar("Tura gracza:" + player);
 }
