@@ -2,15 +2,15 @@ const sqrt3 = Math.sqrt(3);
 
 
 
-function padLeft(nr, n, str){
-    return Array(n - String(nr).length + 1).join(str||'0') + nr;
+function padLeft(nr, n, str) {
+    return Array(n - String(nr).length + 1).join(str || '0') + nr;
 }
 
-function degToRad(deg){
+function degToRad(deg) {
     return deg * Math.PI / 180;
 }
 
-function radToDeg(rad){
+function radToDeg(rad) {
     return (rad / Math.PI) * 180;
 }
 
@@ -27,20 +27,20 @@ function isPointInsideHexagon(px, py, cx, cy, radius) {
         && -sqrt3 * dx - sqrt3 < dy;
 }
 
-function rollD10(){ 
-    return Math.floor(Math.random()*10); 
+function rollD10() {
+    return Math.floor(Math.random() * 10);
 }
 
-function clampDie(v){ 
-    if (v<0) return 0; 
-    if (v>9) return 9; 
-    return v; 
+function clampDie(v) {
+    if (v < 0) return 0;
+    if (v > 9) return 9;
+    return v;
 }
 
 function drawActionToken(f) {
-  const c = Object.values(gameState.units).filter(u => u.faction === f);
-  if (!c.length) return null;
-  return c[Math.floor(Math.random()*c.length)].id;
+    const c = Object.values(gameState.units).filter(u => u.faction === f);
+    if (!c.length) return null;
+    return c[Math.floor(Math.random() * c.length)].id;
 }
 
 function fadeAudio(audio, startVolume, endVolume, duration, callback) {
@@ -79,21 +79,21 @@ function applyMenuParallax(event) {
     let offsetX = (event.clientX - centerX) / centerX;
     let offsetY = (event.clientY - centerY) / centerY;
 
-    $(".panorama").each(function(index){
+    $(".panorama").each(function (index) {
         let moveX = offsetX * speed[index];
         let moveY = offsetY * speed[index];
 
         $(this).css({
             top: `${moveY}px`,
-            left: `${centerX - $(this).width()/2 + moveX}px`
+            left: `${centerX - $(this).width() / 2 + moveX}px`
         });
     });
 }
 
-function blurMenu(){
-    $(".panorama").each(function(){
+function blurMenu() {
+    $(".panorama").each(function () {
         $(this).css({
             filter: `blur(${gameState.page == "menu" ? 0 : panBlurAmount}px) brightness(${gameState.page == "menu" ? 100 : 150}%)`
         });
-    });   
+    });
 }
