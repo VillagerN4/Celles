@@ -4,16 +4,21 @@
     <meta charset="UTF-8">
     <title>CELLES</title>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="source/board_info.js"></script>
-    <script src="source/factions_info.js"></script>    
+    <script src="source/data/board_info.js"></script>
+    <script src="source/data/factions_info.js"></script>    
 
-    <script src="source/generic.js"></script>
-    <script src="source/board.js"></script>
-    <script src="source/game_variables.js"></script>
-    <script src="source/game_logic.js"></script>
-    <script src="source/units.js"></script>
+    <script src="source/js/generic.js"></script>
+    <script src="source/js/board.js"></script>
+    <script src="source/js/game_variables.js"></script>
+    <script src="source/js/game_logic.js"></script>
+    <script src="source/js/units.js"></script>
 
-    <link rel="stylesheet" href="source/styles.css">
+    <link rel="stylesheet" href="source/css/generic.css">
+    <link rel="stylesheet" href="source/css/ui.css">
+    <link rel="stylesheet" href="source/css/panorama.css">
+    <link rel="stylesheet" href="source/css/board.css">
+    <link rel="stylesheet" href="source/css/unit.css">
+
     <link rel="icon" type="image/png" href="assets/ui/allied_star.png">
 </head>
 <body>
@@ -29,13 +34,13 @@
 </div>
 
 <audio id="menu_music" src="assets/audio/Military Precision.mp3" loop></audio>
-<audio id="game_music" src="assets/audio/Electric Guitar Ambience.mp3" loop></audio>
+<audio id="game_music" src="assets/audio/The Wall.mp3" loop></audio>
 <audio id="m_hover" src="assets/audio/buttonrollover.wav"></audio>
 <audio id="m_click" src="assets/audio/buttonclick.wav"></audio>
 <audio id="m_click_rel" src="assets/audio/buttonclickrelease.wav"></audio>
 
 <div id="page_tap">
-    <p id="tap_anywhere">Press &lt;Left Mouse Buttom&gt; to START</p>
+    <p id="tap_anywhere">Press &lt;Left Mouse Button&gt; to START</p>
 </div>
 
 <div id="page_menu">
@@ -106,6 +111,11 @@
                 <div class="setting">
                     <label for="music_volume" class="menu_text">MUSIC VOLUME:</label>
                     <input type="range" min="0" max="1" step="0.01" value="1" name="music_volume" id="music_volume" class="slider">
+                </div>
+
+                <div class="setting">
+                    <label for="blur_amount" class="menu_text">PANORAMA BLUR:</label>
+                    <input type="range" min="0.5" max="4" step="0.5" value="4" name="blur_amount" id="blur_amount" class="slider">
                 </div>
 
             </div>

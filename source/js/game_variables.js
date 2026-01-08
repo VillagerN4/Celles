@@ -1,9 +1,10 @@
-const debugMode = false;
+const debugMode = true;
 
 var pageAnimating = false;
 var pageFadeTime = !debugMode ? 1500 : 1;
 var musicStarted = false;
 var musicVolume = 1;
+var panBlurAmount = 4;
 
 const gameState = {
   page: 'menu',

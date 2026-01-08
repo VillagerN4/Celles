@@ -312,6 +312,13 @@ $("#board_size").mousemove(function(){
 
   updateDisplayParams();
 });
+
+$("#blur_amount").mousemove(function(){
+  panBlurAmount = $(this).val();
+
+  blurMenu();
+});
+
 function startTurn(player) {
   gameState.activePlayer = player;
   gameState.phase = 'movement';

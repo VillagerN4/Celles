@@ -93,7 +93,7 @@ function applyMenuParallax(event) {
 function blurMenu(){
     $(".panorama").each(function(){
         $(this).css({
-            filter: `blur(${gameState.page == "menu" ? 0 : 5}px) brightness(${gameState.page == "menu" ? 100 : 150}%)`
+            filter: `blur(${gameState.page == "menu" ? 0 : panBlurAmount}px) brightness(${gameState.page == "menu" ? 100 : 150}%)`
         });
     });   
 }

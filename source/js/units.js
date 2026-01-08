@@ -5,56 +5,40 @@ function drawUnit(id) {
   const x = pos[0] - hexRadius * zoom + "px";
   const y = pos[1] - hexHeight * zoom + "px";
 
-  const img1 = $("<img>", {
-    id: "unit_" + id,
-    class: "unit_display",
-    src: `assets/cell/${u.faction}/${u.faction}_standard.png`,
-    css: {
+  const u_css = {
       position: "absolute",
       left: x,
       top: y,
       width: hexRadius * 2 * zoom + "px",
       height: hexHeight * 2 * zoom + "px"
     }
+
+  const img1 = $("<img>", {
+    id: "unit_" + id,
+    class: "unit_display",
+    src: `assets/cell/${u.faction}/${u.faction}_standard.png`,
+    css: u_css
   });
 
   const img2 = $("<img>", {
     id: "unit_" + id + "_outline",
     class: "unit_outline_display",
     src: `assets/cell/outline_white.png`,
-    css: {
-      position: "absolute",
-      left: x,
-      top: y,
-      width: hexRadius * 2 * zoom + "px",
-      height: hexHeight * 2 * zoom + "px"
-    }
+    css: u_css
   });
 
   const img3 = $("<img>", {
     id: "unit_" + id + "_hull",
     class: "unit_hull_display",
     src: `assets/unit/${u.faction}/${model}_hull.png`,
-    css: {
-      position: "absolute",
-      left: x,
-      top: y,
-      width: hexRadius * 2 * zoom + "px",
-      height: hexHeight * 2 * zoom + "px"
-    }
+    css: u_css
   });
 
   const img4 = $("<img>", {
     id: "unit_" + id + "_turret",
     class: "unit_turret_display",
     src: `assets/unit/${u.faction}/${model}_turret.png`,
-    css: {
-      position: "absolute",
-      left: x,
-      top: y,
-      width: hexRadius * 2 * zoom + "px",
-      height: hexHeight * 2 * zoom + "px"
-    }
+    css: u_css
   });
 
   $("#debug_board_container").append(img1);

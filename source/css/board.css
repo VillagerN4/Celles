@@ -1,0 +1,73 @@
+#board{
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index: 5;
+    filter: opacity(0%);
+}
+
+#debug_hex_dis{
+    position: absolute;
+    z-index: 500;
+}
+
+#cell_display{
+    position: absolute;
+    z-index: 100;
+    filter: opacity(55%);
+}
+.debug_hex_display{
+    z-index: 0;
+}
+
+.debug_village_display{
+    z-index: 8;
+}
+
+.debug_river_display{
+    z-index: 1;
+}
+
+.debug_road_display{
+    height: 40px;
+    z-index: 2;
+}
+
+.debug_highway_display{
+    z-index: 3;
+}
+
+.debug_house_display{
+    z-index: 0;
+}
+
+.debug_tree_display{
+    z-index: 0;
+}
+
+.debug_cell_label_display{
+    z-index: 25;
+    margin: 0;
+    text-align: center;
+}
+
+.debug_cell_label_text{
+    position: inherit;
+    top: 4px;
+    margin: 0;
+    z-index: 25;
+    vertical-align: center;
+    font-family: Arial;
+    color: #000000;
+    -webkit-text-stroke: 1px #cec9cf;
+}
+
+.debug_cell_label_text_inner{
+    position: inherit;
+    top: 4px;
+    margin: 0;
+    z-index: 30;
+    vertical-align: center;
+    font-family: Arial;
+    color: #171a1f;
+}

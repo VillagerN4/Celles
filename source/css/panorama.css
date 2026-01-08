@@ -1,0 +1,39 @@
+.panorama{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 110vw;
+    height: 140vh;
+    transition: transform 0.05s linear;
+    transition: filter 3s ease;
+    will-change: transform;
+}
+
+#menu_pan_bg{
+    z-index: -2;
+}
+
+#menu_pan_hz{
+    z-index: -1;
+}
+
+#menu_pan_0{
+    z-index: 0;
+}
+
+#menu_pan_1{
+    z-index: 1;
+}
+
+#menu_pan_2{
+    z-index: 2;
+}
+
+#menu_pan_3{
+    z-index: 3;
+}
+
+#menu_panorama{
+    position: relative;
+    z-index: 0;
+}
