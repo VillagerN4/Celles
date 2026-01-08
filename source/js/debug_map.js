@@ -1,4 +1,4 @@
-function createDebugMap(){
+function createDebugMap() {
     jQuery('<img>', {
         id: "rivers",
         class: "debug_river_display",
@@ -10,12 +10,12 @@ function createDebugMap(){
         }
     }).appendTo('#debug_board_container');
 
-    for(let c = 0; c < columns; c++){
-        for(let r = 0; r < rows; r++){
+    for (let c = 0; c < columns; c++) {
+        for (let r = 0; r < rows; r++) {
             let cell = board_data.board[c][r];
             let cell_pos = getHexCenterPos(r, c);
-            let x = cell_pos[0] - hexRadius*zoom + "px";
-            let y = cell_pos[1] - hexHeight*zoom  + "px";
+            let x = cell_pos[0] - hexRadius * zoom + "px";
+            let y = cell_pos[1] - hexHeight * zoom + "px";
             let uncoveredHouses = [0, 0, 0, 0, 0, 0];
             let neighbors = getHexNeighbors(r, c);
             let forests = 0;
@@ -35,11 +35,11 @@ function createDebugMap(){
             };
 
             neighbors.forEach(n => {
-                if(board_data.board[n[1]][n[0]].terrainType == 2) forests++;
-                if(board_data.board[n[1]][n[0]].terrainType == 1) roughs++;
+                if (board_data.board[n[1]][n[0]].terrainType == 2) forests++;
+                if (board_data.board[n[1]][n[0]].terrainType == 1) roughs++;
             });
 
-            if(cell.hasVillage){
+            if (cell.hasVillage) {
                 jQuery('<img>', {
                     id: "village_marker" + padLeft(c + 1, 2) + padLeft(r, 2),
                     class: "debug_village_display",
@@ -50,7 +50,7 @@ function createDebugMap(){
                     }
                 }).appendTo('#debug_board_container');
             }
-            
+
             jQuery('<img>', {
                 id: padLeft(c + 1, 2) + padLeft(r, 2),
                 class: "debug_hex_display",
@@ -58,7 +58,7 @@ function createDebugMap(){
                 css: c_css
             }).appendTo('#debug_board_container');
 
-            if(cell.terrainType == 2){
+            if (cell.terrainType == 2) {
                 jQuery('<img>', {
                     id: "trees" + padLeft(c + 1, 2) + padLeft(r, 2),
                     class: "debug_tree_display",
@@ -68,8 +68,8 @@ function createDebugMap(){
                         filter: `opacity(${forests*3 - Math.random()*5 + 82}%)`
                     }
                 }).appendTo('#debug_board_container');
-            }else{
-                if(cell.terrainType == 1 && forests > 0){
+            } else {
+                if (cell.terrainType == 1 && forests > 0) {
                     jQuery('<img>', {
                         id: "trees" + padLeft(c + 1, 2) + padLeft(r, 2),
                         class: "debug_tree_display",
@@ -83,18 +83,18 @@ function createDebugMap(){
             }
 
             cell.highways.forEach(edge => {
-            createCellEdgeDetail(x, y, "debug_highway_display", "#board_highways", "highway", edge, r, c);
-            uncoveredHouses[edge] += 1;
+                createCellEdgeDetail(x, y, "debug_highway_display", "#board_highways", "highway", edge, r, c);
+                uncoveredHouses[edge] += 1;
             });
 
             cell.roads.forEach(edge => {
-            createCellEdgeDetail(x, y, "debug_road_display", "#board_roads", "road", edge, r, c);
-            uncoveredHouses[edge] += 1;
+                createCellEdgeDetail(x, y, "debug_road_display", "#board_roads", "road", edge, r, c);
+                uncoveredHouses[edge] += 1;
             });
 
 
-            for(let i = 0; i < 6; i++) {
-                if(uncoveredHouses[i] == 0 && cell.terrainType == 3)
+            for (let i = 0; i < 6; i++) {
+                if (uncoveredHouses[i] == 0 && cell.terrainType == 3)
                     jQuery('<img>', {
                         id: "houses" + padLeft(c + 1, 2) + padLeft(r, 2) + i,
                         class: "debug_house_display",
@@ -128,14 +128,14 @@ function createDebugMap(){
     }
 }
 
-function updateDebugMap(){
+function updateDebugMap() {
     $("#rivers").css({
-        "width": boardWidth*zoom + "px",
-        "height": boardHeight*zoom + "px"
+        "width": boardWidth * zoom + "px",
+        "height": boardHeight * zoom + "px"
     });
 
-    for(let c = 0; c < columns; c++){
-        for(let r = 0; r < rows; r++){
+    for (let c = 0; c < columns; c++) {
+        for (let r = 0; r < rows; r++) {
             let cell = board_data.board[c][r];
             let cell_pos = getHexCenterPos(r, c);
             let x = cell_pos[0] - hexRadius*zoom + "px";
@@ -161,7 +161,7 @@ function updateDebugMap(){
                     $("#" + "houses" + padLeft(c + 1, 2) + padLeft(r, 2) + i).css(c_css);
                 }
             }
-            
+
             cell.highways.forEach(edge => {
             $("#" + "highway" + padLeft(c + 1, 2) + padLeft(r, 2) + edge).css(c_css);
             });
