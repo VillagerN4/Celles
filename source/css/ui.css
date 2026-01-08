@@ -1,6 +1,7 @@
 #board_container{
     position: absolute;
     overflow: hidden;
+    background-color: #737960;
 }
 
 #debug_board_container{
