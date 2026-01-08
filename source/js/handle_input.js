@@ -64,6 +64,7 @@ function handleKeyboardInput(event) {
 
             updateMapBoundry();
             updateDebugMap();
+            updatePathVizualizers();
             moveMap();
         }
         if (gameState.page == "game") {

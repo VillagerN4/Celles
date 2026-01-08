@@ -97,9 +97,7 @@ function getMovementCostForEntry(unit, fromRow, fromCol, toRow, toCol) {
     return cost + edgeCost[edgeInfo[from.edges[movementDirectionEdge]]][typ];
 }
 
-function getMovementDirection(unit, fromRow, fromCol, toRow, toCol) {
-    const to = gameState.board[toCol][toRow];
-    const from = gameState.board[fromCol][fromRow];
+function getMovementDirection(fromRow, fromCol, toRow, toCol) {
 
     let currentCellPos = getHexCenterPos(fromRow, fromCol)
     let nextCellPos = getHexCenterPos(toRow, toCol);
@@ -123,30 +121,50 @@ function unitAt(r, c) {
 
 function executeMovementPath(unitId, path) {
     const u = gameState.units[unitId];
+    let visualizePath = [];
     let pathCost = 0;
+
     if (!u) return { ok: false, msg: 'Brak jednostki', cost: 0 };
+
     u.movementLeft = applySupplyAndDisruptionMovement(u.movement, u);
     const ez = getZOCForFaction(u.faction === 'nazis' ? 'allies' : 'nazis');
+    const startCell = [u.row, u.col];
+
     for (let i = 0; i < path.length; i++) {
         const [r, c] = path[i];
         const pr = (i === 0) ? u.row : path[i - 1][0];
         const pc = (i === 0) ? u.col : path[i - 1][1];
-        const edge = getMovementDirection(u, pr, pc, r, c);
+        const edge = getMovementDirection(pr, pc, r, c);
         const cost = getMovementCostForEntry(u, pr, pc, r, c);
         pathCost += cost;
         // console.log(cost);
         const fromKey = pr + ':' + pc, toKey = r + ':' + c;
         const fz = ez.has(fromKey), tz = ez.has(toKey);
+
+        visualizePath[i] = path[i];
+
+        selectedRow = pr;
+        selectedColumn = pc;
+
         if (u.motorized && fz && tz) {
             const extra = 2;
-            if (u.movementLeft < cost + extra) return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost };
+            if (u.movementLeft < cost + extra){ 
+                createPathVizualizer([startCell, ...visualizePath], false);
+                return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
+            };
+
             const die = rollD10();
             const mod = 0;
             const res = die + mod;
+
             if (res >= 5) { u.movementLeft -= (cost + extra); u.row = r; u.col = c; }
             else { u.movementLeft = 0; u.disrupted = true; return { ok: false, msg: 'Infiltracja nieudana', cost: pathCost }; }
         } else {
-            if (u.movementLeft < cost) return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost };
+            if (u.movementLeft < cost){ 
+                createPathVizualizer([startCell, ...visualizePath], false);
+                return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
+            };
+
             u.movementLeft -= cost; u.row = r; u.col = c;
         }
 
@@ -158,10 +176,14 @@ function executeMovementPath(unitId, path) {
             "transform": (edge > 2) ? `rotate(${180 - 60 * (edge - 4)}deg)` : `rotate(${60 * (edge - 1)}deg)`
         });
 
-        selectedRow = path[i][0];
-        selectedColumn = path[i][1];
+        selectedRow = r;
+        selectedColumn = c;
+
+        console.log(selectedRow,selectedColumn)
+        
     }
     onUnitFinishedMovement(unitId);
+    createPathVizualizer([startCell, ...visualizePath], true);
     return { ok: true, msg: 'Ruch wykonany', cost: pathCost };
 }
 

@@ -25,8 +25,8 @@ function createDebugMap() {
                 position: "absolute",
                 left: x,
                 top: y,
-                width: hexRadius*2 + "px",
-                height: hexHeight*2 + "px"
+                width: hexRadius*2*zoom + "px",
+                height: hexHeight*2*zoom + "px"
             };
 
             const l_css = {
@@ -192,5 +192,105 @@ function updateDebugMap() {
                 $("#unit_" + id + "_turret").css(u_css);
             }
         }
+    }
+}
+
+function createPathVizualizer(path, success){
+    gameState.pathVisualizers.forEach(vis => {
+        vis.elementIds.forEach(e_id => {
+            $("#" + e_id).remove();
+        });
+    });
+
+    if(path.length > 1){
+        gameState.pathVisualizers.push({success, path, elementIds:[]});
+
+        const path_vis_id = gameState.pathVisualizers.length - 1;
+
+        for(i = 0; i < path.length; i++){
+            let [r, c] = path[i];
+            let cell_pos = getHexCenterPos(r, c);
+            let x = cell_pos[0] - hexRadius * zoom + "px";
+            let y = cell_pos[1] - hexHeight * zoom + "px";
+            let is_last = i+1 == path.length;
+            let [nr, nc] = is_last ? [-1,-1] : path[i+1];
+            let [pr, pc] = i==0 ? [-1,-1] : path[i-1];
+
+            const a_css = {
+                position: "absolute",
+                left: x,
+                top: y,
+                width: hexRadius*2*zoom + "px",
+                height: hexHeight*2*zoom + "px"
+            };
+
+            if(!is_last){
+                let exit_edge = getMovementDirection(r, c, nr, nc);
+
+                jQuery('<img>', {
+                    id: `path${path_vis_id}_arrow_${i}_0`,
+                    class: "debug_path_visualizer",
+                    src: `assets/cell/arrow_${success ? "success" : "fail"}.png`,
+                    css: {
+                        ...a_css,
+                        transform: (exit_edge > 2) ? `rotate(${180 - 60 * (exit_edge - 4)}deg)` : `rotate(${60 * (exit_edge - 1)}deg)`
+                    }
+                }).appendTo('#board_paths');
+
+                gameState.pathVisualizers[path_vis_id].elementIds.push(`path${path_vis_id}_arrow_${i}_0`);
+            }
+
+            if(i>0){
+                let entry_edge = getMovementDirection(r, c, pr, pc);
+
+                jQuery('<img>', {
+                    id: `path${path_vis_id}_arrow_${i}_1`,
+                    class: "debug_path_visualizer",
+                    src: `assets/cell/arrow_${success ? "success" : "fail"}${is_last ? "_end" : ""}.png`,
+                    css: {
+                        ...a_css,
+                        transform: (entry_edge > 2) ? `rotate(${180 - 60 * (entry_edge - 4)}deg)` : `rotate(${60 * (entry_edge - 1)}deg)`
+                    }
+                }).appendTo('#board_paths');
+
+                gameState.pathVisualizers[path_vis_id].elementIds.push(`path${path_vis_id}_arrow_${i}_1`);
+            }
+        }
+
+    }
+}
+
+function updatePathVizualizers(){
+    for(j=0; j<gameState.pathVisualizers.length; j++){
+        let vis = gameState.pathVisualizers[j];
+
+        const path = vis.path;
+        if(path.length > 1){
+
+            for(i = 0; i < path.length; i++){
+                let [r, c] = path[i];
+                let cell_pos = getHexCenterPos(r, c);
+                let x = cell_pos[0] - hexRadius * zoom + "px";
+                let y = cell_pos[1] - hexHeight * zoom + "px";
+                let is_last = i+1 == path.length;
+
+                const a_css = {
+                    position: "absolute",
+                    left: x,
+                    top: y,
+                    width: hexRadius*2*zoom + "px",
+                    height: hexHeight*2*zoom + "px"
+                };
+
+                if(!is_last){
+                    $(`#path${j}_arrow_${i}_0`).css(a_css);
+                }
+
+                if(i>0){
+                    $(`#path${j}_arrow_${i}_1`).css(a_css);
+                }
+            }
+
+        };
     }
 }

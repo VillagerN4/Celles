@@ -17,7 +17,8 @@ const gameState = {
   formations: {},
   board: board_data.board,
   rows: rows,
-  columns: columns
+  columns: columns,
+  pathVisualizers: []
 };
 
 const terrainCost = { clear: { mot: 2, inf: 1 }, rough: { mot: 3, inf: 2 }, woods: { mot: 4, inf: 3 }, town: { mot: 2, inf: 1 } };

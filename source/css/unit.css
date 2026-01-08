@@ -18,3 +18,7 @@
 .unit_turret_display{
     z-index: 111;
 }
+
+.debug_path_visualizer{
+    z-index: 760;
+}
