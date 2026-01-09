@@ -9,7 +9,7 @@ var panBlurAmount = 4;
 const gameState = {
   page: 'menu',
   turn: 1,
-  phase: 'token',
+  phase: 'movement',
   activePlayer: 'nazis',
   actionTokens: { nazis: [], allies: [] },
   availableActions: { nazis: 0, allies: 0 },

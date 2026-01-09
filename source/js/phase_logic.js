@@ -79,7 +79,7 @@ onUnitFinishedMovement = function (unitId) {
 }
 
 function startTurnWithQueue(player) {
-    $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
+    // $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
     setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase);
     startTurn(player);
     buildUnitQueue();

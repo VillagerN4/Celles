@@ -60,6 +60,7 @@ $(document).ready(function () {
     fadeAudio(menuMusic, menuMusic.volume, 0, 2000, function(){
       gameMusic.play();
       gameMusic.volume = 1;
+      $("body").css("background-color", "black");
     });
 
       $("#menu_panorama").fadeOut(pageFadeTime);
@@ -188,4 +189,7 @@ $(document).ready(function () {
   $("#preview").hide();
   $("#menu_panorama").hide();
   $("#cover").hide();
+  console.log("#ph_" + gameState.phase)
+  $("#turn_n").text("TURN: " + gameState.turn);
+  $("#ph_" + gameState.phase).addClass("phase_active");
 });

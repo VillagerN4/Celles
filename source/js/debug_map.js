@@ -187,6 +187,7 @@ function updateDebugMap() {
                 };
 
                 $("#unit_" + id).css(u_css);
+                $("#unit_" + id).attr("src", `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`);
                 $("#unit_" + id + "_outline").css(u_css);
                 $("#unit_" + id + "_hull").css(u_css);
                 $("#unit_" + id + "_turret").css(u_css);

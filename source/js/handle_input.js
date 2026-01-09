@@ -7,7 +7,7 @@ function handleClick(event) {
 
         if(event.button == 0){
             
-            if(u && u.id && gameState.units[u.id].faction == gameState.activePlayer){
+            if(u && u.id && ((gameState.units[u.id].faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && gameState.units[u.id].faction != "nazis"))){
                 selectedUnitId = u ? (selectedUnitId != u.id ? u.id : null) : null;
             }else{
                 selectedUnitId = null;
@@ -120,6 +120,7 @@ function handleKeyboardInput(event) {
         if (event.key === 'A' || event.key === 'a') {
             if (selectedUnitId) {
                 const res = activateUnit(selectedUnitId);
+                if (typeof updateDebugMap === 'function') updateDebugMap();
                 setCellInfPar(res.msg);
             }
         }
@@ -160,13 +161,16 @@ function handleKeyboardInput(event) {
             selectedUnitId = null;
             selectedRow = null;
             selectedColumn = null;
+            $("#ph_" + gameState.phase).removeClass("phase_active");
             const res = endPhase();
+            $("#ph_" + gameState.phase).addClass("phase_active");
+            $("#turn_n").text("TURN: " + gameState.turn);
             setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase + "<br>" + "PHASE:" + gameState.phase + res);
 
             if (typeof updateDebugMap === 'function') updateDebugMap();
             if (typeof moveMap === 'function') moveMap();
 
-            $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
+            // $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
         }
     }
 }

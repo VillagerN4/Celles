@@ -16,7 +16,7 @@ function drawUnit(id) {
     const img1 = $("<img>", {
         id: "unit_" + id,
         class: "unit_display",
-        src: `assets/cell/${u.faction}/${u.faction}_standard.png`,
+        src: `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`,
         css: u_css
     });
 

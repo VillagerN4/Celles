@@ -48,6 +48,27 @@ function updateDisplayParams() {
         "left": mapOffsetX,
         "top": mapOffsetY
     });
+
+    let terminalWidth = window.innerWidth - boardWidth - 100;
+    console.log(terminalWidth);
+    let insideWidth = Math.min(terminalWidth, 450);
+
+    $("#game_terminal").css({
+        "width": terminalWidth + "px"
+    });
+    $("#phase_info").css({
+        "gap": insideWidth * 0.05 + "px"
+    });
+    $(".phase").css({
+        "width": insideWidth * 0.21 + "px",
+        "letter-spacing": insideWidth * 0.007 + "px",
+        "padding": insideWidth * 0.03 + "px",
+        "font-size": insideWidth * 0.03 + "px"
+    });
+    $("#turn_n").css({
+        "letter-spacing": insideWidth * 0.014 + "px",
+        "font-size": insideWidth * 0.06 + "px"
+    });
 }
 
 

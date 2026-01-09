@@ -195,7 +195,7 @@ function activateUnit(id) {
     const u = gameState.units[id];
     if (!u) return { ok: false, msg: 'Brak jednostki' };
     if (u.used) return { ok: false, msg: 'Jednostka już użyta' };
-    u.used = false; u.movementLeft = applySupplyAndDisruptionMovement(u.movement, u);
+    u.used = true; u.movementLeft = applySupplyAndDisruptionMovement(u.movement, u);
     return { ok: true, msg: 'Jednostka aktywowana' };
 }
 
