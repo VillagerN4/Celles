@@ -8,21 +8,32 @@ function handleClick(event) {
         if(event.button == 0){
             
             if(u && u.id && gameState.units[u.id].faction == gameState.activePlayer){
-                selectedUnitId = u ? u.id : null;
+                selectedUnitId = u ? (selectedUnitId != u.id ? u.id : null) : null;
+            }else{
+                selectedUnitId = null;
             }
+
+            clearPathVizualizers();
         }else if(event.button == 2){
+
             if(!u){
-                selectedRow = row;
-                selectedColumn = col;
+                if(selectedRow==row && selectedColumn==col){
+                    selectedRow = null;
+                    selectedColumn = null;
+                }else{
+                    selectedRow = row;
+                    selectedColumn = col;
+                }
+            }else{
+                selectedRow=null;
+                selectedColumn=null;
             }
+
+            clearPathVizualizers();
         }
 
-        if(selectedColumn!=null && selectedRow!=null && selectedUnitId!=null && gameState.phase == "movement"){
-            let su = gameState.units[selectedUnitId];
-            let path = findBestPath(su.row, su.col, selectedRow, selectedColumn, su);
-            if(path){
-                createPathVizualizer([...path], "help");
-            }
+        if(gameState.phase == "movement"){
+            createPathGuide();
         }
 
         updateMapBoundry();
@@ -114,6 +125,7 @@ function handleKeyboardInput(event) {
         }
         if (event.key === 'M' || event.key === 'm') {
             if (selectedUnitId!=null && selectedColumn!=null && selectedRow!=null) {
+                clearPathVizualizers();
                 const u = gameState.units[selectedUnitId];
                 if (!u || (u.faction == "nazis" && u.faction != gameState.activePlayer) || (u.faction != "nazis" && "nazis" == gameState.activePlayer)) return;
 

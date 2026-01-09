@@ -14,6 +14,7 @@ $(document).ready(function () {
 
 
   $("#debug_hex_dis").hide();
+  $("#debug_unithex_dis").hide();
   $("#debug_hex_info").hide();
   $("#cell_display").hide();
 
@@ -55,10 +56,11 @@ $(document).ready(function () {
       gameState.page = "game";
 
       gameMusic.volume = 0;
-      gameMusic.play();
 
-    fadeAudio(menuMusic, menuMusic.volume, 0, 2000);
-    fadeAudio(gameMusic, gameMusic.volume, musicVolume, 4000);
+    fadeAudio(menuMusic, menuMusic.volume, 0, 2000, function(){
+      gameMusic.play();
+      gameMusic.volume = 1;
+    });
 
       $("#menu_panorama").fadeOut(pageFadeTime);
       $("#page_menu").fadeOut(pageFadeTime, function () { $("#page_game").fadeIn(pageFadeTime, function () { pageAnimating = false }) });

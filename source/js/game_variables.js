@@ -26,6 +26,7 @@ const roadCost = { mot: 1, inf: 1 };
 const highwayCost = { mot: 0.5, inf: 1 };
 const edgeCost = { none: { mot: 0, inf: 0 }, river: { mot: 2, inf: 1 }, "large river": { mot: 999999999, inf: 999999999 } };
 const enterOccupiedMotorizedExtra = 2;
+const maxMovementCostPerTurn = 16;
 
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];

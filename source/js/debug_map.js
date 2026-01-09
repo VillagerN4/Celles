@@ -195,13 +195,15 @@ function updateDebugMap() {
     }
 }
 
-function createPathVizualizer(path, success){
+function clearPathVizualizers(){
     gameState.pathVisualizers.forEach(vis => {
         vis.elementIds.forEach(e_id => {
             $("#" + e_id).remove();
         });
     });
+}
 
+function createPathVizualizer(path, success){
     if(path.length > 1){
         gameState.pathVisualizers.push({success, path, elementIds:[]});
 
@@ -215,6 +217,7 @@ function createPathVizualizer(path, success){
             let is_last = i+1 == path.length;
             let [nr, nc] = is_last ? [-1,-1] : path[i+1];
             let [pr, pc] = i==0 ? [-1,-1] : path[i-1];
+            let arrow_type = success == "guide"? "guide" : (success ? "success" : "fail");
 
             const a_css = {
                 position: "absolute",
@@ -230,7 +233,7 @@ function createPathVizualizer(path, success){
                 jQuery('<img>', {
                     id: `path${path_vis_id}_arrow_${i}_0`,
                     class: "debug_path_visualizer",
-                    src: `assets/cell/arrow_${success ? "success" : "fail"}.png`,
+                    src: `assets/cell/path/arrow_${arrow_type}.png`,
                     css: {
                         ...a_css,
                         transform: (exit_edge > 2) ? `rotate(${180 - 60 * (exit_edge - 4)}deg)` : `rotate(${60 * (exit_edge - 1)}deg)`
@@ -246,7 +249,7 @@ function createPathVizualizer(path, success){
                 jQuery('<img>', {
                     id: `path${path_vis_id}_arrow_${i}_1`,
                     class: "debug_path_visualizer",
-                    src: `assets/cell/arrow_${success ? "success" : "fail"}${is_last ? "_end" : ""}.png`,
+                    src: `assets/cell/path/arrow_${arrow_type}${is_last ? "_end" : ""}.png`,
                     css: {
                         ...a_css,
                         transform: (entry_edge > 2) ? `rotate(${180 - 60 * (entry_edge - 4)}deg)` : `rotate(${60 * (entry_edge - 1)}deg)`

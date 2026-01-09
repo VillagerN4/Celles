@@ -58,6 +58,7 @@ function fadeAudio(audio, startVolume, endVolume, duration, callback) {
         if (currentStep >= steps) {
             clearInterval(fadeInterval);
             if (endVolume === 0) audio.pause();
+            if (callback) callback();
         }
     }, stepTime);
 }

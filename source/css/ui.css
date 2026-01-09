@@ -211,8 +211,12 @@
 
 #set_list{
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: space-around;
+    column-gap: 30vw;
     height: 50%;
 }
 
@@ -233,24 +237,24 @@
     -webkit-appearance: none;
     appearance: none;
 
+    transform: translateY(3px);
     width: 6vw;
-    height: 1.2vh;
+    height: 0.7vh;
+    border: #181a18 5px solid;
     background: #181a18;
-    border-radius: 4px;
     outline: none;
     cursor: pointer;
+    border-radius: 15px;
 }
 
 .slider::-webkit-slider-runnable-track {
     height: 0.7vh;
     background: #303c32;
-    border-radius: 4px;
 }
 
 .slider::-moz-range-track {
     height: 0.7vh;
     background: #303c32;
-    border-radius: 4px;
 }
 
 .slider::-webkit-slider-thumb {
@@ -263,6 +267,7 @@
     border-radius: 50%;
     margin-top: -6px;
     transition: 0.2s;
+    transform: translateY(-1px);
 }
 
 .slider::-moz-range-thumb {
@@ -272,6 +277,7 @@
     border: 4px solid #4a4a4a;
     border-radius: 50%;
     transition: 0.2s;
+    transform: translateY(-1px);
 }
 
 #controls_content{
@@ -287,4 +293,72 @@
     flex-direction: row;
     justify-content: space-between;
     opacity: 0.8;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translateY(-8px);
+    background-color: #303c32;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border: #181a18 5px solid;
+}
+
+.toggle:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #d9e8dc;
+    border: 4px solid #4a4a4a;
+    -webkit-transition: .4s;
+    transform: translate(-8px, 9px);
+    transition: .4s;
+}
+
+input:checked + .toggle {
+    background-color: #9da3aa;
+}
+
+input:focus + .toggle {
+    box-shadow: 0 0 1px #9fa5aa;
+}
+
+input:checked + .toggle:before {
+    -webkit-transform: translate(16px, 9px);
+    -ms-transform: translate(16px, 9px);
+    transform: translate(16px, 9px);
+}
+
+.toggle.round {
+    border-radius: 34px;    
+}
+
+.toggle.round:before {
+    border-radius: 50%;
+}
+
+.setting{
+    width: 25vw;
+    text-align: start;
 }

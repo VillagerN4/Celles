@@ -181,6 +181,8 @@ function executeMovementPath(unitId, path) {
         if(r==selectedRow && c==selectedColumn){
             selectedRow = null;
             selectedColumn = null;
+        }else{
+            createPathGuide();
         }
         
     }
@@ -218,4 +220,23 @@ function moveUnitToTarget(unitId, tr, tc) {
         used.push([r, c]);
     }
     return executeMovementPath(u.id, used);
+}
+
+function createPathGuide(){
+    if(selectedColumn!=null && selectedRow!=null && selectedUnitId!=null){
+        let su = gameState.units[selectedUnitId];
+        let path = findBestPath(su.row, su.col, selectedRow, selectedColumn, su);
+        if(path){
+            let pathCost = 0;
+            for (let i = 0; i < path.length; i++) {
+                const [r, c] = path[i];
+                const pr = (i === 0) ? su.row : path[i - 1][0];
+                const pc = (i === 0) ? su.col : path[i - 1][1];
+                const cost = getMovementCostForEntry(su, pr, pc, r, c);
+                pathCost += cost;
+            }
+            
+            createPathVizualizer([...path], (pathCost >= su.movementLeft ? false : "guide"));
+        }
+    }
 }
