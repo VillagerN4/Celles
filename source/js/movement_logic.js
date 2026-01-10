@@ -227,6 +227,7 @@ function createPathGuide(){
         let su = gameState.units[selectedUnitId];
         let path = findBestPath(su.row, su.col, selectedRow, selectedColumn, su);
         if(path){
+            let block = null;
             let pathCost = 0;
             for (let i = 0; i < path.length; i++) {
                 const [r, c] = path[i];
@@ -234,9 +235,12 @@ function createPathGuide(){
                 const pc = (i === 0) ? su.col : path[i - 1][1];
                 const cost = getMovementCostForEntry(su, pr, pc, r, c);
                 pathCost += cost;
+                if(cost > 90000){
+                    block = [pr, pc];
+                }
             }
             
-            createPathVizualizer([...path], (pathCost >= su.movementLeft ? false : "guide"));
+            createPathVizualizer([...path], (pathCost >= su.movementLeft ? false : "guide"), block);
         }
     }
 }

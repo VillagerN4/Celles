@@ -204,7 +204,7 @@ function clearPathVizualizers(){
     });
 }
 
-function createPathVizualizer(path, success){
+function createPathVizualizer(path, success, blockade){
     if(path.length > 1){
         gameState.pathVisualizers.push({success, path, elementIds:[]});
 
@@ -240,6 +240,24 @@ function createPathVizualizer(path, success){
                         transform: (exit_edge > 2) ? `rotate(${180 - 60 * (exit_edge - 4)}deg)` : `rotate(${60 * (exit_edge - 1)}deg)`
                     }
                 }).appendTo('#board_paths');
+
+                if(blockade != null){
+                    console.log("there is a blockade", blockade, r == blockade[0] && c == blockade[1], r, blockade[0], c, blockade[1]);
+                    if(r == blockade[0] && c == blockade[1]){
+                        console.log("this is a blockade");
+                        jQuery('<img>', {
+                            id: `path${path_vis_id}_arrow_${i}_block`,
+                            class: "debug_path_visualizer",
+                            src: `assets/cell/path/impassable.png`,
+                            css: {
+                                ...a_css,
+                                transform: (exit_edge > 2) ? `rotate(${180 - 60 * (exit_edge - 4)}deg)` : `rotate(${60 * (exit_edge - 1)}deg)`
+                            }
+                        }).appendTo('#board_paths');
+
+                        gameState.pathVisualizers[path_vis_id].elementIds.push(`path${path_vis_id}_arrow_${i}_block`);
+                    }
+                }
 
                 gameState.pathVisualizers[path_vis_id].elementIds.push(`path${path_vis_id}_arrow_${i}_0`);
             }
@@ -288,6 +306,7 @@ function updatePathVizualizers(){
 
                 if(!is_last){
                     $(`#path${j}_arrow_${i}_0`).css(a_css);
+                    $(`#path${j}_arrow_${i}_block`).css(a_css);
                 }
 
                 if(i>0){

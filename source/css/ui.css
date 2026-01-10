@@ -422,8 +422,8 @@ input:checked + .toggle:before {
     font-size: xx-large;
 }
 
-.game_button:hover {
-    color: #000000;
+.game_button:hover, .game_button.selected {
+    color: #ffffff;
 }
 
 .game_button{
@@ -455,7 +455,7 @@ input:checked + .toggle:before {
     z-index: -1;
 }
 
-.game_button:hover::before {
+.game_button:hover::before, .game_button.selected::before  {
     opacity: 1;
 }
 

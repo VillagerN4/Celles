@@ -146,41 +146,35 @@ $(document).ready(function () {
 
   $("#tab_cell_b").click(function (event) {
     gameState.terminalTab = 'cell';
-    $("#tab_cell").show();
-    $("#tab_unit").hide();
-    $("#tab_log").hide();
+    updateTerminalTabButtons();
   });
 
   $("#tab_unit_b").click(function (event) {
     gameState.terminalTab = 'unit';
-    $("#tab_cell").hide();
-    $("#tab_unit").show();
-    $("#tab_log").hide();
+    updateTerminalTabButtons();
   });
 
   $("#tab_log_b").click(function (event) {
     gameState.terminalTab = 'log';
-    $("#tab_cell").hide();
-    $("#tab_unit").hide();
-    $("#tab_log").show();
+    updateTerminalTabButtons();
   });
 
   $(".button").mouseover(function (event) {
-    if (!pageAnimating) {
+    if (!pageAnimating && !($(this).hasClass("selected"))) {
       mHover.currentTime = 0;
       mHover.play();
     }
   });
 
   $(".button").mousedown(function (event) {
-    if (!pageAnimating && event.which == 1) {
+    if (!pageAnimating && event.which == 1 && !($(this).hasClass("selected"))) {
       mClick.currentTime = 0;
       mClick.play();
     }
   });
 
   $(".button").mouseup(function (event) {
-    if (!pageAnimating && event.which == 1) {
+    if (!pageAnimating && event.which == 1 && !($(this).hasClass("selected"))) {
       mClickRelease.currentTime = 0;
       mClickRelease.play();
     }
@@ -211,8 +205,7 @@ $(document).ready(function () {
   $("#preview").hide();
   $("#menu_panorama").hide();
   $("#cover").hide();
-  $("#tab_unit").hide();
-  $("#tab_cell").hide();
+  updateTerminalTabButtons();
   $("#turn_n").text("TURN: " + gameState.turn);
   $("#ph_" + gameState.phase).addClass("phase_active");
 });

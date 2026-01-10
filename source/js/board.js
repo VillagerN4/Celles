@@ -50,7 +50,6 @@ function updateDisplayParams() {
     });
 
     let terminalWidth = window.innerWidth - boardWidth - 100;
-    console.log(terminalWidth);
     let insideWidth = Math.min(terminalWidth, 450);
 
     $("#game_terminal").css({
@@ -332,6 +331,33 @@ function moveMap() {
         $("#debug_unithex_dis").hide();
     } else {
         $("#debug_unithex_dis").show();
+    }
+}
+
+function updateTerminalTabButtons(){
+    if(gameState.terminalTab == "cell"){
+        $("#tab_cell_b").addClass("selected");
+        $("#tab_unit_b").removeClass("selected");
+        $("#tab_log_b").removeClass("selected");
+        $("#tab_cell").show();
+        $("#tab_unit").hide();
+        $("#tab_log").hide();
+    }
+    if(gameState.terminalTab == "unit"){
+        $("#tab_cell_b").removeClass("selected");
+        $("#tab_unit_b").addClass("selected");
+        $("#tab_log_b").removeClass("selected");
+        $("#tab_cell").hide();
+        $("#tab_unit").show();
+        $("#tab_log").hide();
+    }
+    if(gameState.terminalTab == "log"){
+        $("#tab_cell_b").removeClass("selected");
+        $("#tab_unit_b").removeClass("selected");
+        $("#tab_log_b").addClass("selected");
+        $("#tab_cell").hide();
+        $("#tab_unit").hide();
+        $("#tab_log").show();
     }
 }
 
