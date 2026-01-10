@@ -13,6 +13,10 @@ function drawUnit(id) {
         height: hexHeight * 2 * zoom + "px"
     }
 
+    const unitC = $("<div>", {
+        id: "unit_" + id + "_container"
+    });
+
     const img1 = $("<img>", {
         id: "unit_" + id,
         class: "unit_display",
@@ -31,34 +35,90 @@ function drawUnit(id) {
         id: "unit_" + id + "_hull",
         class: "unit_hull_display",
         src: `assets/unit/${u.faction}/${model}_hull.png`,
-        css: u_css
+        css: {...u_css, transform: `rotate(${edgeToAngle[u.starterAngleEdge]}deg)`}
     });
 
     const img4 = $("<img>", {
         id: "unit_" + id + "_turret",
         class: "unit_turret_display",
         src: `assets/unit/${u.faction}/${model}_turret.png`,
-        css: u_css
+        css: {...u_css, transform: `rotate(${edgeToAngle[u.starterAngleEdge]}deg)`}
     });
 
-    $("#debug_board_container").append(img1);
-    $("#debug_board_container").append(img2);
-    $("#debug_board_container").append(img3);
-    $("#debug_board_container").append(img4);
+    const moveSound = $("<audio>", {
+        id: "unit_" + id + "_moving_sound",
+        src: 'assets/audio/unit/tank_move.mp3'
+    });
+
+    const shootSound = $("<audio>", {
+        id: "unit_" + id + "_shooting_sound",
+        src: 'assets/audio/unit/tank_shoot.mp3'
+    });
+
+    const debrisSound = $("<audio>", {
+        id: "unit_" + id + "_debris_sound",
+        src: 'assets/audio/unit/tank_explode_debris.mp3'
+    });
+
+    const explodeSound = $("<audio>", {
+        id: "unit_" + id + "_exploding_sound",
+        src: `assets/audio/unit/tank_explode${1 + Math.floor(Math.random() * 3)}.mp3`
+    });
+
+    let contId = "#unit_" + id + "_container";
+
+    $("#board_units").append(unitC);
+    $(contId).append(img1);
+    $(contId).append(img2);
+    $(contId).append(img3);
+    $(contId).append(img4);
+    $(contId).append(moveSound);
+    $(contId).append(shootSound);
+    $(contId).append(explodeSound);
+    $(contId).append(debrisSound);
+
+    u.setupSounds();
 }
 
-function createUnit(id, faction, type, col, row, levels, movement, attack, defense, motorized, model) {
+function createUnit(id, faction, type, col, row, levels, movement, attack, defense, motorized, model, starterAngleEdge) {
     return {
         id, faction, type, col, row, levels,
         movement, movementLeft: movement, attack, defense,
         motorized: !!motorized, used: false,
         supplyState: 'supplied', disrupted: false,
-        model
+        model, moveSound: null, shootSound: null, debrisSound: null, explodeSound: null,
+        startMoveSound: function(){
+            this.moveSound.currentTime = Math.random() * 10;
+            this.moveSound.play();
+            fadeAudio(this.moveSound, 0, 0.5, 600);
+        },
+        stopMoveSound: function(){
+            fadeAudio(this.moveSound, this.moveSound.volume, 0, 600);
+        },
+        playShootSound: function(){
+            this.shootSound.currentTime = 0;
+            this.shootSound.play();
+        },
+        playExplodeSound: function(){
+            this.explodeSound.volume = 0.7
+            this.explodeSound.currentTime = 0;
+            this.explodeSound.play();
+            this.debrisSound.currentTime = 0;
+            this.debrisSound.play();
+        },
+        setupSounds: function(){
+            this.moveSound = document.getElementById("unit_" + id + "_moving_sound");
+            this.shootSound = document.getElementById("unit_" + id + "_shooting_sound");
+            this.debrisSound = document.getElementById("unit_" + id + "_debris_sound");
+            this.explodeSound = document.getElementById("unit_" + id + "_exploding_sound");
+        },
+        starterAngleEdge, col_offset: 0, row_offset: 0,
+        offsetProgress: 0
     };
 }
 
 function seedUnitsExample() {
-    gameState.units['u_01_01'] = createUnit('u_01_01', 'nazis', 'armor', 0, 0, 2, 9, 7, 5, true, "panzer3");
-    gameState.units['u_10_05'] = createUnit('u_10_05', 'allies', 'infantry', 9, 4, 2, 4, 3, 4, false, "sherman");
-    gameState.units['u_05_05'] = createUnit('u_05_05', 'brits', 'armor', 14, 8, 2, 4, 3, 4, false, "sherman");
+    gameState.units['u_01_01'] = createUnit('u_01_01', 'nazis', 'armor', 0, 0, 2, 9, 7, 5, true, "panzer3", 4);
+    gameState.units['u_10_05'] = createUnit('u_10_05', 'allies', 'infantry', 9, 4, 2, 4, 3, 4, false, "sherman", 0);
+    gameState.units['u_05_05'] = createUnit('u_05_05', 'brits', 'armor', 14, 8, 2, 4, 3, 4, false, "sherman", 2);
 }

@@ -173,26 +173,51 @@ function updateDebugMap() {
             $("#label_cell" + padLeft(c + 1, 2) + padLeft(r, 2)).css(l_css);
             $("#label_cell_inner" + padLeft(c + 1, 2) + padLeft(r, 2)).css(l_css);
 
-            for (let id in gameState.units) {
-                const u = gameState.units[id];
-                const pos = getHexCenterPos(u.row, u.col);
-                const ux = pos[0] - hexRadius * zoom + "px";
-                const uy = pos[1] - hexHeight * zoom + "px";
-
-                const u_css = {
-                    "width": hexRadius*2*zoom + "px",
-                    "height": hexHeight*2*zoom + "px", 
-                    "left": ux,
-                    "top": uy
-                };
-
-                $("#unit_" + id).css(u_css);
-                $("#unit_" + id).attr("src", `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`);
-                $("#unit_" + id + "_outline").css(u_css);
-                $("#unit_" + id + "_hull").css(u_css);
-                $("#unit_" + id + "_turret").css(u_css);
-            }
+            updateUnits();
         }
+    }
+}
+
+function updateUnits(){
+    for (let id in gameState.units) {
+        const u = gameState.units[id];
+        const pos = getHexCenterPos(u.row, u.col);
+        const ux = pos[0] - hexRadius * zoom;
+        const uy = pos[1] - hexHeight * zoom;
+
+        let rop = Math.abs(u.row_offset);
+        let cop = Math.abs(u.col_offset);
+
+        let offsetrow = u.row + Math.ceil(rop * (u.row_offset < 0 ? -1 : 1));
+        let offsetcol = u.col + Math.ceil(cop * (u.col_offset < 0 ? -1 : 1));
+
+        const offsetpos = getHexCenterPos(offsetrow, offsetcol);
+
+        const tux = offsetpos[0] - hexRadius * zoom;
+        const tuy = offsetpos[1] - hexHeight * zoom;
+
+        const delta_x = (tux - ux)*u.offsetProgress;
+        const delta_y = (tuy - uy)*u.offsetProgress;
+
+        const u_css = {
+            "width": hexRadius*2*zoom + "px",
+            "height": hexHeight*2*zoom + "px", 
+            "left": ux + "px",
+            "top": uy + "px"
+        };
+
+        const off_u_css = {
+            "width": hexRadius*2*zoom + "px",
+            "height": hexHeight*2*zoom + "px", 
+            "left": ux + delta_x + "px",
+            "top": uy + delta_y + "px"
+        };
+
+        $("#unit_" + id).css(u_css);
+        $("#unit_" + id).attr("src", `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`);
+        $("#unit_" + id + "_outline").css(u_css);
+        $("#unit_" + id + "_hull").css(off_u_css);
+        $("#unit_" + id + "_turret").css(off_u_css);
     }
 }
 
@@ -316,4 +341,16 @@ function updatePathVizualizers(){
 
         };
     }
+}
+
+function updateTurnDisplays(){
+    $("#turn_nazis_on").attr("src",`assets/ui/turn/turn_nazis_on_${schoolMode}.png`);
+    $("#turn_nazis").attr("src",`assets/ui/turn/turn_nazis_off_${schoolMode}.png`);
+
+    $("#turn_nazis_on").css({
+        filter: `opacity(${gameState.activePlayer == "nazis" ? 1 : 0})`
+    });
+    $("#turn_allies_on").css({
+        filter: `opacity(${gameState.activePlayer == "nazis" ? 0 : 1})`
+    });
 }

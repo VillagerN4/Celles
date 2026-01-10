@@ -117,7 +117,7 @@ function updateDisplayParams() {
     });
     $(".terminal_tab").css({
         "width": insideWidth * 0.87 + "px",
-        "height": window.innerHeight - 400 + "px"
+        "height": window.innerHeight - 420 + "px"
     });
     $(".ter_preview").css({
         "width": insideWidth * 0.214 + "px",
@@ -282,6 +282,10 @@ function moveMap() {
         $("#debug_hex_dis").show();
     }
 
+    function isBridge(i){
+       return (!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || (gameState.activePlayer == "nazis" && !allowNazisBridge);
+    }
+
     cell_preview.src = `assets/ui/terrain_preview/${terrainTypes[cell_data.terrainType]}.png`;
     cell_info_id.innerHTML = `CELL ID: ${cell_data_id}`;
     
@@ -291,7 +295,7 @@ function moveMap() {
     cell_detail_addcost.innerHTML = `ADDITIONAL <br>[MOT:${edgeCost[edgeInfo[1]]['mot']} ; INF:${edgeCost[edgeInfo[1]]['inf']}] AT: <br>[`;
     for(i = 0; i < cell_data.edges.length; i++){
         if(cell_data.edges[i] == 1){
-            if((!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || gameState.activePlayer == "nazis"){
+            if(isBridge(i)){
                 additional_count += 1;
             }
         }
@@ -299,7 +303,7 @@ function moveMap() {
     let inserted_cost = 0;
     for(i = 0; i < cell_data.edges.length; i++){
         if(cell_data.edges[i] == 1){
-            if((!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || gameState.activePlayer == "nazis"){
+            if(isBridge(i)){
                 cell_detail_addcost.innerHTML += edgeNames[i].toUpperCase();
                 inserted_cost += 1;
 
@@ -314,7 +318,7 @@ function moveMap() {
     cell_detail_imp.innerHTML = `IMPASSABLE AT: <br>[`;
     for(i = 0; i < cell_data.edges.length; i++){
         if(cell_data.edges[i] == 2){
-            if((!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || gameState.activePlayer == "nazis"){
+            if(isBridge(i)){
                 impassable_count += 1;
             }
         }
@@ -322,7 +326,7 @@ function moveMap() {
     let impass_insert = 0;
     for(i = 0; i < cell_data.edges.length; i++){
         if(cell_data.edges[i] == 2){
-            if((!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || gameState.activePlayer == "nazis"){
+            if(isBridge(i)){
                 cell_detail_imp.innerHTML += edgeNames[i].toUpperCase();
                 impass_insert += 1;
 

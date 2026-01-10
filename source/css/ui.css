@@ -218,7 +218,7 @@
     flex-wrap: wrap;
     align-items: center;
     align-content: space-around;
-    column-gap: 30vw;
+    column-gap: 20vw;
     height: 50%;
 }
 
@@ -361,7 +361,7 @@ input:checked + .toggle:before {
 }
 
 .setting{
-    width: 25vw;
+    width: 40vw;
     text-align: start;
 }
 
@@ -575,4 +575,25 @@ input:checked + .toggle:before {
     min-width: 18px;
     height: 18px;
     letter-spacing: 1px;
+}
+
+#terminal_extra{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 12px;
+    border: #1bb034 5px solid;
+}
+
+.turn_holder{
+    width: 80px;
+    height: 80px;
+}
+
+.turn{
+    position: absolute;
+    width: inherit;
+    height: inherit;
+    transition: filter 1s ease-in-out;
 }

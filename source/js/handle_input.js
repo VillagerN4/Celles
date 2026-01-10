@@ -171,6 +171,7 @@ function handleKeyboardInput(event) {
 
             if (typeof updateDebugMap === 'function') updateDebugMap();
             if (typeof moveMap === 'function') moveMap();
+            updateTurnDisplays();
 
             // $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
         }

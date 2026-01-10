@@ -98,3 +98,32 @@ function blurMenu() {
         });
     });
 }
+
+function getElementRotation(element){
+    var el = document.getElementById(element);
+    var st = window.getComputedStyle(el, null);
+    var tr = st.getPropertyValue("transform") || "FAIL";
+
+    var values = tr.split('(')[1].split(')')[0].split(',');
+    var a = values[0];
+    var b = values[1];
+
+    var angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+    return angle;
+}
+
+function normalizeAngle(angle) {
+    return ((angle % 360) + 360) % 360;
+}
+
+function shortestRotation(currentAngle, edge) {
+    const target = normalizeAngle(edgeToAngle[edge]);
+    const current = normalizeAngle(currentAngle);
+
+    let delta = target - current;
+
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+
+    return delta;
+}

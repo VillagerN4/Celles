@@ -32,19 +32,19 @@
 <div id="cover"></div>
 
 <div id="menu_panorama">
-    <img src="assets/ui/pan_sky.jpg" id="menu_pan_bg" class="panorama">
-    <img src="assets/ui/pan_horizont.png" id="menu_pan_hz" class="panorama">
-    <img src="assets/ui/pan0.png" id="menu_pan_0" class="panorama">
-    <img src="assets/ui/pan1.png" id="menu_pan_1" class="panorama">
-    <img src="assets/ui/pan2.png" id="menu_pan_2" class="panorama">
-    <img src="assets/ui/pan3.png" id="menu_pan_3" class="panorama">
+    <img src="assets/ui/panorama/pan_sky.jpg" id="menu_pan_bg" class="panorama">
+    <img src="assets/ui/panorama/pan_horizont.png" id="menu_pan_hz" class="panorama">
+    <img src="assets/ui/panorama/pan0.png" id="menu_pan_0" class="panorama">
+    <img src="assets/ui/panorama/pan1.png" id="menu_pan_1" class="panorama">
+    <img src="assets/ui/panorama/pan2.png" id="menu_pan_2" class="panorama">
+    <img src="assets/ui/panorama/pan3.png" id="menu_pan_3" class="panorama">
 </div>
 
-<audio id="menu_music" src="assets/audio/Military Precision.mp3" loop></audio>
-<audio id="game_music" src="assets/audio/The Wall.mp3" loop></audio>
-<audio id="m_hover" src="assets/audio/buttonrollover.wav"></audio>
-<audio id="m_click" src="assets/audio/buttonclick.wav"></audio>
-<audio id="m_click_rel" src="assets/audio/buttonclickrelease.wav"></audio>
+<audio id="menu_music" src="assets/audio/music/Military Precision.mp3" loop></audio>
+<audio id="game_music" src="assets/audio/music/The Wall.mp3" loop></audio>
+<audio id="m_hover" src="assets/audio/button/buttonrollover.wav"></audio>
+<audio id="m_click" src="assets/audio/button/buttonclick.wav"></audio>
+<audio id="m_click_rel" src="assets/audio/button/buttonclickrelease.wav"></audio>
 
 <div id="page_tap">
     <p id="tap_anywhere">Press &lt;Left Mouse Button&gt; to START</p>
@@ -126,6 +126,19 @@
                 </div>
 
                 <div class="setting">
+                    <label for="movement_mult" class="menu_text">MOVEMENT POINT MULTIPIER:</label>
+                    <input type="range" min="1" max="4" step="1" value="1" name="movement_mult" id="movement_mult" class="slider">
+                </div>
+
+                <div class="setting">
+                    <label class="menu_text">ALLOW NAZIS TO CROSS BRIDGES:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="nazis_bridge" name="nazis_bridge">
+                        <span class="toggle round button"></span>
+                    </label>
+                </div>
+
+                <div class="setting">
                     <label class="menu_text">SCHOOL MODE:</label>
                     <label class="switch">
                         <input type="checkbox" checked id="school_mode" name="school_mode">
@@ -149,6 +162,7 @@
     <div id="board_container">
         <img src="assets/map/board.png" id="board">
         <div id="debug_board_container">
+            <div id="board_units"></div>
             <div id="board_roads"></div>
             <div id="board_highways"></div>
             <div id="board_rivers"></div>
@@ -168,6 +182,7 @@
                 <p id="ph_supply" class="phase">SUPPLY</p>
             </div>
         </div>
+
         <div id="terminal_tabs">
             <div id="tt_buttons">
                 <p class="game_button button" id="tab_cell_b">CELL</p>
@@ -213,10 +228,26 @@
                 </div>
             </div>
         </div>
-        <p id="cost_info">-</p>
-        <p id="cell_info">-</p>
-        <p id="debug_hex_info">-</p>
+
+        <div id="terminal_extra">
+            <div class="turn_holder">
+                <img src="assets/ui/turn/turn_nazis_off_false.png" id="turn_nazis" class="turn">
+                <img src="assets/ui/turn/turn_nazis_on_false.png" id="turn_nazis_on" class="turn">
+            </div>
+
+            <p class="button game_button" id="proceed_b">PROCEED</p>
+
+            <div class="turn_holder">
+                <img src="assets/ui/turn/turn_allies_off.png" id="turn_allies" class="turn">
+                <img src="assets/ui/turn/turn_allies_on.png" id="turn_allies_on" class="turn">
+            </div>
+        </div>
+
     </div>
+
+    <p id="cost_info">-</p>
+    <p id="cell_info">-</p>
+    <p id="debug_hex_info">-</p>
 </div>
 </body>
 </html>

@@ -190,11 +190,25 @@ $(document).ready(function () {
     updateDisplayParams();
   });
 
+  $("#school_mode").click(function () {
+    schoolMode = $(this).is(':checked');
+    updateTurnDisplays();
+  });
+
+  $("#nazis_bridge").click(function () {
+    allowNazisBridge = $(this).is(':checked');
+  });
+
   $("#blur_amount").mousemove(function () {
     panBlurAmount = $(this).val();
 
     blurMenu();
   });
+
+  $("#movement_mult").mousemove(function () {
+    movementMultiplier = $(this).val();
+  });
+
 
   $("#music_volume").mousemove(function () {
     musicVolume = $(this).val();
@@ -213,6 +227,7 @@ $(document).ready(function () {
   $("#cell_info").hide();
   $("#debug_hex_info").hide();
   updateTerminalTabButtons();
+  updateTurnDisplays();
   $("#turn_n").text("TURN: " + gameState.turn);
   $("#ph_" + gameState.phase).addClass("phase_active");
 });

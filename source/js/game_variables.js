@@ -5,6 +5,9 @@ var pageFadeTime = !debugMode ? 1500 : 1;
 var musicStarted = false;
 var musicVolume = 1;
 var panBlurAmount = 4;
+var movementMultiplier = 1;
+var schoolMode = true;
+var allowNazisBridge = false;
 
 const gameState = {
   page: 'menu',
@@ -29,6 +32,8 @@ const highwayCost = { mot: 0.5, inf: 1 };
 const edgeCost = { none: { mot: 0, inf: 0 }, river: { mot: 2, inf: 1 }, "large river": { mot: 999999999, inf: 999999999 } };
 const enterOccupiedMotorizedExtra = 2;
 const maxMovementCostPerTurn = 16;
+
+const edgeToAngle = [-60, 0, 60, 240, 180, 120];
 
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];

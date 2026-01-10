@@ -13,10 +13,14 @@
 .unit_hull_display{
     position: absolute;
     z-index: 110;
+    transform: rotate(0deg);
+    transition: transform 5s linear;
 }
 
 .unit_turret_display{
     z-index: 111;
+    transform: rotate(0deg);
+    transition: transform 5s linear;
 }
 
 .debug_path_visualizer{

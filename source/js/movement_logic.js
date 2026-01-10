@@ -93,7 +93,7 @@ function getMovementCostForEntry(unit, fromRow, fromCol, toRow, toCol) {
             }
         });
     }
-    if (cost > 0 && ((from.edges[movementDirectionEdge] == 0 && fact == "nazis") || fact != "nazis")) return cost + (occupied ? 999999 : 0);
+    if (cost > 0 && ((from.edges[movementDirectionEdge] == 0 && fact == "nazis" || allowNazisBridge) || fact != "nazis")) return cost + (occupied ? 999999 : 0);
 
     cost = terrainCost[terrain][typ];
     // console.log("base cost: ", cost);
@@ -169,12 +169,15 @@ function executeMovementPath(unitId, path) {
             u.movementLeft -= cost; u.row = r; u.col = c;
         }
 
+        let currentRotation = getElementRotation("unit_" + unitId + "_hull");
+        let deltaRotation = shortestRotation(currentRotation, edge);
+
         $("#unit_" + unitId + "_turret").css({
-            "transform": (edge > 2) ? `rotate(${180 - 60 * (edge - 4)}deg)` : `rotate(${60 * (edge - 1)}deg)`
+            "transform": `rotate(${currentRotation + deltaRotation}deg)`
         });
 
         $("#unit_" + unitId + "_hull").css({
-            "transform": (edge > 2) ? `rotate(${180 - 60 * (edge - 4)}deg)` : `rotate(${60 * (edge - 1)}deg)`
+            "transform": `rotate(${currentRotation + deltaRotation}deg)`
         });
 
         selectedUnitId = unitId;
