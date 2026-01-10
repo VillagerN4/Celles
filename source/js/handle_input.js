@@ -7,7 +7,7 @@ function handleClick(event) {
 
         if(event.button == 0){
             
-            if(u && u.id && ((gameState.units[u.id].faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && gameState.units[u.id].faction != "nazis"))){
+            if(u && u.id){
                 selectedUnitId = u ? (selectedUnitId != u.id ? u.id : null) : null;
             }else{
                 selectedUnitId = null;
@@ -32,7 +32,7 @@ function handleClick(event) {
             clearPathVizualizers();
         }
 
-        if(gameState.phase == "movement"){
+        if(selectedUnitId && gameState.phase == "movement" && ((gameState.units[selectedUnitId].faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && gameState.units[selectedUnitId].faction != "nazis"))){
             createPathGuide();
         }
 
@@ -161,6 +161,7 @@ function handleKeyboardInput(event) {
             selectedUnitId = null;
             selectedRow = null;
             selectedColumn = null;
+            clearPathVizualizers();
             $("#ph_" + gameState.phase).removeClass("phase_active");
             const res = endPhase();
             $("#ph_" + gameState.phase).addClass("phase_active");

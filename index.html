@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>CELLES</title>
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="source/data/board_info.js"></script>
     <script src="source/data/factions_info.js"></script>    
@@ -165,6 +166,39 @@
                 <p id="ph_movement" class="phase">MOVEMENT</p>
                 <p id="ph_combat" class="phase">COMBAT</p>
                 <p id="ph_supply" class="phase">SUPPLY</p>
+            </div>
+        </div>
+        <div id="terminal_tabs">
+            <div id="tt_buttons">
+                <p class="game_button button" id="tab_cell_b">CELL</p>
+                <p class="game_button button" id="tab_unit_b">UNIT</p>
+                <p class="game_button button" id="tab_log_b">LOG</p>
+            </div>
+            <div id="tab_cell" class="terminal_tab">
+                <div id="tab_cell_available">
+                    <div id="cell_overview">
+                        <img src="assets/ui/terrain_preview/town.png" id="cell_preview">
+                        <p class="cell_info_text" id="cell_info_id">CELL ID: 0000</p>
+                    </div>
+                    <div id="cell_details">
+                        <p class="cell_detail_text" id="cell_detail_type">TERRAIN TYPE: -----</p>
+                        <p class="cell_detail_text" id="cell_detail_cost">ENTRY COST: -</p>
+                        <p class="cell_detail_text" id="cell_detail_addcost">ADDITIONAL COSTS AT: -</p>
+                        <p class="cell_detail_text" id="cell_detail_imp">IMPASSABLE AT: -</p>
+                        <p class="cell_detail_text" id="cell_detail_roads">ROADS AT: -</p>
+                        <p class="cell_detail_text" id="cell_detail_hways">HIGHWATS AT: -</p>
+                        <p class="cell_detail_text" id="cell_detail_village">HAS VILLAGE/TOWN</p>
+                    </div>
+                </div>
+                <div id="tab_cell_notavailable">
+                    <p class="cell_info_text">NOT AVAILABLE - NO CELL SELECTED</p>
+                </div>
+            </div>
+            <div id="tab_unit" class="terminal_tab">
+
+            </div>
+            <div id="tab_log" class="terminal_tab">
+
             </div>
         </div>
         <p id="cost_info">-</p>

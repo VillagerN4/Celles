@@ -60,7 +60,7 @@ $(document).ready(function () {
     fadeAudio(menuMusic, menuMusic.volume, 0, 2000, function(){
       gameMusic.play();
       gameMusic.volume = 1;
-      $("body").css("background-color", "black");
+      $("body").css("background-color", "#191822");
     });
 
       $("#menu_panorama").fadeOut(pageFadeTime);
@@ -69,6 +69,7 @@ $(document).ready(function () {
       seedUnitsExample();
       updateDisplayParams();
       createDebugMap();
+      moveMap();
       for (let id in gameState.units) {
         drawUnit(id);
       }
@@ -143,6 +144,27 @@ $(document).ready(function () {
     }
   });
 
+  $("#tab_cell_b").click(function (event) {
+    gameState.terminalTab = 'cell';
+    $("#tab_cell").show();
+    $("#tab_unit").hide();
+    $("#tab_log").hide();
+  });
+
+  $("#tab_unit_b").click(function (event) {
+    gameState.terminalTab = 'unit';
+    $("#tab_cell").hide();
+    $("#tab_unit").show();
+    $("#tab_log").hide();
+  });
+
+  $("#tab_log_b").click(function (event) {
+    gameState.terminalTab = 'log';
+    $("#tab_cell").hide();
+    $("#tab_unit").hide();
+    $("#tab_log").show();
+  });
+
   $(".button").mouseover(function (event) {
     if (!pageAnimating) {
       mHover.currentTime = 0;
@@ -189,7 +211,8 @@ $(document).ready(function () {
   $("#preview").hide();
   $("#menu_panorama").hide();
   $("#cover").hide();
-  console.log("#ph_" + gameState.phase)
+  $("#tab_unit").hide();
+  $("#tab_cell").hide();
   $("#turn_n").text("TURN: " + gameState.turn);
   $("#ph_" + gameState.phase).addClass("phase_active");
 });

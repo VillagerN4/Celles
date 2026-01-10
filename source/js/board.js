@@ -54,7 +54,9 @@ function updateDisplayParams() {
     let insideWidth = Math.min(terminalWidth, 450);
 
     $("#game_terminal").css({
-        "width": terminalWidth + "px"
+        "width": terminalWidth + "px",
+        "height": window.innerHeight - 50 + "px",
+        "gap": insideWidth * 0.02 + "px"
     });
     $("#phase_info").css({
         "gap": insideWidth * 0.05 + "px"
@@ -65,9 +67,24 @@ function updateDisplayParams() {
         "padding": insideWidth * 0.03 + "px",
         "font-size": insideWidth * 0.03 + "px"
     });
+    $(".game_button").css({
+        "width": insideWidth * 0.31 + "px",
+        "letter-spacing": insideWidth * 0.01 + "px",
+        "font-size": insideWidth * 0.03 + "px"
+    });
     $("#turn_n").css({
         "letter-spacing": insideWidth * 0.014 + "px",
         "font-size": insideWidth * 0.06 + "px"
+    });
+    $(".terminal_tab").css({
+        "width": insideWidth * 0.87 + "px",
+        "height": window.innerHeight - 400 + "px"
+    });
+    $("#cell_preview").css({
+        "width": insideWidth * 0.214 + "px",
+    });
+    $("#terminal_tabs").css({
+        "height": window.innerHeight - 320 + "px"
     });
 }
 
@@ -137,6 +154,16 @@ function moveMap() {
     const board_img = document.getElementById("board");
     const debug_board = document.getElementById("debug_board_container");
 
+    const cell_info_id = document.getElementById("cell_info_id");
+    const cell_preview = document.getElementById("cell_preview");
+
+    const cell_detail_terrain = document.getElementById("cell_detail_type");
+    const cell_detail_cost = document.getElementById("cell_detail_cost");
+    const cell_detail_roads = document.getElementById("cell_detail_roads");
+    const cell_detail_highways = document.getElementById("cell_detail_hways");
+    const cell_detail_addcost = document.getElementById("cell_detail_addcost");
+    const cell_detail_imp = document.getElementById("cell_detail_imp");
+
     const debug_hex = document.getElementById("debug_hex_dis");
     const debug_uhex = document.getElementById("debug_unithex_dis");
     const cell_dis = document.getElementById("cell_display");
@@ -181,10 +208,124 @@ function moveMap() {
     cell_dis.style.width = debug_hex.style.width;
     cell_dis.style.height = debug_uhex.style.height;
 
+    let cell_data = board_data.board[board_col][board_row];
+    let cell_data_id = padLeft(board_col + 1, 2) + padLeft(board_row, 2);
+    let additional_count = 0;
+    let impassable_count = 0;
+
     if (selectedColumn == null || selectedRow == null) {
         $("#debug_hex_dis").hide();
+        if(!isMouseInBoard()){
+            $("#tab_cell_available").hide();
+            $("#tab_cell_notavailable").show();
+        }else{
+            $("#tab_cell_notavailable").hide();
+            $("#tab_cell_available").show();
+        }
     } else {
+        cell_data = board_data.board[selectedColumn][selectedRow];
+        cell_data_id = padLeft(selectedColumn + 1, 2) + padLeft(selectedRow, 2);
+        
         $("#debug_hex_dis").show();
+    }
+
+    cell_preview.src = `assets/ui/terrain_preview/${terrainTypes[cell_data.terrainType]}.png`;
+    cell_info_id.innerHTML = `CELL ID: ${cell_data_id}`;
+    
+    cell_detail_terrain.innerHTML = `TERRAIN TYPE: <br>${terrainTypes[cell_data.terrainType].toUpperCase()}`;
+    cell_detail_cost.innerHTML = `ENTRY COST: <br>[MOT:${terrainCost[terrainTypes[cell_data.terrainType]]['mot']} ; INF:${terrainCost[terrainTypes[cell_data.terrainType]]['inf']}]`;
+    
+    cell_detail_addcost.innerHTML = `ADDITIONAL <br>[MOT:${edgeCost[edgeInfo[1]]['mot']} ; INF:${edgeCost[edgeInfo[1]]['inf']}] AT: <br>[`;
+    for(i = 0; i < cell_data.edges.length; i++){
+        if(cell_data.edges[i] == 1){
+            if((!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || gameState.activePlayer == "nazis"){
+                additional_count += 1;
+            }
+        }
+    }
+    let inserted_cost = 0;
+    for(i = 0; i < cell_data.edges.length; i++){
+        if(cell_data.edges[i] == 1){
+            if((!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || gameState.activePlayer == "nazis"){
+                cell_detail_addcost.innerHTML += edgeNames[i].toUpperCase();
+                inserted_cost += 1;
+
+                if(inserted_cost < additional_count)
+                    cell_detail_addcost.innerHTML += ", ";
+            }
+        }
+    }
+    cell_detail_addcost.innerHTML += "]";
+
+    
+    cell_detail_imp.innerHTML = `IMPASSABLE AT: <br>[`;
+    for(i = 0; i < cell_data.edges.length; i++){
+        if(cell_data.edges[i] == 2){
+            if((!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || gameState.activePlayer == "nazis"){
+                impassable_count += 1;
+            }
+        }
+    }
+    let impass_insert = 0;
+    for(i = 0; i < cell_data.edges.length; i++){
+        if(cell_data.edges[i] == 2){
+            if((!cell_data.roads.includes(i) && !cell_data.highways.includes(i)) || gameState.activePlayer == "nazis"){
+                cell_detail_imp.innerHTML += edgeNames[i].toUpperCase();
+                impass_insert += 1;
+
+                if(impass_insert < impassable_count)
+                    cell_detail_imp.innerHTML += ", ";
+            }
+        }
+    }
+    cell_detail_imp.innerHTML += "]";
+
+
+    cell_detail_roads.innerHTML = "ROADS AT: <br>[";
+    for(i = 0; i < cell_data.roads.length; i++){
+            cell_detail_roads.innerHTML += edgeNames[cell_data.roads[i]].toUpperCase();
+
+            if(i < cell_data.roads.length - 1)
+                cell_detail_roads.innerHTML += ", ";
+    }
+    cell_detail_roads.innerHTML += "]";
+
+    cell_detail_highways.innerHTML = "HIGHWAYS AT: <br>[";
+    for(i = 0; i < cell_data.highways.length; i++){
+            cell_detail_highways.innerHTML += edgeNames[cell_data.highways[i]].toUpperCase();
+
+            if(i < cell_data.highways.length - 1)
+                cell_detail_highways.innerHTML += ", ";
+    }
+    cell_detail_highways.innerHTML += "]";
+
+    if(cell_data.terrainType == 3 || cell_data.hasVillage){
+        $("#cell_detail_village").show();
+    }else{
+        $("#cell_detail_village").hide();
+    }
+
+    if(cell_data.roads.length > 0){
+        $("#cell_detail_roads").show();
+    }else{
+        $("#cell_detail_roads").hide();
+    }
+    if(cell_data.highways.length > 0){
+        $("#cell_detail_hways").show();
+    }else{
+        $("#cell_detail_hways").hide();
+    }
+
+    if(additional_count > 0){
+        $("#cell_detail_addcost").show();
+    }else{
+        $("#cell_detail_addcost").hide();
+    }
+
+    if(impassable_count > 0){
+        $("#cell_detail_imp").show();
+    }else{
+        $("#cell_detail_imp").hide();
     }
 
     if (selectedUnitId == null) {

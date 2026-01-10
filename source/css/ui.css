@@ -372,10 +372,12 @@ input:checked + .toggle:before {
     padding: 15px;
     border: #2fff52 5px dashed;
     border-radius: 12px;
-    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-#turn_info{
+#turn_info, #terminal_tabs{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -418,4 +420,99 @@ input:checked + .toggle:before {
     font-weight: bolder;
     letter-spacing: 10px;
     font-size: xx-large;
+}
+
+.game_button:hover {
+    color: #000000;
+}
+
+.game_button{
+    letter-spacing: 0.5vw;  
+    font-size: 0.8vw;
+    font-family: 'Trebuchet MS';
+    width: 220px;
+    cursor: pointer;
+    color: #63ff80;
+    transition: color .5s ease;
+    z-index: 0;
+    position: relative;
+    overflow: hidden;
+    font-weight: bold;
+    text-align: center;
+}
+
+.game_button::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(to bottom,
+        rgba(47, 154, 47, 0.268),
+        rgb(34, 111, 34)
+    );
+    opacity: 0;
+    transition: opacity .5s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.game_button:hover::before {
+    opacity: 1;
+}
+
+#tt_buttons{
+    display: flex;
+    flex-direction: row;
+}
+
+#cell_preview{
+    width: 150px;
+}
+
+.cell_info_text{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: #63ff80;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.cell_detail_text{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: #63ff80;
+    letter-spacing: 2px;
+    width: 180px;
+    font-size: 11px;
+}
+
+.terminal_tab{
+    width: 600px;
+    height: 300px;
+    border: #2fff52 5px dashed;
+    padding: 10px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+#tab_cell_available{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: 35px;
+}
+
+#cell_details{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#cell_overview{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
 }
