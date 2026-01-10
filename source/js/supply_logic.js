@@ -25,5 +25,5 @@ function applySupplyAndDisruptionMovement(baseMovement, unit) {
     if (unit.supplyState === 'out') m *= 2 / 3;
     if (unit.supplyState === 'isolated') m *= 1 / 3;
     if (unit.disrupted) m *= 2 / 3;
-    return Math.max(0, m);
+    return Math.max(0, m) * movementMultiplier;
 }

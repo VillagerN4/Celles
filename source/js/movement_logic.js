@@ -123,10 +123,15 @@ function unitAt(r, c) {
     return null;
 }
 
-function executeMovementPath(unitId, path) {
+async function executeMovementPath(unitId, path) {
     const u = gameState.units[unitId];
+
+    gameState.animatedUnits.push(unitId);
+    const animUID = gameState.animatedUnits.length - 1;
+
     let visualizePath = [];
     let pathCost = 0;
+    let lastAction = "end";
 
     if (!u) return { ok: false, msg: 'Brak jednostki', cost: 0 };
 
@@ -134,16 +139,47 @@ function executeMovementPath(unitId, path) {
     const ez = getZOCForFaction(u.faction === 'nazis' ? 'allies' : 'nazis');
     const startCell = [u.row, u.col];
 
+    u.startMoveSound();
+
+    function stopPath(r, c){
+        u.row = r; 
+        u.col = c;
+        u.row_offset = 0;
+        u.col_offset = 0;
+        u.offsetProgress = 0;
+
+        updateUnits();
+        u.stopMoveSound();
+        gameState.animatedUnits.splice(animUID);
+    }
+
+    function applyRotation(rot){   
+        $("#unit_" + unitId + "_turret").css({
+            "transform": `rotate(${rot}deg)`
+        });
+
+        $("#unit_" + unitId + "_hull").css({
+            "transform": `rotate(${rot}deg)`
+        });
+    }
+
     for (let i = 0; i < path.length; i++) {
         const [r, c] = path[i];
         const pr = (i === 0) ? u.row : path[i - 1][0];
         const pc = (i === 0) ? u.col : path[i - 1][1];
+        const nr = (i === path.length-1) ? r : path[i + 1][0];
+        const nc = (i === path.length-1) ? c : path[i + 1][1];
         const edge = getMovementDirection(pr, pc, r, c);
+        const nedge = getMovementDirection(r, c, nr, nc);
         const cost = getMovementCostForEntry(u, pr, pc, r, c);
         pathCost += cost;
         // console.log(cost);
         const fromKey = pr + ':' + pc, toKey = r + ':' + c;
         const fz = ez.has(fromKey), tz = ez.has(toKey);
+
+        let currentRotation = getElementRotation("unit_" + unitId + "_hull");
+        let deltaRotation = shortestRotation(currentRotation, edge);
+        let nextDelta = shortestRotation(currentRotation + deltaRotation, nedge);
 
         visualizePath[i] = path[i];
 
@@ -151,6 +187,7 @@ function executeMovementPath(unitId, path) {
             const extra = 2;
             if (u.movementLeft < cost + extra){ 
                 createPathVizualizer([startCell, ...visualizePath], false);
+                stopPath(r, c);
                 return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
             };
 
@@ -158,27 +195,23 @@ function executeMovementPath(unitId, path) {
             const mod = 0;
             const res = die + mod;
 
-            if (res >= 5) { u.movementLeft -= (cost + extra); u.row = r; u.col = c; }
-            else { u.movementLeft = 0; u.disrupted = true; return { ok: false, msg: 'Infiltracja nieudana', cost: pathCost }; }
+            if (res >= 5) { 
+                u.movementLeft -= (cost + extra); 
+            }
+            else { 
+                u.movementLeft = 0; u.disrupted = true; 
+                stopPath(r, c);
+                return { ok: false, msg: 'Infiltracja nieudana', cost: pathCost }; 
+            }
         } else {
             if (u.movementLeft < cost){ 
                 createPathVizualizer([startCell, ...visualizePath], false);
+                stopPath(r, c);
                 return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
             };
 
-            u.movementLeft -= cost; u.row = r; u.col = c;
+            u.movementLeft -= cost;
         }
-
-        let currentRotation = getElementRotation("unit_" + unitId + "_hull");
-        let deltaRotation = shortestRotation(currentRotation, edge);
-
-        $("#unit_" + unitId + "_turret").css({
-            "transform": `rotate(${currentRotation + deltaRotation}deg)`
-        });
-
-        $("#unit_" + unitId + "_hull").css({
-            "transform": `rotate(${currentRotation + deltaRotation}deg)`
-        });
 
         selectedUnitId = unitId;
         if(r==selectedRow && c==selectedColumn){
@@ -186,11 +219,56 @@ function executeMovementPath(unitId, path) {
             selectedColumn = null;
         }else{
             createPathGuide();
+        } 
+
+        if(deltaRotation != 0){
+            applyRotation(currentRotation + deltaRotation);
+            await tweenOffsetProgress(u, 6000, "mid");
         }
+
+        u.row_offset = r - pr;
+        u.col_offset = c - pc;
+        u.offsetProgress = 1;
+
+        console.log("movementstart", lastAction);
+
+        if((nextDelta!=0 || i == path.length-2) && lastAction=="end"){
+            lastAction = "both";
+        }
+
+        if((nextDelta!=0 || i == path.length-2) && lastAction == "start"){ 
+            lastAction = "mid";
+        }
+
+        await tweenOffsetProgress(u, (lastAction=="start" ? 5000 : 10000), lastAction=="end" ? "start" : (lastAction=="mid" ? "end" : (lastAction=="both" ? "inout" : "mid")));
+
+        if(lastAction=="end"){
+            lastAction = "start";
+        }
+
+        if(lastAction=="both"){
+            lastAction = "end";
+        }
+
+        if(lastAction=="mid"){
+            lastAction = "end";
+        }
+
+        console.log("movementend", lastAction);
+
+        if(i==path.length-1)
+            u.stopMoveSound();
+
+        u.row = r; 
+        u.col = c;
+        u.row_offset = 0;
+        u.col_offset = 0;
+        u.offsetProgress = 0;
         
     }
     onUnitFinishedMovement(unitId);
     createPathVizualizer([startCell, ...visualizePath], true);
+    stopPath(u.row, u.col);
     return { ok: true, msg: 'Ruch wykonany', cost: pathCost };
 }
 

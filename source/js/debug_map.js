@@ -267,7 +267,6 @@ function createPathVizualizer(path, success, blockade){
                 }).appendTo('#board_paths');
 
                 if(blockade != null){
-                    console.log("there is a blockade", blockade, r == blockade[0] && c == blockade[1], r, blockade[0], c, blockade[1]);
                     if(r == blockade[0] && c == blockade[1]){
                         console.log("this is a blockade");
                         jQuery('<img>', {

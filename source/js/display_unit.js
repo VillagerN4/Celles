@@ -47,7 +47,8 @@ function drawUnit(id) {
 
     const moveSound = $("<audio>", {
         id: "unit_" + id + "_moving_sound",
-        src: 'assets/audio/unit/tank_move.mp3'
+        src: 'assets/audio/unit/tank_move.mp3',
+        loop: true
     });
 
     const shootSound = $("<audio>", {
@@ -90,7 +91,7 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
         startMoveSound: function(){
             this.moveSound.currentTime = Math.random() * 10;
             this.moveSound.play();
-            fadeAudio(this.moveSound, 0, 0.5, 600);
+            fadeAudio(this.moveSound, 0, 0.5, 6000);
         },
         stopMoveSound: function(){
             fadeAudio(this.moveSound, this.moveSound.volume, 0, 600);

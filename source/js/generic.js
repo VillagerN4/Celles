@@ -127,3 +127,25 @@ function shortestRotation(currentAngle, edge) {
 
     return delta;
 }
+
+function tweenOffsetProgress(u, duration, fade = "mid", callback) {
+    return new Promise(resolve => {
+        const start = performance.now();
+        const ease = easing[fade] || easing.mid;
+        
+        function step(now) {
+            const t = Math.min((now - start) / duration, 1);
+            u.offsetProgress = ease(t);
+            updateUnits();
+
+            if (t < 1) {
+                requestAnimationFrame(step);
+            } else {
+                u.offsetProgress = 1;
+                resolve();
+            }
+        }
+
+        requestAnimationFrame(step);
+    });
+}

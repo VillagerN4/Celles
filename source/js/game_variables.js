@@ -5,9 +5,9 @@ var pageFadeTime = !debugMode ? 1500 : 1;
 var musicStarted = false;
 var musicVolume = 1;
 var panBlurAmount = 4;
-var movementMultiplier = 1;
+var movementMultiplier = debugMode ? 9999 : 1;
 var schoolMode = true;
-var allowNazisBridge = false;
+var allowNazisBridge = debugMode;
 
 const gameState = {
   page: 'menu',
@@ -23,7 +23,8 @@ const gameState = {
   board: board_data.board,
   rows: rows,
   columns: columns,
-  pathVisualizers: []
+  pathVisualizers: [],
+  animatedUnits: []
 };
 
 const terrainCost = { clear: { mot: 2, inf: 1 }, rough: { mot: 3, inf: 2 }, woods: { mot: 4, inf: 3 }, town: { mot: 2, inf: 1 } };
@@ -34,6 +35,7 @@ const enterOccupiedMotorizedExtra = 2;
 const maxMovementCostPerTurn = 16;
 
 const edgeToAngle = [-60, 0, 60, 240, 180, 120];
+const easing = {start: t => t * t, mid: t => t, end: t => t * (2 - t), inout: t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2};
 
 const factions = ["allies", "nazis", "brits"];
 const modes = ["reduced", "standard", "active"];
