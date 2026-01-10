@@ -21,7 +21,7 @@ var topBoundry = 0;
 var bottomBoundry = 0;
 
 
-function setCellInfPar(message) {
+function sendLog(message) {
     jQuery('<p>', {
         class: `log_entry unread`,
         text: message

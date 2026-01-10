@@ -33,7 +33,7 @@ function handleClick(event) {
         }
 
         if(selectedUnitId && gameState.phase == "movement" && ((gameState.units[selectedUnitId].faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && gameState.units[selectedUnitId].faction != "nazis"))){
-            createPathGuide();
+            createPathGuide(true);
         }
 
         updateMapBoundry();
@@ -98,50 +98,50 @@ function handleKeyboardInput(event) {
 
             if (event.key === 'A' || event.key === 'a') {
                 if (gameState.phase !== 'movement') {
-                    setCellInfPar("Nie można aktywować jednostki poza fazą ruchu");
+                    sendLog("You can only activate units during the movement phase.");
                     return;
                 }
             }
 
             if (event.key === 'M' || event.key === 'm') {
                 if (gameState.phase !== 'movement') {
-                    setCellInfPar("Ruch tylko w fazie movement");
+                    sendLog("You can only move units during the movement phase.");
                     return;
                 }
             }
 
             if (event.key === 'C' || event.key === 'c') {
                 if (gameState.phase !== 'combat') {
-                    setCellInfPar("Walka tylko w fazie combat");
+                    sendLog("You can only engage in combat during the combat phase.");
                     return;
                 }
             }
         }
         if (event.key === 'A' || event.key === 'a') {
-            if (selectedUnitId) {
+            if (selectedUnitId && gameState.animatedUnits[selectedUnitId] == null) {
                 const res = activateUnit(selectedUnitId);
                 if (typeof updateDebugMap === 'function') updateDebugMap();
-                setCellInfPar(res.msg);
+                sendLog(`Activated unit: ${selectedUnitId}`);
             }
         }
         if (event.key === 'M' || event.key === 'm') {
-            if (selectedUnitId!=null && selectedColumn!=null && selectedRow!=null) {
+            if (selectedUnitId!=null && selectedColumn!=null && selectedRow!=null && gameState.animatedUnits[selectedUnitId] == null) {
                 clearPathVizualizers();
                 const u = gameState.units[selectedUnitId];
                 if (!u || (u.faction == "nazis" && u.faction != gameState.activePlayer) || (u.faction != "nazis" && "nazis" == gameState.activePlayer)) return;
 
                 const targetRow = selectedRow;
                 const targetCol = selectedColumn;
+
+                sendLog(`Began movement for unit: ${selectedUnitId} to cell: ${padLeft(targetCol + 1, 2) + padLeft(targetRow, 2)}`);
+
                 const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
-                setCellInfPar(res.msg);
                 if (typeof updateDebugMap === 'function') updateDebugMap();
                 if (typeof moveMap === 'function') moveMap();
-
-                $("#cost_info").text("Movement cost: " + res.cost);
             }
         }
         if (event.key === 'C' || event.key === 'c') {
-            if (selectedUnitId) {
+            if (selectedUnitId && gameState.animatedUnits[selectedUnitId] == null) {
                 const u = gameState.units[selectedUnitId];
                 if (!u) return;
                 const neigh = getHexNeighbors(u.row, u.col);
@@ -150,9 +150,9 @@ function handleKeyboardInput(event) {
                     const victim = unitAt(n[0], n[1]);
                     if (victim && victim.faction !== u.faction) enemies.push(victim.id);
                 });
-                if (enemies.length === 0) { setCellInfPar('Brak sąsiednich wrogów'); return; }
+                if (enemies.length === 0) { sendLog("No neighboring enemies."); return; }
                 const res = resolveCombat([selectedUnitId], enemies, 'medium');
-                setCellInfPar('Combat result:' + res);
+                sendLog(`Combat result: ${res}`);
                 if (typeof updateDebugMap === 'function') updateDebugMap();
                 if (typeof moveMap === 'function') moveMap();
             }
@@ -167,7 +167,7 @@ function handleKeyboardInput(event) {
             const res = endPhase();
             $("#ph_" + gameState.phase).addClass("phase_active");
             $("#turn_n").text("TURN: " + gameState.turn);
-            setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase + "<br>" + "PHASE:" + gameState.phase + res);
+            sendLog(`The ${gameState.activePlayer.toUpperCase()} are beginning their ${gameState.phase.toUpperCase()} phase.`);
 
             if (typeof updateDebugMap === 'function') updateDebugMap();
             if (typeof moveMap === 'function') moveMap();

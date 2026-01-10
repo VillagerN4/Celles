@@ -118,7 +118,7 @@ function getMovementDirection(fromRow, fromCol, toRow, toCol) {
 function unitAt(r, c) {
     for (const id in gameState.units) {
         const u = gameState.units[id];
-        if (u.row === r && u.col === c) return u;
+        if (u.row === r && u.col === c && gameState.animatedUnits[id] == null) return u;
     }
     return null;
 }
@@ -126,7 +126,7 @@ function unitAt(r, c) {
 async function executeMovementPath(unitId, path) {
     const u = gameState.units[unitId];
 
-    gameState.animatedUnits.push(unitId);
+    gameState.animatedUnits[unitId] = path;
     const animUID = gameState.animatedUnits.length - 1;
 
     let visualizePath = [];
@@ -139,7 +139,14 @@ async function executeMovementPath(unitId, path) {
     const ez = getZOCForFaction(u.faction === 'nazis' ? 'allies' : 'nazis');
     const startCell = [u.row, u.col];
 
+    clearPathVizualizers();
+    createPathGuide(false);
+
     u.startMoveSound();
+
+    selectedUnitId = null;
+    selectedRow = null;
+    selectedColumn = null;
 
     function stopPath(r, c){
         u.row = r; 
@@ -150,7 +157,7 @@ async function executeMovementPath(unitId, path) {
 
         updateUnits();
         u.stopMoveSound();
-        gameState.animatedUnits.splice(animUID);
+        gameState.animatedUnits[animUID] = null;
     }
 
     function applyRotation(rot){   
@@ -186,7 +193,6 @@ async function executeMovementPath(unitId, path) {
         if (u.motorized && fz && tz) {
             const extra = 2;
             if (u.movementLeft < cost + extra){ 
-                createPathVizualizer([startCell, ...visualizePath], false);
                 stopPath(r, c);
                 return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
             };
@@ -205,21 +211,12 @@ async function executeMovementPath(unitId, path) {
             }
         } else {
             if (u.movementLeft < cost){ 
-                createPathVizualizer([startCell, ...visualizePath], false);
                 stopPath(r, c);
                 return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
             };
 
             u.movementLeft -= cost;
         }
-
-        selectedUnitId = unitId;
-        if(r==selectedRow && c==selectedColumn){
-            selectedRow = null;
-            selectedColumn = null;
-        }else{
-            createPathGuide();
-        } 
 
         if(deltaRotation != 0){
             applyRotation(currentRotation + deltaRotation);
@@ -266,8 +263,7 @@ async function executeMovementPath(unitId, path) {
         u.offsetProgress = 0;
         
     }
-    onUnitFinishedMovement(unitId);
-    createPathVizualizer([startCell, ...visualizePath], true);
+    onUnitFinishedMovement(unitId, pathCost);
     stopPath(u.row, u.col);
     return { ok: true, msg: 'Ruch wykonany', cost: pathCost };
 }
@@ -303,7 +299,7 @@ function moveUnitToTarget(unitId, tr, tc) {
     return executeMovementPath(u.id, used);
 }
 
-function createPathGuide(){
+function createPathGuide(isGuide){
     if(selectedColumn!=null && selectedRow!=null && selectedUnitId!=null){
         let su = gameState.units[selectedUnitId];
         let path = findBestPath(su.row, su.col, selectedRow, selectedColumn, su);
@@ -321,7 +317,7 @@ function createPathGuide(){
                 }
             }
             
-            createPathVizualizer([...path], (pathCost >= su.movementLeft ? false : "guide"), block);
+            createPathVizualizer([...path], (pathCost >= su.movementLeft ? false : (isGuide ? "guide" : true)), block);
         }
     }
 }

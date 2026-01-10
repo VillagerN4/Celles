@@ -69,25 +69,23 @@ function buildUnitQueue() {
     queueIndex = 0;
 }
 
-onUnitFinishedMovement = function (unitId) {
+onUnitFinishedMovement = function (unitId, cost) {
     const u = gameState.units[unitId];
     if (!u) return;
 
     u.used = true;
 
-    setCellInfPar("Jednostka zakończyła ruch:" + unitId)
+    sendLog(`Unit: ${unitId} has arrived at its destination with a total cost of ${cost}.`);
 }
 
 function startTurnWithQueue(player) {
     // $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
-    setCellInfPar("TURN:" + gameState.turn + "PLAYER:" + gameState.activePlayer + "PHASE:" + gameState.phase);
+    sendLog(`The ${gameState.activePlayer.toUpperCase()} are beginning their ${gameState.phase.toUpperCase()} phase.`);
     startTurn(player);
     buildUnitQueue();
 
     if (unitQueue.length === 0) {
-        setCellInfPar("Brak jednostek dla gracza:" + player);
+        sendLog(`No available units for ${player.toUpperCase()}`);
         return;
     }
-
-    setCellInfPar("Tura gracza:" + player);
 }
