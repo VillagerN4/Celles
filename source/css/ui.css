@@ -516,3 +516,67 @@ input:checked + .toggle:before {
     text-align: center;
     align-items: center;
 }
+
+#log_history{
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: inherit;
+}
+
+#log_history::-webkit-scrollbar {
+    width: 10px;
+    border-radius: 5px;
+}
+
+#log_history::-webkit-scrollbar-track {
+    background: #244e2c; 
+    border-radius: 5px;
+}
+ 
+#log_history::-webkit-scrollbar-thumb {
+    background: #63ff80; 
+    border-radius: 5px;
+}
+
+#log_history::-webkit-scrollbar-thumb:hover {
+    background: #9dffaf; 
+    border-radius: 5px;
+}
+
+.log_entry{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: #63ff80;
+    background-color: #244e2c;
+    border-radius: 5px;
+    border: 5px #244e2c solid;
+    letter-spacing: 2px;
+    font-size: 13px;
+    margin: 0;
+}
+
+.log_entry::before {
+    font-weight: bolder;
+    content: ">";
+}
+
+.log_entry.unread{
+    color: #244e2c;
+    background-color: #63ff80;
+    border: 5px #63ff80 solid;
+}
+
+#tab_log_b.unread::after{
+    font-weight: bolder;
+    content: attr(data-unread);
+    color: #ffffff;
+    background-color: #ff0000;
+    border-radius: 15px;
+    text-align: center; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    letter-spacing: 1px;
+}

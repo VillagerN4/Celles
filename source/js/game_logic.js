@@ -57,7 +57,7 @@ $(document).ready(function () {
 
       gameMusic.volume = 0;
 
-    fadeAudio(menuMusic, menuMusic.volume, 0, 2000, function(){
+    fadeAudio(menuMusic, menuMusic.volume, 0, 1500, function(){
       gameMusic.play();
       gameMusic.volume = 1;
       $("body").css("background-color", "#191822");
@@ -145,11 +145,15 @@ $(document).ready(function () {
   });
 
   $("#tab_cell_b").click(function (event) {
+    if(gameState.terminalTab == 'log')
+        $(".log_entry.unread").removeClass("unread");
     gameState.terminalTab = 'cell';
     updateTerminalTabButtons();
   });
 
   $("#tab_unit_b").click(function (event) {
+    if(gameState.terminalTab == 'log')
+        $(".log_entry.unread").removeClass("unread");
     gameState.terminalTab = 'unit';
     updateTerminalTabButtons();
   });
@@ -205,6 +209,9 @@ $(document).ready(function () {
   $("#preview").hide();
   $("#menu_panorama").hide();
   $("#cover").hide();
+  $("#cost_info").hide();
+  $("#cell_info").hide();
+  $("#debug_hex_info").hide();
   updateTerminalTabButtons();
   $("#turn_n").text("TURN: " + gameState.turn);
   $("#ph_" + gameState.phase).addClass("phase_active");

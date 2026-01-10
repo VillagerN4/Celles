@@ -9,6 +9,7 @@ var panBlurAmount = 4;
 const gameState = {
   page: 'menu',
   terminalTab: 'log',
+  unreadLogs: 0,
   turn: 1,
   phase: 'movement',
   activePlayer: 'nazis',

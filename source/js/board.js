@@ -22,8 +22,48 @@ var bottomBoundry = 0;
 
 
 function setCellInfPar(message) {
-    const cell_inf = document.getElementById("cell_info");
-    cell_inf.innerHTML = message;
+    jQuery('<p>', {
+        class: `log_entry unread`,
+        text: message
+    }).appendTo('#log_history');
+    if(gameState.terminalTab != "log"){
+        gameState.unreadLogs += 1;
+    }
+
+    $("#tab_log_b").toggleClass("unread", gameState.unreadLogs > 0).attr("data-unread", gameState.unreadLogs > 99 ? "99+" : gameState.unreadLogs);
+
+    if(gameState.terminalTab == "log"){
+        scrollLogToBottom();
+    }
+}
+
+function scrollLogToBottom(){
+    const log = document.getElementById("log_history");
+    let targetTop = log.scrollHeight;
+
+    log.scrollTo({
+        top: targetTop,
+        behavior: "smooth"
+    });
+}
+
+function scrollToFirstUnread(){
+    const log = document.getElementById("log_history");
+    const firstUnread = log.querySelector(".log_entry.unread");
+
+    if (!firstUnread) return scrollLogToBottom();
+
+    let targetTop = firstUnread.offsetTop - log.offsetTop;
+
+    log.scrollTo({
+        top: targetTop,
+        behavior: "smooth"
+    });
+}
+
+function clearLogs(){
+    $(".log_entry").remove();
+    gameState.unreadLogs = 0;
 }
 
 
@@ -352,12 +392,15 @@ function updateTerminalTabButtons(){
         $("#tab_log").hide();
     }
     if(gameState.terminalTab == "log"){
+        gameState.unreadLogs = 0;
         $("#tab_cell_b").removeClass("selected");
         $("#tab_unit_b").removeClass("selected");
         $("#tab_log_b").addClass("selected");
         $("#tab_cell").hide();
         $("#tab_unit").hide();
         $("#tab_log").show();
+        $("#tab_log_b").removeClass("unread");
+        scrollToFirstUnread();
     }
 }
 

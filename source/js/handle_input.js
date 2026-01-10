@@ -158,6 +158,7 @@ function handleKeyboardInput(event) {
             }
         }
         if (event.key === 'F' || event.key === 'f') {
+            clearLogs();
             selectedUnitId = null;
             selectedRow = null;
             selectedColumn = null;
