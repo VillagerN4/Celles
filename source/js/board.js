@@ -119,7 +119,7 @@ function updateDisplayParams() {
         "width": insideWidth * 0.87 + "px",
         "height": window.innerHeight - 400 + "px"
     });
-    $("#cell_preview").css({
+    $(".ter_preview").css({
         "width": insideWidth * 0.214 + "px",
     });
     $("#terminal_tabs").css({
@@ -246,6 +246,20 @@ function moveMap() {
 
     cell_dis.style.width = debug_hex.style.width;
     cell_dis.style.height = debug_uhex.style.height;
+
+
+    let selUnit = selectedUnitId == null ? (isMouseInBoard() ? unitAt(board_row, board_col) : null) : gameState.units[selectedUnitId];
+
+    if(selUnit == null){
+        $("#tab_unit_available").hide();
+        $("#tab_unit_notavailable").show();
+    }else{
+        $("#tab_unit_notavailable").hide();
+        $("#tab_unit_available").show();
+    }
+
+
+
 
     let cell_data = board_data.board[board_col][board_row];
     let cell_data_id = padLeft(board_col + 1, 2) + padLeft(board_row, 2);
