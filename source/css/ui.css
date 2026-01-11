@@ -504,6 +504,10 @@ input:checked + .toggle:before {
     justify-content: center;
 }
 
+#unit_details > p{
+    margin-bottom: 3px;
+}
+
 #cell_overview, #unit_overview{
     height: 100%;
     display: flex;
