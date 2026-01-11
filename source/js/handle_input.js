@@ -121,7 +121,7 @@ function handleKeyboardInput(event) {
             if (selectedUnitId && gameState.animatedUnits[selectedUnitId] == null) {
                 const res = activateUnit(selectedUnitId);
                 if (typeof updateDebugMap === 'function') updateDebugMap();
-                sendLog(`Activated unit: ${selectedUnitId}`);
+                sendLog(`Activated unit: ${selectedUnitId}.`);
             }
         }
         if (event.key === 'M' || event.key === 'm') {
@@ -133,7 +133,7 @@ function handleKeyboardInput(event) {
                 const targetRow = selectedRow;
                 const targetCol = selectedColumn;
 
-                sendLog(`Began movement for unit: ${selectedUnitId} to cell: ${padLeft(targetCol + 1, 2) + padLeft(targetRow, 2)}`);
+                sendLog(`Began movement for unit: ${selectedUnitId} to cell: ${padLeft(targetCol + 1, 2) + padLeft(targetRow, 2)}.`);
 
                 const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
                 if (typeof updateDebugMap === 'function') updateDebugMap();
@@ -152,7 +152,7 @@ function handleKeyboardInput(event) {
                 });
                 if (enemies.length === 0) { sendLog("No neighboring enemies."); return; }
                 const res = resolveCombat([selectedUnitId], enemies, 'medium');
-                sendLog(`Combat result: ${res}`);
+                sendLog(`Combat result: ${res}.`);
                 if (typeof updateDebugMap === 'function') updateDebugMap();
                 if (typeof moveMap === 'function') moveMap();
             }

@@ -57,11 +57,14 @@ $(document).ready(function () {
 
       gameMusic.volume = 0;
 
-    fadeAudio(menuMusic, menuMusic.volume, 0, 1500, function(){
-      gameMusic.play();
-      gameMusic.volume = 1;
-      $("body").css("background-color", "#191822");
-    });
+      fadeAudio(menuMusic, menuMusic.volume, 0, 1500, function(){
+        gameMusic.play();
+        gameMusic.volume = 1;
+        updateDebugMap();
+        updateMapBoundry();
+        moveMap();
+        $("body").css("background-color", "#191822");
+      });
 
       $("#menu_panorama").fadeOut(pageFadeTime);
       $("#page_menu").fadeOut(pageFadeTime, function () { $("#page_game").fadeIn(pageFadeTime, function () { pageAnimating = false }) });

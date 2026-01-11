@@ -117,7 +117,7 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
             this.debrisSound = document.getElementById("unit_" + id + "_debris_sound");
             this.explodeSound = document.getElementById("unit_" + id + "_exploding_sound");
         },
-        starterAngleEdge, currentRotation: edgeToAngle[starterAngleEdge], col_offset: 0, row_offset: 0,
+        starterAngleEdge, currentRotation: edgeToAngle[starterAngleEdge], currentTurretRotation: edgeToAngle[starterAngleEdge], col_offset: 0, row_offset: 0,
         offsetProgress: 0
     };
 }

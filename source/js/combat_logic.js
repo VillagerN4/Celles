@@ -89,7 +89,7 @@ function applyLossesToUnits(units, levels) {
         if (remaining <= 0) break;
         if (!u) continue;
         if (u.levels === 2) { u.levels = 1; remaining -= 1; }
-        else if (u.levels === 1) { delete gameState.units[u.id]; remaining -= 1; }
+        else if (u.levels === 1) {explodeUnit(u.id); delete gameState.units[u.id]; remaining -= 1; }
     }
 }
 

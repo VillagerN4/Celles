@@ -75,7 +75,7 @@ onUnitFinishedMovement = function (unitId, cost) {
 
     u.used = true;
 
-    sendLog(`Unit: ${unitId} has arrived at its destination with a total cost of ${cost}.`);
+    sendLog(`Unit: ${unitId} has arrived at its destination with a total cost of ${cost} points.`);
 }
 
 function startTurnWithQueue(player) {
@@ -85,7 +85,7 @@ function startTurnWithQueue(player) {
     buildUnitQueue();
 
     if (unitQueue.length === 0) {
-        sendLog(`No available units for ${player.toUpperCase()}`);
+        sendLog(`No available units for the ${gameState.activePlayer.toUpperCase()}.`);
         return;
     }
 }

@@ -128,7 +128,7 @@ function shortestRotation(currentAngle, edge) {
     return delta;
 }
 
-function tweenOffsetProgress(u, duration, fade = "mid", callback) {
+function tweenOffsetProgress(u, duration, fade = "mid") {
     return new Promise(resolve => {
         const start = performance.now();
         const ease = easing[fade] || easing.mid;
