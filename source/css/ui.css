@@ -464,14 +464,14 @@ input:checked + .toggle:before {
     flex-direction: row;
 }
 
-.cell_info_text{
+.cell_info_text, .unit_info_text {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: #63ff80;
     text-align: center;
     letter-spacing: 2px;
 }
 
-.cell_detail_text{
+.cell_detail_text,.unit_detail_text{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     color: #63ff80;
     letter-spacing: 2px;
