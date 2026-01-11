@@ -325,9 +325,11 @@ function createPathGuide(isGuide){
 
 function isCellPartOfPath(r, c){
     for (const [unit, path] of Object.entries(gameState.animatedUnits)) {
-        for(i = 0; i < path.length; i++){
-            let [pr, pc] = path[i];
-            if(pr == r && pc == c) return true;
+        if(path != null){
+            for(i = 0; i < path.length; i++){
+                let [pr, pc] = path[i];
+                if(pr == r && pc == c) return true;
+            }
         }
     }
     return false;

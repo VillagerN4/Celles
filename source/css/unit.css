@@ -26,3 +26,7 @@
 .debug_path_visualizer{
     z-index: 760;
 }
+
+.explosion_display{
+    z-index: 120;
+}

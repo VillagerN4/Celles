@@ -19,28 +19,28 @@ function drawUnit(id) {
 
     const img1 = $("<img>", {
         id: "unit_" + id,
-        class: "unit_display",
+        class: `unit_display ${id}_explodable`,
         src: `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`,
         css: u_css
     });
 
     const img2 = $("<img>", {
         id: "unit_" + id + "_outline",
-        class: "unit_outline_display",
+        class: `unit_outline_display ${id}_explodable`,
         src: `assets/cell/outline_white.png`,
         css: u_css
     });
 
     const img3 = $("<img>", {
         id: "unit_" + id + "_hull",
-        class: "unit_hull_display",
+        class: `unit_hull_display ${id}_explodable`,
         src: `assets/unit/${u.faction}/${model}_hull.png`,
         css: {...u_css, transform: `rotate(${edgeToAngle[u.starterAngleEdge]}deg)`}
     });
 
     const img4 = $("<img>", {
         id: "unit_" + id + "_turret",
-        class: "unit_turret_display",
+        class: `unit_turret_display ${id}_explodable`,
         src: `assets/unit/${u.faction}/${model}_turret.png`,
         css: {...u_css, transform: `rotate(${edgeToAngle[u.starterAngleEdge]}deg)`}
     });
@@ -105,7 +105,7 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
             this.shootSound.play();
         },
         playExplodeSound: function(){
-            this.explodeSound.volume = 0.7
+            this.explodeSound.volume = 1
             this.explodeSound.currentTime = 0;
             this.explodeSound.play();
             this.debrisSound.currentTime = 0;
@@ -120,6 +120,42 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
         starterAngleEdge, currentRotation: edgeToAngle[starterAngleEdge], col_offset: 0, row_offset: 0,
         offsetProgress: 0
     };
+}
+
+function explodeUnit(id){
+    if(gameState.animatedUnits[id] == null){
+        const u = gameState.units[id];
+        if(!u) return false;
+        const pos = getHexCenterPos(u.row, u.col);
+
+        let size = 92;
+
+        const x = pos[0] - size/2 * zoom + "px";
+        const y = pos[1] - size/2 * zoom + "px";
+
+        gameState.units[id].playExplodeSound();
+
+        $(`.${id}_explodable`).remove();
+
+        
+        const img1 = $("<img>", {
+            id: "unit_" + id + "_explosion",
+            class: `explosion_display`,
+            src: `assets/explosion/explosion.gif`,
+            css: {
+                position: "absolute",
+                left: x,
+                top: y,
+                width: size * zoom + "px",
+                height: size * zoom + "px"
+            }
+        });
+
+        $("#unit_" + id + "_container").append(img1);
+
+        return true;
+    }
+    return false;
 }
 
 function seedUnitsExample() {
