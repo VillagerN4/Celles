@@ -201,6 +201,20 @@ function moveMap() {
     const cell_detail_addcost = document.getElementById("cell_detail_addcost");
     const cell_detail_imp = document.getElementById("cell_detail_imp");
 
+    const unit_preview = document.getElementById("unit_preview");
+    const unit_info_id = document.getElementById("unit_info_id");
+    const unit_detail_faction = document.getElementById("unit_detail_faction");
+    const unit_detail_type = document.getElementById("unit_detail_type");
+    const unit_detail_model = document.getElementById("unit_detail_model");
+    const unit_detail_attack = document.getElementById("unit_detail_attack");
+    const unit_detail_defense = document.getElementById("unit_detail_defense");
+    const unit_detail_steps = document.getElementById("unit_detail_steps");
+    const unit_detail_movement = document.getElementById("unit_detail_movement");
+    const unit_detail_movementleft = document.getElementById("unit_detail_movementleft");
+    const unit_detail_supply = document.getElementById("unit_detail_supply");
+    const unit_detail_disrupted = document.getElementById("unit_detail_disrupted");
+    const unit_detail_used = document.getElementById("unit_detail_used");
+
     const debug_hex = document.getElementById("debug_hex_dis");
     const debug_uhex = document.getElementById("debug_unithex_dis");
     const cell_dis = document.getElementById("cell_display");
@@ -252,6 +266,20 @@ function moveMap() {
         $("#tab_unit_available").hide();
         $("#tab_unit_notavailable").show();
     }else{
+        unit_preview.src = `assets/unit/${selUnit.faction}/${selUnit.model}_hull.png`;
+        unit_info_id.innerHTML = `UNIT ID: ${selUnit.id}`;
+        unit_detail_faction.innerHTML = `FACTION:<br>${selUnit.faction.toUpperCase()}`;
+        unit_detail_type.innerHTML = `TYPE:<br>${selUnit.type.toUpperCase()}`;
+        unit_detail_model.innerHTML = `MODEL:<br>${selUnit.model.toUpperCase()}`;
+        unit_detail_attack.innerHTML = `ATTACK:<br>${selUnit.attack}`;
+        unit_detail_defense.innerHTML = `DEFENSE:<br>${selUnit.defense}`;
+        unit_detail_steps.innerHTML = `STEPS:<br>${selUnit.levels}`;
+        unit_detail_movement.innerHTML = `MOVEMENT:<br>${selUnit.movement}`;
+        unit_detail_movementleft.innerHTML = `MOVEMENT LEFT:<br>${Math.floor(selUnit.movementLeft)}`;
+        unit_detail_supply.innerHTML = `SUPPLY:<br>${selUnit.supplyState.toUpperCase()}`;
+        unit_detail_disrupted.innerHTML = `DISRUPTED:<br>${selUnit.disrupted ? "YES" : "NO"}`;
+        unit_detail_used.innerHTML = `USED:<br>${selUnit.used ? "YES" : "NO"}`;
+
         $("#tab_unit_notavailable").hide();
         $("#tab_unit_available").show();
     }
