@@ -27,7 +27,6 @@ function endPhase() {
         gameState.phase = 'combat';
         return { ok: true, phase: 'combat' };
     } else if (gameState.phase === 'combat') {
-        resolveAllEngagements();
         gameState.phase = 'supply';
         return { ok: true, phase: 'supply' };
     } else if (gameState.phase === 'supply') {

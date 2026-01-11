@@ -1,42 +1,42 @@
-function collectEngagements() {
-    const engagements = [];
-    const seen = new Set();
-    for (const id in gameState.units) {
-        const u = gameState.units[id];
-        if (u.faction !== gameState.activePlayer) continue;
-        const neigh = getHexNeighbors(u.row, u.col);
-        for (const [r, c] of neigh) {
-            const enemy = unitAt(r, c);
-            if (enemy && enemy.faction !== u.faction) {
-                const key = [u.id, enemy.id].sort().join(':');
-                if (!seen.has(key)) {
-                    engagements.push({ attacker: u.id, defender: enemy.id });
-                    seen.add(key);
-                }
-            }
-        }
-    }
-    return engagements;
-}
+// function collectEngagements() {
+//     const engagements = [];
+//     const seen = new Set();
+//     for (const id in gameState.units) {
+//         const u = gameState.units[id];
+//         if (u.faction !== gameState.activePlayer) continue;
+//         const neigh = getHexNeighbors(u.row, u.col);
+//         for (const [r, c] of neigh) {
+//             const enemy = unitAt(r, c);
+//             if (enemy && enemy.faction !== u.faction) {
+//                 const key = [u.id, enemy.id].sort().join(':');
+//                 if (!seen.has(key)) {
+//                     engagements.push({ attacker: u.id, defender: enemy.id });
+//                     seen.add(key);
+//                 }
+//             }
+//         }
+//     }
+//     return engagements;
+// }
 
-function resolveAllEngagements() {
-    const engagements = collectEngagements();
-    for (const e of engagements) {
-        const atk = [e.attacker];
-        const defNeighbors = [];
-        const aUnit = gameState.units[e.attacker];
-        if (!aUnit) continue;
-        const neigh = getHexNeighbors(aUnit.row, aUnit.col);
-        for (const [r, c] of neigh) {
-            const v = unitAt(r, c);
-            if (v && v.faction !== aUnit.faction) defNeighbors.push(v.id);
-        }
-        if (defNeighbors.length === 0) continue;
-        resolveCombat(atk, defNeighbors, 'medium');
-    }
-    if (typeof updateDebugMap === 'function') updateDebugMap();
-    if (typeof moveMap === 'function') moveMap();
-}
+// function resolveAllEngagements() {
+//     const engagements = collectEngagements();
+//     for (const e of engagements) {
+//         const atk = [e.attacker];
+//         const defNeighbors = [];
+//         const aUnit = gameState.units[e.attacker];
+//         if (!aUnit) continue;
+//         const neigh = getHexNeighbors(aUnit.row, aUnit.col);
+//         for (const [r, c] of neigh) {
+//             const v = unitAt(r, c);
+//             if (v && v.faction !== aUnit.faction) defNeighbors.push(v.id);
+//         }
+//         if (defNeighbors.length === 0) continue;
+//         resolveCombat(atk, defNeighbors, 'medium');
+//     }
+//     if (typeof updateDebugMap === 'function') updateDebugMap();
+//     if (typeof moveMap === 'function') moveMap();
+// }
 
 function resolveCombat(aIds, dIds, attackType) {
     const A = aIds.map(id => gameState.units[id]).filter(Boolean);
@@ -157,4 +157,47 @@ function getZOCForFaction(f) {
         }
     }
     return z;
+}
+
+function startCombat(primaryId) {
+    const u = gameState.units[primaryId];
+    if (!u) return;
+
+    gameState.combat = {
+        primary: primaryId,
+        attackers: [primaryId],
+        defenders: collectAllAdjacentEnemies(u)
+    };
+}
+
+function collectAllAdjacentEnemies(unit) {
+    const out = [];
+    const neigh = getHexNeighbors(unit.row, unit.col);
+    for (const [r, c] of neigh) {
+        const e = unitAt(r, c);
+        if (e && e.faction !== unit.faction) out.push(e.id);
+    }
+    return out;
+}
+
+function getAttackSupportCandidates(defenderIds, faction) {
+    const set = new Set();
+
+    for (const dId of defenderIds) {
+        const d = gameState.units[dId];
+        if (!d) continue;
+
+        const neigh = getHexNeighbors(d.row, d.col);
+        for (const [r, c] of neigh) {
+            const u = unitAt(r, c);
+            if (u && u.faction === faction) set.add(u.id);
+        }
+    }
+    return [...set];
+}
+
+function resolveCurrentCombat() {
+    const { attackers, defenders } = gameState.combat;
+    resolveCombat(attackers, defenders, 'medium');
+    gameState.combat = null;
 }

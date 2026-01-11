@@ -230,7 +230,9 @@ $(document).ready(function () {
     if (gameState.phase !== 'combat') {
         sendLog("You can only engage in combat during the COMBAT phase.");
     }else{
-    //your job
+      startCombat(selectedUnitId);
+      
+      sendLog(`Selected attacker: ${selectedUnitId}. Now click enemy units.`);
     }
   });
 

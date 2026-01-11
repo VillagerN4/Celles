@@ -24,7 +24,8 @@ const gameState = {
   rows: rows,
   columns: columns,
   pathVisualizers: [],
-  animatedUnits: {}
+  animatedUnits: {},
+  combat: {primary: null, attackers: [], defenders: []}
 };
 
 const terrainCost = { clear: { mot: 2, inf: 1 }, rough: { mot: 3, inf: 2 }, woods: { mot: 4, inf: 3 }, town: { mot: 2, inf: 1 } };
