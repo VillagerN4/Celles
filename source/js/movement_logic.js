@@ -127,7 +127,6 @@ async function executeMovementPath(unitId, path) {
     const u = gameState.units[unitId];
 
     gameState.animatedUnits[unitId] = path;
-    const animUID = gameState.animatedUnits.length - 1;
 
     let visualizePath = [];
     let pathCost = 0;
@@ -156,11 +155,11 @@ async function executeMovementPath(unitId, path) {
         u.offsetProgress = 0;
 
         updateUnits();
-        u.stopMoveSound();
-        gameState.animatedUnits[animUID] = null;
+        gameState.animatedUnits[unitId] = null;
     }
 
     function applyRotation(rot){   
+        u.currentRotation = rot;
         $("#unit_" + unitId + "_turret").css({
             "transform": `rotate(${rot}deg)`
         });
@@ -184,9 +183,8 @@ async function executeMovementPath(unitId, path) {
         const fromKey = pr + ':' + pc, toKey = r + ':' + c;
         const fz = ez.has(fromKey), tz = ez.has(toKey);
 
-        let currentRotation = getElementRotation("unit_" + unitId + "_hull");
-        let deltaRotation = shortestRotation(currentRotation, edge);
-        let nextDelta = shortestRotation(currentRotation + deltaRotation, nedge);
+        let deltaRotation = shortestRotation(u.currentRotation, edge);
+        let nextDelta = shortestRotation(u.currentRotation + deltaRotation, nedge);
 
         visualizePath[i] = path[i];
 
@@ -206,11 +204,13 @@ async function executeMovementPath(unitId, path) {
             }
             else { 
                 u.movementLeft = 0; u.disrupted = true; 
+                u.stopMoveSound();
                 stopPath(r, c);
                 return { ok: false, msg: 'Infiltracja nieudana', cost: pathCost }; 
             }
         } else {
             if (u.movementLeft < cost){ 
+                u.stopMoveSound();
                 stopPath(r, c);
                 return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
             };
@@ -219,21 +219,27 @@ async function executeMovementPath(unitId, path) {
         }
 
         if(deltaRotation != 0){
-            applyRotation(currentRotation + deltaRotation);
-            await tweenOffsetProgress(u, 6000, "mid");
+            applyRotation(u.currentRotation + deltaRotation);
+            await tweenOffsetProgress(u, 8000, "mid");
+        }
+
+        if(i==path.length-1){
+            if(path.length < 3){
+                u.quickMoveSound();
+            }else{
+                u.stopMoveSound();
+            }
         }
 
         u.row_offset = r - pr;
         u.col_offset = c - pc;
         u.offsetProgress = 1;
 
-        console.log("movementstart", lastAction);
-
-        if((nextDelta!=0 || i == path.length-2) && lastAction=="end"){
+        if((nextDelta!=0 || i > (path.length-2)) && lastAction=="end"){
             lastAction = "both";
         }
 
-        if((nextDelta!=0 || i == path.length-2) && lastAction == "start"){ 
+        if((nextDelta!=0 || i > (path.length-2)) && lastAction == "start"){ 
             lastAction = "mid";
         }
 
@@ -250,11 +256,6 @@ async function executeMovementPath(unitId, path) {
         if(lastAction=="mid"){
             lastAction = "end";
         }
-
-        console.log("movementend", lastAction);
-
-        if(i==path.length-1)
-            u.stopMoveSound();
 
         u.row = r; 
         u.col = c;
@@ -320,4 +321,14 @@ function createPathGuide(isGuide){
             createPathVizualizer([...path], (pathCost >= su.movementLeft ? false : (isGuide ? "guide" : true)), block);
         }
     }
+}
+
+function isCellPartOfPath(r, c){
+    for (const [unit, path] of Object.entries(gameState.animatedUnits)) {
+        for(i = 0; i < path.length; i++){
+            let [pr, pc] = path[i];
+            if(pr == r && pc == c) return true;
+        }
+    }
+    return false;
 }

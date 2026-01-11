@@ -98,21 +98,21 @@ function handleKeyboardInput(event) {
 
             if (event.key === 'A' || event.key === 'a') {
                 if (gameState.phase !== 'movement') {
-                    sendLog("You can only activate units during the movement phase.");
+                    sendLog("You can only activate units during the MOVEMENT phase.");
                     return;
                 }
             }
 
             if (event.key === 'M' || event.key === 'm') {
                 if (gameState.phase !== 'movement') {
-                    sendLog("You can only move units during the movement phase.");
+                    sendLog("You can only move units during the MOVEMENT phase.");
                     return;
                 }
             }
 
             if (event.key === 'C' || event.key === 'c') {
                 if (gameState.phase !== 'combat') {
-                    sendLog("You can only engage in combat during the combat phase.");
+                    sendLog("You can only engage in combat during the COMBAT phase.");
                     return;
                 }
             }
@@ -125,7 +125,7 @@ function handleKeyboardInput(event) {
             }
         }
         if (event.key === 'M' || event.key === 'm') {
-            if (selectedUnitId!=null && selectedColumn!=null && selectedRow!=null && gameState.animatedUnits[selectedUnitId] == null) {
+            if (selectedUnitId!=null && selectedColumn!=null && selectedRow!=null && gameState.animatedUnits[selectedUnitId] == null && !isCellPartOfPath(selectedRow, selectedColumn)) {
                 clearPathVizualizers();
                 const u = gameState.units[selectedUnitId];
                 if (!u || (u.faction == "nazis" && u.faction != gameState.activePlayer) || (u.faction != "nazis" && "nazis" == gameState.activePlayer)) return;
@@ -156,24 +156,6 @@ function handleKeyboardInput(event) {
                 if (typeof updateDebugMap === 'function') updateDebugMap();
                 if (typeof moveMap === 'function') moveMap();
             }
-        }
-        if (event.key === 'F' || event.key === 'f') {
-            clearLogs();
-            selectedUnitId = null;
-            selectedRow = null;
-            selectedColumn = null;
-            clearPathVizualizers();
-            $("#ph_" + gameState.phase).removeClass("phase_active");
-            const res = endPhase();
-            $("#ph_" + gameState.phase).addClass("phase_active");
-            $("#turn_n").text("TURN: " + gameState.turn);
-            sendLog(`The ${gameState.activePlayer.toUpperCase()} are beginning their ${gameState.phase.toUpperCase()} phase.`);
-
-            if (typeof updateDebugMap === 'function') updateDebugMap();
-            if (typeof moveMap === 'function') moveMap();
-            updateTurnDisplays();
-
-            // $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
         }
     }
 }

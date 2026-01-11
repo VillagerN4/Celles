@@ -107,9 +107,7 @@ function updateDisplayParams() {
         "font-size": insideWidth * 0.03 + "px"
     });
     $(".game_button").css({
-        "width": insideWidth * 0.31 + "px",
-        "letter-spacing": insideWidth * 0.01 + "px",
-        "font-size": insideWidth * 0.03 + "px"
+        "width": insideWidth * 0.3 + "px"
     });
     $("#turn_n").css({
         "letter-spacing": insideWidth * 0.014 + "px",

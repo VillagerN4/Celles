@@ -196,14 +196,16 @@ function updateUnits(){
         const tux = offsetpos[0] - hexRadius * zoom;
         const tuy = offsetpos[1] - hexHeight * zoom;
 
-        const delta_x = (tux - ux)*u.offsetProgress;
-        const delta_y = (tuy - uy)*u.offsetProgress;
+        const x_diff = (tux - ux);
+        const y_diff = (tuy - uy);
+        const delta_x = x_diff*u.offsetProgress;
+        const delta_y = y_diff*u.offsetProgress;
 
         const u_css = {
             "width": hexRadius*2*zoom + "px",
             "height": hexHeight*2*zoom + "px", 
-            "left": ux + "px",
-            "top": uy + "px"
+            "left": ux + x_diff * Math.round(u.offsetProgress) + "px",
+            "top": uy + y_diff * Math.round(u.offsetProgress) + "px"
         };
 
         const off_u_css = {

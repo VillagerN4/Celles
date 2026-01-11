@@ -91,10 +91,14 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
         startMoveSound: function(){
             this.moveSound.currentTime = Math.random() * 10;
             this.moveSound.play();
-            fadeAudio(this.moveSound, 0, 0.5, 6000);
+            fadeAudio(this.moveSound, 0, 0.5, 8000);
         },
         stopMoveSound: function(){
-            fadeAudio(this.moveSound, this.moveSound.volume, 0, 600);
+            fadeAudio(this.moveSound, 0.5, 0, 8000);
+        },
+        quickMoveSound: function(){
+            let u = this;
+            fadeAudio(u.moveSound, 0, 0.5, 4000, function(){fadeAudio(u.moveSound, 0.5, 0, 4000)});
         },
         playShootSound: function(){
             this.shootSound.currentTime = 0;
@@ -113,7 +117,7 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
             this.debrisSound = document.getElementById("unit_" + id + "_debris_sound");
             this.explodeSound = document.getElementById("unit_" + id + "_exploding_sound");
         },
-        starterAngleEdge, col_offset: 0, row_offset: 0,
+        starterAngleEdge, currentRotation: edgeToAngle[starterAngleEdge], col_offset: 0, row_offset: 0,
         offsetProgress: 0
     };
 }

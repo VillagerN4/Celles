@@ -184,6 +184,33 @@ $(document).ready(function () {
     }
   });
 
+  $("#proceed_b").click(function (event){
+    let animatedU = 0;
+    for (const [unit, path] of Object.entries(gameState.animatedUnits)) {
+      if(path != null) animatedU++;
+    }
+    if (animatedU == 0) {
+      clearLogs();
+      selectedUnitId = null;
+      selectedRow = null;
+      selectedColumn = null;
+      clearPathVizualizers();
+      $("#ph_" + gameState.phase).removeClass("phase_active");
+      const res = endPhase();
+      $("#ph_" + gameState.phase).addClass("phase_active");
+      $("#turn_n").text("TURN: " + gameState.turn);
+      sendLog(`The ${gameState.activePlayer.toUpperCase()} are beginning their ${gameState.phase.toUpperCase()} phase.`);
+
+      if (typeof updateDebugMap === 'function') updateDebugMap();
+      if (typeof moveMap === 'function') moveMap();
+      updateTurnDisplays();
+
+      // $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
+    }else{
+      sendLog(`Cannot proceed to next phase during unit movement.`);
+    }
+  });
+
   $("#board_size").mousemove(function () {
     sizeFactor = $(this).val();
 
