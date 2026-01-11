@@ -123,6 +123,21 @@ function unitAt(r, c) {
     return null;
 }
 
+function applyRotation(unitId, rot, part){   
+    let u = gameState.units[unitId];
+    if(!u) return;
+    
+    if(part == "_turret"){
+        u.currentTurretRotation = rot;
+    }else{
+        u.currentRotation = rot;  
+    }
+
+    $("#unit_" + unitId + part).css({
+        "transform": `rotate(${rot}deg)`
+    });
+}
+
 async function executeMovementPath(unitId, path) {
     const u = gameState.units[unitId];
 
@@ -158,17 +173,6 @@ async function executeMovementPath(unitId, path) {
         gameState.animatedUnits[unitId] = null;
     }
 
-    function applyRotation(rot){   
-        u.currentRotation = rot;
-        $("#unit_" + unitId + "_turret").css({
-            "transform": `rotate(${rot}deg)`
-        });
-
-        $("#unit_" + unitId + "_hull").css({
-            "transform": `rotate(${rot}deg)`
-        });
-    }
-
     for (let i = 0; i < path.length; i++) {
         const [r, c] = path[i];
         const pr = (i === 0) ? u.row : path[i - 1][0];
@@ -184,6 +188,7 @@ async function executeMovementPath(unitId, path) {
         const fz = ez.has(fromKey), tz = ez.has(toKey);
 
         let deltaRotation = shortestRotation(u.currentRotation, edge);
+        let deltaTurretRotation = shortestRotation(u.currentTurretRotation, edge);
         let nextDelta = shortestRotation(u.currentRotation + deltaRotation, nedge);
 
         visualizePath[i] = path[i];
@@ -219,12 +224,13 @@ async function executeMovementPath(unitId, path) {
         }
 
         if(deltaRotation != 0){
-            applyRotation(u.currentRotation + deltaRotation);
+            applyRotation(unitId, u.currentRotation + deltaRotation, "_hull");
+            applyRotation(unitId, u.currentTurretRotation + deltaTurretRotation, "_turret");
             await tweenOffsetProgress(u, 8000, "mid");
         }
 
         if(i==path.length-1){
-            if(path.length < 3){
+            if(path.length < 2){
                 u.quickMoveSound();
             }else{
                 u.stopMoveSound();

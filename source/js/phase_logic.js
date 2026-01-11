@@ -75,7 +75,7 @@ onUnitFinishedMovement = function (unitId, cost) {
 
     u.used = true;
 
-    sendLog(`Unit: ${unitId} has arrived at its destination with a total cost of ${cost}.`);
+    sendLog(`Unit: ${unitId} has arrived at its destination with a total cost of ${cost} points.`);
 }
 
 function startTurnWithQueue(player) {
