@@ -187,6 +187,53 @@ $(document).ready(function () {
     }
   });
 
+  $("#activate_unit").click(function (event){
+    if (gameState.phase !== 'movement') {
+        sendLog("You can only activate units during the MOVEMENT phase.");
+    }else if (selectedUnitId && gameState.animatedUnits[selectedUnitId] == null) {
+        const res = activateUnit(selectedUnitId);
+        if (typeof updateDebugMap === 'function') updateDebugMap();
+        sendLog(`Activated unit: ${selectedUnitId}.`);
+    }
+  });
+
+  $("#move_unit").click(function (event){
+    if (gameState.phase !== 'movement') {
+        sendLog("You can only move units during the MOVEMENT phase.");
+    }else  if (selectedUnitId!=null && selectedColumn!=null && selectedRow!=null && gameState.animatedUnits[selectedUnitId] == null && !isCellPartOfPath(selectedRow, selectedColumn)) {
+        clearPathVizualizers();
+        const u = gameState.units[selectedUnitId];
+        if (!u || (u.faction == "nazis" && u.faction != gameState.activePlayer) || (u.faction != "nazis" && "nazis" == gameState.activePlayer)) return;
+
+        const targetRow = selectedRow;
+        const targetCol = selectedColumn;
+
+        sendLog(`Began movement for unit: ${selectedUnitId} to cell: ${padLeft(targetCol + 1, 2) + padLeft(targetRow, 2)}.`);
+
+        const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
+        if (typeof updateDebugMap === 'function') updateDebugMap();
+        if (typeof moveMap === 'function') moveMap();
+    }else{
+      if(selectedColumn==null && selectedRow==null){
+        sendLog("Cannot start movement. Select a destination.");
+      }
+      if(gameState.animatedUnits[selectedUnitId] != null){
+        sendLog("Cannot start movement. Unit is already moving.");
+      }
+      if(isCellPartOfPath(selectedRow, selectedColumn)){
+        sendLog("Cannot start movement. Selected cell is a part of another unit's path.");
+      }
+    }
+  });
+
+  $("#combat_unit").click(function (event){
+    if (gameState.phase !== 'combat') {
+        sendLog("You can only engage in combat during the COMBAT phase.");
+    }else{
+    //your job
+    }
+  });
+
   $("#proceed_b").click(function (event){
     let animatedU = 0;
     for (const [unit, path] of Object.entries(gameState.animatedUnits)) {

@@ -94,68 +94,21 @@ function handleKeyboardInput(event) {
             updatePathVizualizers();
             moveMap();
         }
-        if (gameState.page == "game") {
-
-            if (event.key === 'A' || event.key === 'a') {
-                if (gameState.phase !== 'movement') {
-                    sendLog("You can only activate units during the MOVEMENT phase.");
-                    return;
-                }
-            }
-
-            if (event.key === 'M' || event.key === 'm') {
-                if (gameState.phase !== 'movement') {
-                    sendLog("You can only move units during the MOVEMENT phase.");
-                    return;
-                }
-            }
-
-            if (event.key === 'C' || event.key === 'c') {
-                if (gameState.phase !== 'combat') {
-                    sendLog("You can only engage in combat during the COMBAT phase.");
-                    return;
-                }
-            }
-        }
-        if (event.key === 'A' || event.key === 'a') {
-            if (selectedUnitId && gameState.animatedUnits[selectedUnitId] == null) {
-                const res = activateUnit(selectedUnitId);
-                if (typeof updateDebugMap === 'function') updateDebugMap();
-                sendLog(`Activated unit: ${selectedUnitId}.`);
-            }
-        }
-        if (event.key === 'M' || event.key === 'm') {
-            if (selectedUnitId!=null && selectedColumn!=null && selectedRow!=null && gameState.animatedUnits[selectedUnitId] == null && !isCellPartOfPath(selectedRow, selectedColumn)) {
-                clearPathVizualizers();
-                const u = gameState.units[selectedUnitId];
-                if (!u || (u.faction == "nazis" && u.faction != gameState.activePlayer) || (u.faction != "nazis" && "nazis" == gameState.activePlayer)) return;
-
-                const targetRow = selectedRow;
-                const targetCol = selectedColumn;
-
-                sendLog(`Began movement for unit: ${selectedUnitId} to cell: ${padLeft(targetCol + 1, 2) + padLeft(targetRow, 2)}.`);
-
-                const res = moveUnitToTarget(selectedUnitId, targetRow, targetCol);
-                if (typeof updateDebugMap === 'function') updateDebugMap();
-                if (typeof moveMap === 'function') moveMap();
-            }
-        }
-        if (event.key === 'C' || event.key === 'c') {
-            if (selectedUnitId && gameState.animatedUnits[selectedUnitId] == null) {
-                const u = gameState.units[selectedUnitId];
-                if (!u) return;
-                const neigh = getHexNeighbors(u.row, u.col);
-                const enemies = [];
-                neigh.forEach(n => {
-                    const victim = unitAt(n[0], n[1]);
-                    if (victim && victim.faction !== u.faction) enemies.push(victim.id);
-                });
-                if (enemies.length === 0) { sendLog("No neighboring enemies."); return; }
-                const res = resolveCombat([selectedUnitId], enemies, 'medium');
-                sendLog(`Combat result: ${res}.`);
-                if (typeof updateDebugMap === 'function') updateDebugMap();
-                if (typeof moveMap === 'function') moveMap();
-            }
-        }
+        // if (event.key === 'C' || event.key === 'c') {
+        //     if (selectedUnitId && gameState.animatedUnits[selectedUnitId] == null) {
+        //         const u = gameState.units[selectedUnitId];
+        //         if (!u) return;
+        //         const neigh = getHexNeighbors(u.row, u.col);
+        //         const enemies = [];
+        //         neigh.forEach(n => {
+        //             const victim = unitAt(n[0], n[1]);
+        //             if (victim && victim.faction !== u.faction) enemies.push(victim.id);
+        //         });
+        //         if (enemies.length === 0) { sendLog("No neighboring enemies."); return; }
+        //         const res = resolveCombat([selectedUnitId], enemies, 'medium');
+        //         sendLog(`Combat result: ${res}.`);
+        //         if (typeof updateDebugMap === 'function') updateDebugMap();
+        //         if (typeof moveMap === 'function') moveMap();
+        //     }
     }
 }
