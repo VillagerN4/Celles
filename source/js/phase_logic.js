@@ -85,7 +85,7 @@ function startTurnWithQueue(player) {
     buildUnitQueue();
 
     if (unitQueue.length === 0) {
-        sendLog(`No available units for ${player.toUpperCase()}`);
+        sendLog(`No available units for the ${gameState.activePlayer.toUpperCase()}.`);
         return;
     }
 }
