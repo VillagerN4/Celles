@@ -67,6 +67,12 @@ function drawUnit(id) {
     });
 
     let contId = "#unit_" + id + "_container";
+    $(".unit_hull_display").css({
+      transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
+    });
+    $(".unit_turret_display").css({
+      transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
+    });
 
     $("#board_units").append(unitC);
     $(contId).append(img1);
@@ -91,14 +97,14 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
         startMoveSound: function(){
             this.moveSound.currentTime = Math.random() * 10;
             this.moveSound.play();
-            fadeAudio(this.moveSound, 0, 0.5, 8000);
+            fadeAudio(this.moveSound, 0, 0.5, 8000 * unitSpeedModifier);
         },
         stopMoveSound: function(){
-            fadeAudio(this.moveSound, 0.5, 0, 8000);
+            fadeAudio(this.moveSound, 0.5, 0, 8000 * unitSpeedModifier);
         },
         quickMoveSound: function(){
             let u = this;
-            fadeAudio(u.moveSound, 0, 0.5, 4000, function(){fadeAudio(u.moveSound, 0.5, 0, 4000)});
+            fadeAudio(u.moveSound, 0, 0.5, 4000 * unitSpeedModifier, function(){fadeAudio(u.moveSound, 0.5, 0, 4000 * unitSpeedModifier)});
         },
         playShootSound: function(){
             this.shootSound.currentTime = 0;

@@ -163,6 +163,7 @@ async function executeMovementPath(unitId, path) {
     selectedColumn = null;
 
     function stopPath(r, c){
+        console.log("stopped");
         u.row = r; 
         u.col = c;
         u.row_offset = 0;
@@ -193,40 +194,10 @@ async function executeMovementPath(unitId, path) {
 
         visualizePath[i] = path[i];
 
-        if (u.motorized && fz && tz) {
-            const extra = 2;
-            if (u.movementLeft < cost + extra){ 
-                stopPath(r, c);
-                return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
-            };
-
-            const die = rollD10();
-            const mod = 0;
-            const res = die + mod;
-
-            if (res >= 5) { 
-                u.movementLeft -= (cost + extra); 
-            }
-            else { 
-                u.movementLeft = 0; u.disrupted = true; 
-                u.stopMoveSound();
-                stopPath(r, c);
-                return { ok: false, msg: 'Infiltracja nieudana', cost: pathCost }; 
-            }
-        } else {
-            if (u.movementLeft < cost){ 
-                u.stopMoveSound();
-                stopPath(r, c);
-                return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
-            };
-
-            u.movementLeft -= cost;
-        }
-
         if(deltaRotation != 0){
             applyRotation(unitId, u.currentRotation + deltaRotation, "_hull");
             applyRotation(unitId, u.currentTurretRotation + deltaTurretRotation, "_turret");
-            await tweenOffsetProgress(u, 8000, "mid");
+            await tweenOffsetProgress(u, 8000 * unitSpeedModifier, "mid");
         }
 
         if(i==path.length-1){
@@ -249,7 +220,9 @@ async function executeMovementPath(unitId, path) {
             lastAction = "mid";
         }
 
-        await tweenOffsetProgress(u, (lastAction=="start" ? 5000 : 10000), lastAction=="end" ? "start" : (lastAction=="mid" ? "end" : (lastAction=="both" ? "inout" : "mid")));
+        console.log(pathCost);
+
+        await tweenOffsetProgress(u, (lastAction=="start" ? 5000 * unitSpeedModifier : 10000 * unitSpeedModifier), lastAction=="end" ? "start" : (lastAction=="mid" ? "end" : (lastAction=="both" ? "inout" : "mid")));
 
         if(lastAction=="end"){
             lastAction = "start";
@@ -261,6 +234,38 @@ async function executeMovementPath(unitId, path) {
 
         if(lastAction=="mid"){
             lastAction = "end";
+        }
+
+        if (u.motorized && fz && tz) {
+            const extra = 2;
+            if (u.movementLeft < cost + extra){ 
+                u.stopMoveSound();
+                stopPath(r, c);
+                return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
+            };
+
+            const die = rollD10();
+            const mod = 0;
+            const res = die + mod;
+
+            if (res >= 5) { 
+                u.movementLeft -= (cost + extra); 
+            }
+            else { 
+                u.movementLeft = 0; u.disrupted = true; 
+                u.stopMoveSound();
+                stopPath(r, c);
+                sendLog(`Unit: ${unitId} had its movement disrupted.`);
+                return { ok: false, msg: 'Infiltracja nieudana', cost: pathCost }; 
+            }
+        } else {
+            if (u.movementLeft < cost){ 
+                u.stopMoveSound();
+                stopPath(r, c);
+                return { ok: false, msg: 'Brak punktów ruchu', cost: pathCost }
+            };
+
+            u.movementLeft -= cost;
         }
 
         u.row = r; 

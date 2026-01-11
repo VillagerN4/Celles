@@ -286,6 +286,10 @@ $(document).ready(function () {
     movementMultiplier = $(this).val();
   });
 
+  $("#speed_mult").mousemove(function () {
+    unitSpeedModifier = 1/$(this).val();
+  });
+
 
   $("#music_volume").mousemove(function () {
     musicVolume = $(this).val();

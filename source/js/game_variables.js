@@ -1,4 +1,4 @@
-const debugMode = true;
+const debugMode = false;
 
 var pageAnimating = false;
 var pageFadeTime = !debugMode ? 1500 : 1;
@@ -8,6 +8,7 @@ var panBlurAmount = 4;
 var movementMultiplier = debugMode ? 9999 : 1;
 var schoolMode = true;
 var allowNazisBridge = debugMode;
+var unitSpeedModifier = debugMode ? 0.1 : 1;
 
 const gameState = {
   page: 'menu',
