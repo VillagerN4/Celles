@@ -214,6 +214,13 @@ function updateUnits(){
             "left": ux + delta_x + "px",
             "top": uy + delta_y + "px"
         };
+        
+        $(".unit_hull_display").css({
+        transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
+        });
+        $(".unit_turret_display").css({
+        transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
+        });
 
         $("#unit_" + id).css(u_css);
         $("#unit_" + id).attr("src", `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`);

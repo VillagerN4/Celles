@@ -67,12 +67,6 @@ function drawUnit(id) {
     });
 
     let contId = "#unit_" + id + "_container";
-    $(".unit_hull_display").css({
-      transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
-    });
-    $(".unit_turret_display").css({
-      transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
-    });
 
     $("#board_units").append(unitC);
     $(contId).append(img1);
