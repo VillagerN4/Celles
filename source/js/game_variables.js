@@ -6,7 +6,7 @@ var musicStarted = false;
 var musicVolume = 1;
 var panBlurAmount = 4;
 var movementMultiplier = debugMode ? 9999 : 1;
-var schoolMode = true;
+var schoolMode = false;
 var allowNazisBridge = debugMode;
 var unitSpeedModifier = debugMode ? 0.1 : 1;
 
