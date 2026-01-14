@@ -1,4 +1,4 @@
-const debugMode = false;
+const debugMode = true;
 
 var pageAnimating = false;
 var pageFadeTime = !debugMode ? 1500 : 1;

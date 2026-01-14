@@ -8,25 +8,30 @@ function handleClick(event) {
         if(event.button == 0){
             
             if(u && u.id){
-                selectedUnitId = u ? (selectedUnitId != u.id ? u.id : null) : null;
+                selectedUnitId = u ? ((selectedUnitId == u.id && gameState.terminalTab == 'unit') ? (setTerminalPage('log'), null) : u.id) : null;
+                setTerminalPage('unit');
             }else{
-                selectedUnitId = null;
+                selectedUnitId = null; 
+                setTerminalPage('log');
             }
 
             clearPathVizualizers();
         }else if(event.button == 2){
 
             if(!u){
-                if(selectedRow==row && selectedColumn==col){
+                if(selectedRow==row && selectedColumn==col && gameState.terminalTab == 'cell'){
                     selectedRow = null;
                     selectedColumn = null;
+                    setTerminalPage('log');
                 }else{
+                    setTerminalPage('cell');
                     selectedRow = row;
                     selectedColumn = col;
                 }
             }else{
                 selectedRow=null;
                 selectedColumn=null;
+                setTerminalPage('log');
             }
 
             clearPathVizualizers();

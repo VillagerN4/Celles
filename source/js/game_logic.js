@@ -148,22 +148,15 @@ $(document).ready(function () {
   });
 
   $("#tab_cell_b").click(function (event) {
-    if(gameState.terminalTab == 'log')
-        $(".log_entry.unread").removeClass("unread");
-    gameState.terminalTab = 'cell';
-    updateTerminalTabButtons();
+    setTerminalPage('cell');
   });
 
   $("#tab_unit_b").click(function (event) {
-    if(gameState.terminalTab == 'log')
-        $(".log_entry.unread").removeClass("unread");
-    gameState.terminalTab = 'unit';
-    updateTerminalTabButtons();
+    setTerminalPage('unit');
   });
 
   $("#tab_log_b").click(function (event) {
-    gameState.terminalTab = 'log';
-    updateTerminalTabButtons();
+    setTerminalPage('log');
   });
 
   $(".button").mouseover(function (event) {

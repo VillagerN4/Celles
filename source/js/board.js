@@ -484,3 +484,10 @@ function getHexNeighbors(r, c) {
     }
     return out;
 }
+
+function setTerminalPage(page){
+    if(gameState.terminalTab == 'log' && page != 'log')
+        $(".log_entry.unread").removeClass("unread");
+    gameState.terminalTab = page;
+    updateTerminalTabButtons();
+} 
