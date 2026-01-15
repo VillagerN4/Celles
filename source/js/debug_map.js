@@ -222,11 +222,17 @@ function updateUnits(){
         transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
         });
 
+        $("#unit_" + id + "_outline").attr("src", `assets/cell/${selectedEnemyUnitsIds[id] == "SELECTED" ? "selection_red" : "outline_white"}.png`);
         $("#unit_" + id).css(u_css);
         $("#unit_" + id).attr("src", `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`);
         $("#unit_" + id + "_outline").css(u_css);
         $("#unit_" + id + "_hull").css(off_u_css);
         $("#unit_" + id + "_turret").css(off_u_css);
+        if(selectedUnitId == id){
+            $("#unit_" + id + "_outline").hide();
+        }else{
+            $("#unit_" + id + "_outline").show();
+        }
     }
 }
 

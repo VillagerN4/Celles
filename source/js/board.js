@@ -222,14 +222,14 @@ function moveMap() {
     let sel_u_pos = !selectedUnitId ? [0,0] : getHexCenterPos(gameState.units[selectedUnitId].row, gameState.units[selectedUnitId].col);
     let sel_pos = getHexCenterPos(selectedRow, selectedColumn);
 
-    debug_hex.style.left = camX - boardWidth * zoom / 2 + sel_pos[0] - hexRadius * zoom + "px";
-    debug_hex.style.top = camY - boardHeight * zoom / 2 + sel_pos[1] - hexHeight * zoom + "px";
+    debug_hex.style.left = sel_pos[0] - hexRadius * zoom + "px";
+    debug_hex.style.top = sel_pos[1] - hexHeight * zoom + "px";
 
-    debug_uhex.style.left = camX - boardWidth * zoom / 2 + sel_u_pos[0] - hexRadius * zoom + "px";
-    debug_uhex.style.top = camY - boardHeight * zoom / 2 + sel_u_pos[1] - hexHeight * zoom + "px";
+    debug_uhex.style.left = sel_u_pos[0] - hexRadius * zoom + "px";
+    debug_uhex.style.top = sel_u_pos[1] - hexHeight * zoom + "px";
 
-    cell_dis.style.left = camX - boardWidth * zoom / 2 + pos[0] - hexRadius * zoom + "px";
-    cell_dis.style.top = camY - boardHeight * zoom / 2 + pos[1] - hexHeight * zoom + "px";
+    cell_dis.style.left = pos[0] - hexRadius * zoom + "px";
+    cell_dis.style.top = pos[1] - hexHeight * zoom + "px";
 
     deb_hex.innerHTML = padLeft(board_col + 1, 2) + padLeft(board_row, 2)
         + "<br>" + board_row + " " + board_col
@@ -256,6 +256,8 @@ function moveMap() {
 
 
     let selUnit = selectedUnitId == null ? (isMouseInBoard() ? unitAt(board_row, board_col) : null) : gameState.units[selectedUnitId];
+
+    if(lastSelectedEnemy != null) selUnit = gameState.units[lastSelectedEnemy];
 
     if(selUnit == null){
         $("#tab_unit_available").hide();

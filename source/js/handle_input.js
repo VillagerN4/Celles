@@ -8,13 +8,41 @@ function handleClick(event) {
         if(event.button == 0){
             
             if(u && u.id){
-                selectedUnitId = u ? ((selectedUnitId == u.id && gameState.terminalTab == 'unit') ? (setTerminalPage('log'), null) : u.id) : null;
-                setTerminalPage('unit');
+                if(selectedUnitId == u.id && gameState.terminalTab == 'unit' && lastSelectedEnemy == null){
+                    setTerminalPage('log');
+                    selectedUnitId = null;
+                }else{
+                    if(((u.faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && u.faction != "nazis"))){
+                        selectedUnitId = u.id;
+                        lastSelectedEnemy = null;
+
+                        setTerminalPage('unit');
+                    }else{
+                        if(selectedEnemyUnitsIds[u.id] == "SELECTED"){
+                            if(lastSelectedEnemy == u.id){
+                                selectedEnemyUnitsIds[u.id] = null;
+                                if(selectedUnitId == null) setTerminalPage('log');
+                                lastSelectedEnemy = null;
+                            }else{
+                                selectedEnemyUnitsIds[u.id] = "SELECTED";
+                                lastSelectedEnemy = u.id;
+
+                                setTerminalPage('unit');
+                            }
+                        }else{
+                                selectedEnemyUnitsIds[u.id] = "SELECTED";
+                                lastSelectedEnemy = u.id;
+                                
+                                setTerminalPage('unit');
+                        }
+                    }
+                }
             }else{
                 selectedUnitId = null; 
                 setTerminalPage('log');
             }
 
+            updateUnits();
             clearPathVizualizers();
         }else if(event.button == 2){
 

@@ -56,6 +56,8 @@ var mouseDown = false;
 var selectedRow = null;
 var selectedColumn = null;
 var selectedUnitId = null;
+var selectedEnemyUnitsIds = {};
+var lastSelectedEnemy = null;
 
 const CRT = {
   '4': { 0: '2A', 1: '2A', 2: 'RD', 3: '1A', 4: 'RD', 5: 'RD', 6: 'RD', 7: '1A', 8: '1A', 9: '-' },

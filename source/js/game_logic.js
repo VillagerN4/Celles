@@ -237,6 +237,8 @@ $(document).ready(function () {
     if (animatedU == 0) {
       clearLogs();
       selectedUnitId = null;
+      selectedEnemyUnitsIds = {};
+      lastSelectedEnemy = null;
       selectedRow = null;
       selectedColumn = null;
       clearPathVizualizers();
@@ -251,6 +253,7 @@ $(document).ready(function () {
       updateTurnDisplays();
 
       // $("body").css({ "background-color": gameState.activePlayer == "nazis" ? "#a6acbdff" : "#77ab79ff" });
+      setTerminalPage('log');
     }else{
       sendLog(`Cannot proceed to next phase during unit movement.`);
     }
