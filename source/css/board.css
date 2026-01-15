@@ -18,7 +18,7 @@
 
 #cell_display{
     position: absolute;
-    z-index: 100;
+    z-index: 105;
     filter: opacity(55%);
 }
 .debug_hex_display{

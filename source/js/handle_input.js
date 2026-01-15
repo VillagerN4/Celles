@@ -1,4 +1,7 @@
 function handleClick(event) {
+    const mClickRelease = document.getElementById("m_click_rel");
+    const mClick = document.getElementById("m_click");
+
     if (isMouseInBoard() && gameState.page == "game") {
         let row_col = getHexRowCol(cx, cy);
         const row = Math.max(0, Math.min(row_col[0], gameState.rows - 1));
@@ -11,27 +14,37 @@ function handleClick(event) {
                 if(selectedUnitId == u.id && gameState.terminalTab == 'unit' && lastSelectedEnemy == null){
                     setTerminalPage('log');
                     selectedUnitId = null;
+                    mClick.currentTime = 0;
+                    mClick.play();
                 }else{
                     if(((u.faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && u.faction != "nazis"))){
                         selectedUnitId = u.id;
                         lastSelectedEnemy = null;
 
                         setTerminalPage('unit');
+                        mClickRelease.currentTime = 0;
+                        mClickRelease.play();
                     }else{
                         if(selectedEnemyUnitsIds[u.id] == "SELECTED"){
                             if(lastSelectedEnemy == u.id){
                                 selectedEnemyUnitsIds[u.id] = null;
                                 if(selectedUnitId == null) setTerminalPage('log');
                                 lastSelectedEnemy = null;
+                                mClick.currentTime = 0;
+                                mClick.play();
                             }else{
                                 selectedEnemyUnitsIds[u.id] = "SELECTED";
                                 lastSelectedEnemy = u.id;
 
                                 setTerminalPage('unit');
+                                mClickRelease.currentTime = 0;
+                                mClickRelease.play();
                             }
                         }else{
                                 selectedEnemyUnitsIds[u.id] = "SELECTED";
                                 lastSelectedEnemy = u.id;
+                                mClickRelease.currentTime = 0;
+                                mClickRelease.play();
                                 
                                 setTerminalPage('unit');
                         }
@@ -42,7 +55,6 @@ function handleClick(event) {
                 setTerminalPage('log');
             }
 
-            updateUnits();
             clearPathVizualizers();
         }else if(event.button == 2){
 
@@ -51,10 +63,14 @@ function handleClick(event) {
                     selectedRow = null;
                     selectedColumn = null;
                     setTerminalPage('log');
+                    mClick.currentTime = 0;
+                    mClick.play();
                 }else{
                     setTerminalPage('cell');
                     selectedRow = row;
                     selectedColumn = col;
+                    mClickRelease.currentTime = 0;
+                    mClickRelease.play();
                 }
             }else{
                 selectedRow=null;
@@ -70,6 +86,7 @@ function handleClick(event) {
         }
 
         updateMapBoundry();
+        updateUnits();
         moveMap();
     }
 }

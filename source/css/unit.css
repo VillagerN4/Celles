@@ -6,8 +6,11 @@
 
 .unit_outline_display {
     position: absolute;
-    filter: opacity(75%);
     z-index: 101;
+}
+
+.unit_unselected{
+    filter: opacity(55%);
 }
 
 .unit_hull_display{

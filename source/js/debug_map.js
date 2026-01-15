@@ -222,17 +222,28 @@ function updateUnits(){
         transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
         });
 
-        $("#unit_" + id + "_outline").attr("src", `assets/cell/${selectedEnemyUnitsIds[id] == "SELECTED" ? "selection_red" : "outline_white"}.png`);
+        if(id == selectedUnitId){
+            if(gameState.terminalTab == 'unit' && lastSelectedEnemy == null){
+                $("#unit_" + id + "_outline").removeClass('unit_unselected');
+            }else{
+                $("#unit_" + id + "_outline").addClass('unit_unselected');
+            }
+        }else if(selectedEnemyUnitsIds[id] == "SELECTED"){
+            if(gameState.terminalTab == 'unit' && lastSelectedEnemy == id){
+                $("#unit_" + id + "_outline").removeClass('unit_unselected');
+            }else{
+                $("#unit_" + id + "_outline").addClass('unit_unselected');
+            }
+        }else{
+            $("#unit_" + id + "_outline").removeClass('unit_unselected');
+        }
+
+        $("#unit_" + id + "_outline").attr("src", `assets/cell/${`${id == selectedUnitId || selectedEnemyUnitsIds[id] == "SELECTED" ? "selection" : "outline"}_${((u.faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && u.faction != "nazis")) ? "white" : "red"}`}.png`);
         $("#unit_" + id).css(u_css);
         $("#unit_" + id).attr("src", `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`);
         $("#unit_" + id + "_outline").css(u_css);
         $("#unit_" + id + "_hull").css(off_u_css);
         $("#unit_" + id + "_turret").css(off_u_css);
-        if(selectedUnitId == id){
-            $("#unit_" + id + "_outline").hide();
-        }else{
-            $("#unit_" + id + "_outline").show();
-        }
     }
 }
 
