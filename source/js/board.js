@@ -424,7 +424,7 @@ function moveMap() {
     if (selectedUnitId == null) {
         $("#debug_unithex_dis").hide();
     } else {
-        $("#debug_unithex_dis").show();
+        // $("#debug_unithex_dis").show();
     }
 }
 
@@ -492,4 +492,5 @@ function setTerminalPage(page){
         $(".log_entry.unread").removeClass("unread");
     gameState.terminalTab = page;
     updateTerminalTabButtons();
+    updateUnits();
 } 
