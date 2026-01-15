@@ -179,6 +179,12 @@ function updateDebugMap() {
 }
 
 function updateUnits(){
+    if(gameState.terminalTab == 'cell'){
+        $("#debug_hex_dis").removeClass('unit_unselected');
+    }else{
+        $("#debug_hex_dis").addClass('unit_unselected');
+    }
+
     for (let id in gameState.units) {
         const u = gameState.units[id];
         const pos = getHexCenterPos(u.row, u.col);
