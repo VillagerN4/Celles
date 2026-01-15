@@ -91,21 +91,23 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
         startMoveSound: function(){
             this.moveSound.currentTime = Math.random() * 10;
             this.moveSound.play();
-            fadeAudio(this.moveSound, 0, 0.5, 8000 * unitSpeedModifier);
+            fadeAudio(this.moveSound, 0, 0.5 * sfxVolume, 8000 * unitSpeedModifier);
         },
         stopMoveSound: function(){
-            fadeAudio(this.moveSound, 0.5, 0, 8000 * unitSpeedModifier);
+            fadeAudio(this.moveSound, 0.5 * sfxVolume, 0, 8000 * unitSpeedModifier);
         },
         quickMoveSound: function(){
             let u = this;
-            fadeAudio(u.moveSound, 0, 0.5, 4000 * unitSpeedModifier, function(){fadeAudio(u.moveSound, 0.5, 0, 4000 * unitSpeedModifier)});
+            fadeAudio(u.moveSound, 0, 0.5 * sfxVolume, 4000 * unitSpeedModifier, function(){fadeAudio(u.moveSound, 0.5 * sfxVolume, 0, 4000 * unitSpeedModifier)});
         },
         playShootSound: function(){
+            this.shootSound.volume = sfxVolume;
             this.shootSound.currentTime = 0;
             this.shootSound.play();
         },
         playExplodeSound: function(){
-            this.explodeSound.volume = 1
+            this.explodeSound.volume = sfxVolume;
+            this.debrisSound.volume = sfxVolume;
             this.explodeSound.currentTime = 0;
             this.explodeSound.play();
             this.debrisSound.currentTime = 0;

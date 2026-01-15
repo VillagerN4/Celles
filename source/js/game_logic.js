@@ -55,11 +55,9 @@ $(document).ready(function () {
       pageAnimating = true;
       gameState.page = "game";
 
-      gameMusic.volume = 0;
-
       fadeAudio(menuMusic, menuMusic.volume, 0, 1500, function(){
         gameMusic.play();
-        gameMusic.volume = 1;
+        gameMusic.volume = musicVolume;
         updateDebugMap();
         updateMapBoundry();
         moveMap();
@@ -292,6 +290,10 @@ $(document).ready(function () {
   $("#music_volume").mousemove(function () {
     musicVolume = $(this).val();
     menuMusic.volume = musicVolume;
+  });
+
+  $("#sfx_volume").mousemove(function () {
+    sfxVolume = $(this).val();
   });
 
   $("#page_game").hide();

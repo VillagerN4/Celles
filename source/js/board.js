@@ -79,8 +79,8 @@ function updateDisplayParams() {
     $("#board_placeholder").css({
         "width": boardWidth + "px",
         "height": boardHeight + "px",
-        "left": window.innerWidth / 2 - mapOffsetX - boardWidth / 2,
-        "top": window.innerHeight - 20 - boardHeight
+        "left": window.innerWidth / 2 - mapOffsetX - boardWidth / 2 + "px",
+        "bottom": "20px"
     });
     $("#board_container").css({
         "width": boardWidth + "px",

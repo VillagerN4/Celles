@@ -601,3 +601,7 @@ input:checked + .toggle:before {
     height: inherit;
     transition: filter 1s ease-in-out;
 }
+
+#preview{
+    height: 90vh;
+}
