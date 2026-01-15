@@ -6,62 +6,84 @@ function handleClick(event) {
         const u = unitAt(row, col);
 
         if(event.button == 0){
-            
-            if(u && u.id){
-                if(selectedUnitId == u.id && gameState.terminalTab == 'unit' && lastSelectedEnemy == null){
-                    setTerminalPage('log');
-                    selectedUnitId = null;
-                }else{
-                    if(((u.faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && u.faction != "nazis"))){
-                        selectedUnitId = u.id;
-                        lastSelectedEnemy = null;
-
-                        setTerminalPage('unit');
+                if(u && u.id){
+                    if(selectedUnitId == u.id && gameState.terminalTab == 'unit' && lastSelectedEnemy == null){
+                        setTerminalPage('log');
+                        selectedUnitId = null;
                     }else{
-                        if(selectedEnemyUnitsIds[u.id] == "SELECTED"){
-                            if(lastSelectedEnemy == u.id){
-                                selectedEnemyUnitsIds[u.id] = null;
-                                if(selectedUnitId == null) setTerminalPage('log');
-                                lastSelectedEnemy = null;
-                            }else{
-                                selectedEnemyUnitsIds[u.id] = "SELECTED";
-                                lastSelectedEnemy = u.id;
+                        if(((u.faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && u.faction != "nazis"))){
+                            selectedUnitId = u.id;
+                            lastSelectedEnemy = null;
 
-                                setTerminalPage('unit');
-                            }
+                            setTerminalPage('unit');
                         }else{
-                                selectedEnemyUnitsIds[u.id] = "SELECTED";
-                                lastSelectedEnemy = u.id;
-                                
-                                setTerminalPage('unit');
+                            if(selectedEnemyUnitsIds[u.id] == "SELECTED"){
+                                if(lastSelectedEnemy == u.id){
+                                    selectedEnemyUnitsIds[u.id] = null;
+                                    if(selectedUnitId == null) setTerminalPage('log');
+                                    lastSelectedEnemy = null;
+                                }else{
+                                    selectedEnemyUnitsIds[u.id] = "SELECTED";
+                                    lastSelectedEnemy = u.id;
+
+                                    setTerminalPage('unit');
+                                }
+                            }else{
+                                    selectedEnemyUnitsIds[u.id] = "SELECTED";
+                                    lastSelectedEnemy = u.id;
+                                    
+                                    setTerminalPage('unit');
+                            }
                         }
                     }
+                }else{
+                    selectedUnitId = null; 
+                    setTerminalPage('log');
                 }
-            }else{
-                selectedUnitId = null; 
-                setTerminalPage('log');
-            }
-
             updateUnits();
+            
             clearPathVizualizers();
         }else if(event.button == 2){
 
-            if(!u){
-                if(selectedRow==row && selectedColumn==col && gameState.terminalTab == 'cell'){
+            if (gameState.phase === "movement") {
+
+                if(!u){
+                    if(selectedRow == row && selectedColumn == col && gameState.terminalTab == 'cell'){
+                        selectedRow = null;
+                        selectedColumn = null;
+                        setTerminalPage('log');
+                    }else{
+                        setTerminalPage('cell');
+                        selectedRow = row;
+                        selectedColumn = col;
+                    }
+                }else{
                     selectedRow = null;
                     selectedColumn = null;
                     setTerminalPage('log');
-                }else{
-                    setTerminalPage('cell');
-                    selectedRow = row;
-                    selectedColumn = col;
                 }
-            }else{
-                selectedRow=null;
-                selectedColumn=null;
-                setTerminalPage('log');
-            }
 
+            } else if (gameState.phase === "combat") {
+
+                if (!u) return;
+
+                if (gameState.combat.primary) {
+
+                    if (gameState.combat.supportCandidates?.includes(u.id)) {
+
+                        const idx = gameState.combat.attackers.indexOf(u.id);
+                        if (idx === -1) {
+                            gameState.combat.attackers.push(u.id);
+                            sendLog(`Added support attacker ${u.id}`);
+                        } else {
+                            gameState.combat.attackers.splice(idx, 1);
+                            sendLog(`Removed support attacker ${u.id}`);
+                        }
+                        setTerminalPage('unit');
+                        return;
+                    }
+                }
+            }
             clearPathVizualizers();
         }
 

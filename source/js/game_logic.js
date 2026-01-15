@@ -221,9 +221,28 @@ $(document).ready(function () {
     if (gameState.phase !== 'combat') {
         sendLog("You can only engage in combat during the COMBAT phase.");
     }else{
-      startCombat(selectedUnitId);
-      
-      sendLog(`Selected attacker: ${selectedUnitId}. Now click enemy units.`);
+      if(!isCombat){
+        startCombat(selectedUnitId);
+        isCombat = true;
+        console.log(gameState.combat);
+        if (!gameState.combat?.primary) {
+          console.log(gameState.combat);
+          sendLog("No combat selected.");
+          return;
+        }
+
+        if (gameState.combat.attackers.length === 1 || gameState.combat.defenders.length === 0) {
+            sendLog("Select attackers first.");
+            return;
+        }
+        document.getElementsByClassName("combat_unit")[0].style.color = "#8b0000";
+      }else{
+        resolveCurrentCombat();
+        gameState.combat = null;
+        updateDebugMap?.();
+        moveMap?.();
+        document.getElementsByClassName("combat_unit")[0].style.color = "#63ff80";
+      }
     }
   });
 

@@ -1,44 +1,5 @@
-// function collectEngagements() {
-//     const engagements = [];
-//     const seen = new Set();
-//     for (const id in gameState.units) {
-//         const u = gameState.units[id];
-//         if (u.faction !== gameState.activePlayer) continue;
-//         const neigh = getHexNeighbors(u.row, u.col);
-//         for (const [r, c] of neigh) {
-//             const enemy = unitAt(r, c);
-//             if (enemy && enemy.faction !== u.faction) {
-//                 const key = [u.id, enemy.id].sort().join(':');
-//                 if (!seen.has(key)) {
-//                     engagements.push({ attacker: u.id, defender: enemy.id });
-//                     seen.add(key);
-//                 }
-//             }
-//         }
-//     }
-//     return engagements;
-// }
-
-// function resolveAllEngagements() {
-//     const engagements = collectEngagements();
-//     for (const e of engagements) {
-//         const atk = [e.attacker];
-//         const defNeighbors = [];
-//         const aUnit = gameState.units[e.attacker];
-//         if (!aUnit) continue;
-//         const neigh = getHexNeighbors(aUnit.row, aUnit.col);
-//         for (const [r, c] of neigh) {
-//             const v = unitAt(r, c);
-//             if (v && v.faction !== aUnit.faction) defNeighbors.push(v.id);
-//         }
-//         if (defNeighbors.length === 0) continue;
-//         resolveCombat(atk, defNeighbors, 'medium');
-//     }
-//     if (typeof updateDebugMap === 'function') updateDebugMap();
-//     if (typeof moveMap === 'function') moveMap();
-// }
-
 function resolveCombat(aIds, dIds, attackType) {
+    isCombat = false;
     const A = aIds.map(id => gameState.units[id]).filter(Boolean);
     const D = dIds.map(id => gameState.units[id]).filter(Boolean);
     if (!A.length || !D.length) return { ok: false, msg: 'Brak jednostek' };
@@ -163,12 +124,20 @@ function startCombat(primaryId) {
     const u = gameState.units[primaryId];
     if (!u) return;
 
+    const defenders = collectAllAdjacentEnemies(u);
+    if (defenders.length === 0) return;
+
     gameState.combat = {
         primary: primaryId,
         attackers: [primaryId],
-        defenders: collectAllAdjacentEnemies(u)
+        defenders: defenders,
+        supportCandidates: getAttackSupportCandidates(defenders, u.faction)
+            .filter(id => id !== primaryId)
     };
+
+    if(isCombat === false) sendLog("Combat started. Select supporting attackers.");
 }
+
 
 function collectAllAdjacentEnemies(unit) {
     const out = [];

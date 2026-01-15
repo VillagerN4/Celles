@@ -161,7 +161,9 @@ function explodeUnit(id){
 }
 
 function seedUnitsExample() {
-    gameState.units['u_01_01'] = createUnit('u_01_01', 'nazis', 'armor', 0, 0, 2, 9, 7, 5, true, "panzer3", 4);
+    gameState.units['u_01_01'] = createUnit('u_01_01', 'nazis', 'armor', 0, 0, 1000, 9, 7, 5, true, "panzer3", 4);
     gameState.units['u_10_05'] = createUnit('u_10_05', 'allies', 'infantry', 9, 4, 2, 4, 3, 4, false, "sherman", 0);
     gameState.units['u_05_05'] = createUnit('u_05_05', 'brits', 'armor', 14, 8, 2, 4, 3, 4, false, "sherman", 2);
+    gameState.units['u_05_06'] = createUnit('u_05_06', 'brits', 'armor', 0, 1, 2, 4, 3, 4, false, "sherman", 2);
+    gameState.units['u_01_02'] = createUnit('u_01_02', 'nazis', 'armor', 1, 0, 2, 9, 7, 5, true, "panzer3", 4);
 }
