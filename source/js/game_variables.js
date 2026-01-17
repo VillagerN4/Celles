@@ -3,7 +3,7 @@ const debugMode = true;
 var pageAnimating = false;
 var pageFadeTime = !debugMode ? 1500 : 1;
 var musicStarted = false;
-var musicVolume = 1;
+var musicVolume = debugMode ? 0 : 1;
 var sfxVolume = 1;
 var panBlurAmount = 0;
 var movementMultiplier = debugMode ? 9999 : 1;
@@ -57,10 +57,8 @@ var mouseDown = false;
 var selectedRow = null;
 var selectedColumn = null;
 var selectedUnitId = null;
-var selectedEnemyUnitsIds = {};
-var lastSelectedEnemy = null;
+var selectedUnitsIds = {};
 var isSelected = false;
-var isCombat = false;
 
 const CRT = {
   '4': { 0: '2A', 1: '2A', 2: 'RD', 3: '1A', 4: 'RD', 5: 'RD', 6: 'RD', 7: '1A', 8: '1A', 9: '-' },

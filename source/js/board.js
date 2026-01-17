@@ -257,8 +257,6 @@ function moveMap() {
 
     let selUnit = selectedUnitId == null ? (isMouseInBoard() ? unitAt(board_row, board_col) : null) : gameState.units[selectedUnitId];
 
-    if(lastSelectedEnemy != null) selUnit = gameState.units[lastSelectedEnemy];
-
     if(selUnit == null){
         $("#tab_unit_available").hide();
         $("#tab_unit_notavailable").show();

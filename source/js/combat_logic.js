@@ -1,5 +1,4 @@
 function resolveCombat(aIds, dIds, attackType) {
-    isCombat = false;
     const A = aIds.map(id => gameState.units[id]).filter(Boolean);
     const D = dIds.map(id => gameState.units[id]).filter(Boolean);
     if (!A.length || !D.length) return { ok: false, msg: 'Brak jednostek' };
@@ -50,7 +49,7 @@ function applyLossesToUnits(units, levels) {
         if (remaining <= 0) break;
         if (!u) continue;
         if (u.levels === 2) { u.levels = 1; remaining -= 1; }
-        else if (u.levels === 1) {explodeUnit(u.id); delete gameState.units[u.id]; remaining -= 1; }
+        else if (u.levels === 1) {if(u.id == selectedUnitId){selectedUnitId = null; selectedUnitsIds[u.id] = null;} explodeUnit(u.id); delete gameState.units[u.id]; remaining -= 1; }
     }
 }
 
@@ -130,27 +129,25 @@ function startCombat(primaryId) {
     gameState.combat = {
         primary: primaryId,
         attackers: [primaryId],
-        defenders: defenders,
-        supportCandidates: getAttackSupportCandidates(defenders, u.faction)
-            .filter(id => id !== primaryId)
+        defenders: defenders
     };
-
-    if(isCombat === false) sendLog("Combat started. Select supporting attackers.");
 }
 
 
 function collectAllAdjacentEnemies(unit) {
     const out = [];
     const neigh = getHexNeighbors(unit.row, unit.col);
+    const isNazi = unit.faction == "nazis";
     for (const [r, c] of neigh) {
         const e = unitAt(r, c);
-        if (e && e.faction !== unit.faction) out.push(e.id);
+        if (e && ((isNazi && e.faction != "nazis") || (!isNazi && e.faction == "nazis"))) out.push(e.id);
     }
     return out;
 }
 
 function getAttackSupportCandidates(defenderIds, faction) {
     const set = new Set();
+    const isNazi = faction == "nazis";
 
     for (const dId of defenderIds) {
         const d = gameState.units[dId];
@@ -159,7 +156,7 @@ function getAttackSupportCandidates(defenderIds, faction) {
         const neigh = getHexNeighbors(d.row, d.col);
         for (const [r, c] of neigh) {
             const u = unitAt(r, c);
-            if (u && u.faction === faction) set.add(u.id);
+            if (u && ((isNazi && u.faction != "nazis") || (!isNazi && u.faction == "nazis"))) set.add(u.id);
         }
     }
     return [...set];

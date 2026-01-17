@@ -221,28 +221,32 @@ $(document).ready(function () {
     if (gameState.phase !== 'combat') {
         sendLog("You can only engage in combat during the COMBAT phase.");
     }else{
-      if(!isCombat){
-        startCombat(selectedUnitId);
-        isCombat = true;
-        console.log(gameState.combat);
-        if (!gameState.combat?.primary) {
-          console.log(gameState.combat);
-          sendLog("No combat selected.");
-          return;
-        }
+      startCombat(selectedUnitId);
 
-        if (gameState.combat.attackers.length === 1 || gameState.combat.defenders.length === 0) {
-            sendLog("Select attackers first.");
-            return;
+      let attackers = [selectedUnitId];
+      const isNazi = gameState.faction == 'nazis';
+      for (const [id, selected] of Object.entries(selectedUnitsIds)) {
+        if(selected == "SELECTED"){
+          const u = gameState.units[id];
+          if (!u) continue;
+
+          const neigh = getHexNeighbors(u.row, u.col);
+          for (const [r, c] of neigh) {
+              const nu = unitAt(r, c);
+              if (nu && ((isNazi && u.faction != "nazis") || (!isNazi && u.faction == "nazis")) && nu.id == selectedUnitId) attackers.push(u.id);
+          }
         }
-        document.getElementsByClassName("combat_unit")[0].style.color = "#8b0000";
-      }else{
+      }
+
+      if(gameState.combat != null){ 
+        gameState.combat.attackers = attackers;
+
         resolveCurrentCombat();
         gameState.combat = null;
-        updateDebugMap?.();
-        moveMap?.();
-        document.getElementsByClassName("combat_unit")[0].style.color = "#63ff80";
       }
+
+      updateDebugMap();
+      moveMap();
     }
   });
 
@@ -254,8 +258,7 @@ $(document).ready(function () {
     if (animatedU == 0) {
       clearLogs();
       selectedUnitId = null;
-      selectedEnemyUnitsIds = {};
-      lastSelectedEnemy = null;
+      selectedUnitsIds = {};
       selectedRow = null;
       selectedColumn = null;
       clearPathVizualizers();

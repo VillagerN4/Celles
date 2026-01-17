@@ -7,34 +7,14 @@ function handleClick(event) {
 
         if(event.button == 0){
                 if(u && u.id){
-                    if(selectedUnitId == u.id && gameState.terminalTab == 'unit' && lastSelectedEnemy == null){
+                    if(selectedUnitId == u.id && gameState.terminalTab == 'unit'){
                         setTerminalPage('log');
                         selectedUnitId = null;
+                        selectedUnitsIds[u.id] = null;
                     }else{
-                        if(((u.faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && u.faction != "nazis"))){
-                            selectedUnitId = u.id;
-                            lastSelectedEnemy = null;
-
-                            setTerminalPage('unit');
-                        }else{
-                            if(selectedEnemyUnitsIds[u.id] == "SELECTED"){
-                                if(lastSelectedEnemy == u.id){
-                                    selectedEnemyUnitsIds[u.id] = null;
-                                    if(selectedUnitId == null) setTerminalPage('log');
-                                    lastSelectedEnemy = null;
-                                }else{
-                                    selectedEnemyUnitsIds[u.id] = "SELECTED";
-                                    lastSelectedEnemy = u.id;
-
-                                    setTerminalPage('unit');
-                                }
-                            }else{
-                                    selectedEnemyUnitsIds[u.id] = "SELECTED";
-                                    lastSelectedEnemy = u.id;
-                                    
-                                    setTerminalPage('unit');
-                            }
-                        }
+                        selectedUnitId = u.id;
+                        selectedUnitsIds[u.id] = "SELECTED";
+                        setTerminalPage('unit');
                     }
                 }else{
                     selectedUnitId = null; 
@@ -45,45 +25,22 @@ function handleClick(event) {
             clearPathVizualizers();
         }else if(event.button == 2){
 
-            if (gameState.phase === "movement") {
-
-                if(!u){
-                    if(selectedRow == row && selectedColumn == col && gameState.terminalTab == 'cell'){
-                        selectedRow = null;
-                        selectedColumn = null;
-                        setTerminalPage('log');
-                    }else{
-                        setTerminalPage('cell');
-                        selectedRow = row;
-                        selectedColumn = col;
-                    }
-                }else{
+            if(!u){
+                if(selectedRow == row && selectedColumn == col && gameState.terminalTab == 'cell'){
                     selectedRow = null;
                     selectedColumn = null;
                     setTerminalPage('log');
+                }else{
+                    setTerminalPage('cell');
+                    selectedRow = row;
+                    selectedColumn = col;
                 }
-
-            } else if (gameState.phase === "combat") {
-
-                if (!u) return;
-
-                if (gameState.combat.primary) {
-
-                    if (gameState.combat.supportCandidates?.includes(u.id)) {
-
-                        const idx = gameState.combat.attackers.indexOf(u.id);
-                        if (idx === -1) {
-                            gameState.combat.attackers.push(u.id);
-                            sendLog(`Added support attacker ${u.id}`);
-                        } else {
-                            gameState.combat.attackers.splice(idx, 1);
-                            sendLog(`Removed support attacker ${u.id}`);
-                        }
-                        setTerminalPage('unit');
-                        return;
-                    }
-                }
+            }else{
+                selectedRow = null;
+                selectedColumn = null;
+                setTerminalPage('log');
             }
+            
             clearPathVizualizers();
         }
 
