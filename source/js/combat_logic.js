@@ -49,7 +49,7 @@ function applyLossesToUnits(units, levels) {
         if (remaining <= 0) break;
         if (!u) continue;
         if (u.levels === 2) { u.levels = 1; remaining -= 1; }
-        else if (u.levels === 1) {if(u.id == selectedUnitId){selectedUnitId = null; selectedUnitsIds[u.id] = null;} explodeUnit(u.id); delete gameState.units[u.id]; remaining -= 1; }
+        else if (u.levels === 1) {if(u.id == selectedUnitId){selectedUnitId = null;} selectedUnitsIds[u.id] = null; explodeUnit(u.id); delete gameState.units[u.id]; remaining -= 1; }
     }
 }
 
@@ -162,8 +162,93 @@ function getAttackSupportCandidates(defenderIds, faction) {
     return [...set];
 }
 
-function resolveCurrentCombat() {
+async function resolveCurrentCombat() {
     const { attackers, defenders } = gameState.combat;
+
+    for (const aId of attackers) {
+        const target = defenders[Math.floor(Math.random() * defenders.length)];
+        if (!target) continue;
+
+        await animateAttack(aId, target);
+    }
+    
     resolveCombat(attackers, defenders, 'medium');
+
     gameState.combat = null;
+}
+
+async function rotateTurretToTarget(attacker, defenderId) {
+    const d = gameState.units[defenderId];
+    if (!d) return;
+
+    const edge = getMovementDirection(attacker.row, attacker.col, d.row, d.col);
+
+    const current = attacker.currentTurretRotation;
+
+    const delta = shortestRotation(current, edge);
+    if (delta === 0) return;
+
+    attacker.currentTurretRotation = current + delta;
+
+    $("#unit_" + attacker.id + "_turret").addClass("rotating");
+
+    updateUnits();
+
+    await new Promise(r => setTimeout(r, 10));
+
+    attacker.playTurnSound();
+
+    applyRotation(attacker.id, attacker.currentTurretRotation, "_turret");
+
+    await tweenOffsetProgress(attacker, 8000 * unitSpeedModifier, "inout");
+    $("#unit_" + attacker.id + "_turret").removeClass("rotating");
+    await new Promise(r => setTimeout(r, 10));
+}
+
+async function fireWeapon(attacker) {
+    const recoil = 2 * zoom;
+    const id = attacker.id;
+    const rot = attacker.currentTurretRotation;
+
+    function applyTurretTransform(unitId, rotation, recoil = 0) {
+        $("#unit_" + unitId + "_turret").css(
+            "transform",
+            `rotate(${rotation}deg) translateY(${recoil}px)`
+        );
+    }
+
+
+    $("#unit_" + id + "_turret").css({
+        transition: `transform 0.01s linear`
+    });
+
+    applyTurretTransform(id, rot, recoil);
+
+    await new Promise(r => setTimeout(r, 10));
+
+    $("#unit_" + attacker.id + "_turret").addClass("firing");
+    updateUnits();
+
+    attacker.playShootSound();
+
+    await new Promise(r => setTimeout(r, 120));
+
+    applyTurretTransform(id, rot, 0);
+
+    await new Promise(r => setTimeout(r, 1200));
+
+    $("#unit_" + attacker.id + "_turret").removeClass("firing");
+}
+
+async function animateAttack(attackerId, defenderId) {
+    const attacker = gameState.units[attackerId];
+    const defender = gameState.units[defenderId];
+
+    if (!attacker || !defender) return;
+
+    await rotateTurretToTarget(attacker, defenderId);
+
+    await new Promise(r => setTimeout(r, 1200));
+
+    await fireWeapon(attacker);
 }

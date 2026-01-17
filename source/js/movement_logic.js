@@ -139,6 +139,7 @@ function applyRotation(unitId, rot, part){
 }
 
 async function executeMovementPath(unitId, path) {
+    $("#unit_" + unitId + "_turret").addClass("rotating");
     const u = gameState.units[unitId];
 
     gameState.animatedUnits[unitId] = path;
@@ -169,6 +170,7 @@ async function executeMovementPath(unitId, path) {
         u.row_offset = 0;
         u.col_offset = 0;
         u.offsetProgress = 0;
+        $("#unit_" + unitId + "_turret").removeClass("rotating");
 
         updateUnits();
         gameState.animatedUnits[unitId] = null;

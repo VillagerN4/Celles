@@ -66,6 +66,11 @@ function drawUnit(id) {
         src: `assets/audio/unit/tank_explode${1 + Math.floor(Math.random() * 3)}.mp3`
     });
 
+    const turnSound = $("<audio>", {
+        id: "unit_" + id + "_turning_sound",
+        src: `assets/audio/unit/tank_turret.mp3`
+    });
+
     let contId = "#unit_" + id + "_container";
 
     $("#board_units").append(unitC);
@@ -77,6 +82,7 @@ function drawUnit(id) {
     $(contId).append(shootSound);
     $(contId).append(explodeSound);
     $(contId).append(debrisSound);
+    $(contId).append(turnSound);
 
     u.setupSounds();
 }
@@ -87,7 +93,7 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
         movement, movementLeft: movement, attack, defense,
         motorized: !!motorized, used: false,
         supplyState: 'supplied', disrupted: false,
-        model, moveSound: null, shootSound: null, debrisSound: null, explodeSound: null,
+        model, moveSound: null, shootSound: null, debrisSound: null, explodeSound: null, turnSound: null,
         startMoveSound: function(){
             this.moveSound.currentTime = Math.random() * 10;
             this.moveSound.play();
@@ -105,6 +111,11 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
             this.shootSound.currentTime = 0;
             this.shootSound.play();
         },
+        playTurnSound: function(){
+            this.turnSound.volume = sfxVolume;
+            this.turnSound.currentTime = 0;
+            this.turnSound.play();
+        },
         playExplodeSound: function(){
             this.explodeSound.volume = sfxVolume;
             this.debrisSound.volume = sfxVolume;
@@ -118,46 +129,71 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
             this.shootSound = document.getElementById("unit_" + id + "_shooting_sound");
             this.debrisSound = document.getElementById("unit_" + id + "_debris_sound");
             this.explodeSound = document.getElementById("unit_" + id + "_exploding_sound");
+            this.turnSound = document.getElementById("unit_" + id + "_turning_sound");
         },
         starterAngleEdge, currentRotation: edgeToAngle[starterAngleEdge], currentTurretRotation: edgeToAngle[starterAngleEdge], col_offset: 0, row_offset: 0,
         offsetProgress: 0
     };
 }
 
-function explodeUnit(id){
-    if(gameState.animatedUnits[id] == null){
-        const u = gameState.units[id];
-        if(!u) return false;
-        const pos = getHexCenterPos(u.row, u.col);
+function explodeUnit(id) {
+    if (gameState.animatedUnits[id] != null) return false;
 
-        let size = 92;
+    const u = gameState.units[id];
+    if (!u) return false;
 
-        const x = pos[0] - size/2 * zoom + "px";
-        const y = pos[1] - size/2 * zoom + "px";
+    const pos = getHexCenterPos(u.row, u.col);
 
-        gameState.units[id].playExplodeSound();
+    const size = 92;
+    const frameCount = 64;
+    const duration = 1400;
 
-        $(`.${id}_explodable`).remove();
+    const x = pos[0] - (size / 2) * zoom + "px";
+    const y = pos[1] - (size / 2) * zoom + "px";
 
-        
-        const img1 = $("<img>", {
-            id: "unit_" + id + "_explosion",
-            class: `explosion_display`,
-            src: `assets/explosion/explosion.gif`,
-            css: {
-                position: "absolute",
-                left: x,
-                top: y,
-                width: size * zoom + "px",
-                height: size * zoom + "px"
+    u.playExplodeSound();
+
+    $(`.${id}_explodable`).remove();
+
+    const $img = $("<img>", {
+        id: "unit_" + id + "_explosion",
+        class: "explosion_display",
+        src: "assets/explosion/frames/explosion (1).png",
+        css: {
+            position: "absolute",
+            left: x,
+            top: y,
+            width: size * zoom + "px",
+            height: size * zoom + "px",
+            pointerEvents: "none",
+            transform: `rotate(${Math.random() * 360}deg)`
+        }
+    });
+
+    $("#unit_" + id + "_container").append($img);
+
+    const start = performance.now();
+
+    function step(now) {
+        const t = Math.min((now - start) / duration, 1);
+        const frame = Math.floor(t * frameCount) + 1;
+
+        if (frame <= frameCount) {
+            $img.attr(
+                "src",
+                `assets/explosion/frames/explosion (${frame}).png`
+            );
+            requestAnimationFrame(step);
+            if (t > 0.8) {
+                $img.css("opacity", (1 - t) / 0.2);
             }
-        });
-
-        $("#unit_" + id + "_container").append(img1);
-
-        return true;
+        } else {
+            $img.remove();
+        }
     }
-    return false;
+
+    requestAnimationFrame(step);
+    return true;
 }
 
 function seedUnitsExample() {

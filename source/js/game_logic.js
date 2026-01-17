@@ -223,22 +223,13 @@ $(document).ready(function () {
     }else{
       startCombat(selectedUnitId);
 
-      let attackers = [selectedUnitId];
-      const isNazi = gameState.faction == 'nazis';
-      for (const [id, selected] of Object.entries(selectedUnitsIds)) {
-        if(selected == "SELECTED"){
-          const u = gameState.units[id];
-          if (!u) continue;
-
-          const neigh = getHexNeighbors(u.row, u.col);
-          for (const [r, c] of neigh) {
-              const nu = unitAt(r, c);
-              if (nu && ((isNazi && u.faction != "nazis") || (!isNazi && u.faction == "nazis")) && nu.id == selectedUnitId) attackers.push(u.id);
-          }
-        }
-      }
-
       if(gameState.combat != null){ 
+        let attackCandidates = getAttackSupportCandidates(gameState.combat.defenders, gameState.faction);
+        let attackers = [];
+        for (const [id, selected] of Object.entries(selectedUnitsIds)) {
+          if(selected == "SELECTED" && attackCandidates.includes(id)) attackers.push(id);
+        }
+
         gameState.combat.attackers = attackers;
 
         resolveCurrentCombat();

@@ -224,8 +224,11 @@ function updateUnits(){
         $(".unit_hull_display").css({
         transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
         });
-        $(".unit_turret_display").css({
+        $(".unit_turret_display.rotating").css({
         transition: `transform ${6 * unitSpeedModifier}s ease-in-out`
+        });
+        $(".unit_turret_display.firing").css({
+        transition: `transform 0.6s ease-out`
         });
 
         if(id == selectedUnitId){
@@ -242,6 +245,7 @@ function updateUnits(){
             }
         }
 
+        $("#unit_" + id + "_explosion").css(off_u_css);
         $("#unit_" + id + "_outline").attr("src", `assets/cell/${`${selectedUnitsIds[id] == "SELECTED" ? "selection" : "outline"}_${((u.faction == "nazis" && gameState.activePlayer == "nazis") || (gameState.activePlayer != "nazis" && u.faction != "nazis")) ? "white" : "red"}`}.png`);
         $("#unit_" + id).css(u_css);
         $("#unit_" + id).attr("src", `assets/cell/${u.faction}/${u.faction}_${u.used ? "active" : (u.disrupted ? "reduced" : "standard")}.png`);

@@ -16,14 +16,14 @@
 .unit_hull_display{
     position: absolute;
     z-index: 110;
-    transform: rotate(0deg);
-    transition: transform 6s ease-in-out;
 }
 
 .unit_turret_display{
     z-index: 111;
-    transform: rotate(0deg);
-    transition: transform 6s ease-in-out;
+}
+
+.unit_turret_display.firing{
+    transition: transform 0.6s ease-out;
 }
 
 .debug_path_visualizer{
