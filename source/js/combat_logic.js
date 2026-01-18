@@ -140,7 +140,7 @@ function startCombat(primaryId) {
 function collectAllAdjacentEnemies(unit) {
     const out = [];
     const neigh = getHexNeighbors(unit.row, unit.col);
-    const isNazi = unit.faction == "nazis";
+    const isNazi = (unit.faction == "nazis");
     for (const [r, c] of neigh) {
         const e = unitAt(r, c);
         if (e && ((isNazi && e.faction != "nazis") || (!isNazi && e.faction == "nazis"))) out.push(e.id);
@@ -150,7 +150,7 @@ function collectAllAdjacentEnemies(unit) {
 
 function getAttackSupportCandidates(defenderIds, faction) {
     const set = new Set();
-    const isNazi = faction == "nazis";
+    const isNazi = (faction != "nazis");
 
     for (const dId of defenderIds) {
         const d = gameState.units[dId];
@@ -197,8 +197,6 @@ async function resolveAnimatedShot(pair, doomed, remainingShots, success, loss) 
 
     if (shotsLeft === 0 && doomed.has(to)) {
         const fate = doomed.get(to);
-
-        console.log(fate);
 
         const u = gameState.units[to];
 

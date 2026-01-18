@@ -228,7 +228,7 @@ $(document).ready(function () {
       updateUnits();
 
       if(gameState.combat != null){ 
-        let attackCandidates = getAttackSupportCandidates(gameState.combat.defenders, gameState.faction);
+        let attackCandidates = getAttackSupportCandidates(gameState.combat.defenders, gameState.activePlayer);
         let attackers = [];
         for (const [id, selected] of Object.entries(selectedUnitsIds)) {
           if(selected == "SELECTED" && attackCandidates.includes(id)) attackers.push(id);
