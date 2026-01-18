@@ -347,3 +347,20 @@ function isCellPartOfPath(r, c){
     }
     return false;
 }
+
+function matchesPreferredDirection(faction, dr, dc) {
+
+    if (faction === "allies") {
+        return ((dr === -1 && dc === -1) || (dr === -1 && dc ===  0) || (dr === -1 && dc ===  1));
+    }
+
+    if (faction === "brits") {
+        return ((dr === -1 && dc === -1) || (dr ===  0 && dc === -1));
+    }
+
+    if (faction === "nazis") {
+        return ((dr ===  1 && dc ===  0) || (dr ===  0 && dc === -1));
+    }
+
+    return false;
+}
