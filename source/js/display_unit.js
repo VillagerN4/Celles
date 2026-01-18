@@ -164,7 +164,7 @@ function createUnit(id, faction, type, col, row, levels, movement, attack, defen
 }
 
 function explodeUnit(id) {
-    if (gameState.animatedUnits[id] != null) return false;
+    if (gameState.animatedUnits[id] != null && gameState.animatedUnits[id] != true) return false;
 
     const u = gameState.units[id];
     if (!u) return false;
@@ -223,7 +223,7 @@ function explodeUnit(id) {
 }
 
 function explodeAtUnit(id, success, fromDir) {
-    if (gameState.animatedUnits[id] != null) return false;
+    if (gameState.animatedUnits[id] != null && gameState.animatedUnits[id] != true) return false;
 
     const u = gameState.units[id];
     if (!u) return false;
@@ -280,7 +280,7 @@ function explodeAtUnit(id, success, fromDir) {
 }
 
 function shootShell(id, recoil) {
-    if (gameState.animatedUnits[id] != null) return false;
+    if (gameState.animatedUnits[id] != null && gameState.animatedUnits[id] != true) return false;
 
     const u = gameState.units[id];
     if (!u) return false;

@@ -143,7 +143,7 @@ function collectAllAdjacentEnemies(unit) {
     const isNazi = (unit.faction == "nazis");
     for (const [r, c] of neigh) {
         const e = unitAt(r, c);
-        if (e && ((isNazi && e.faction != "nazis") || (!isNazi && e.faction == "nazis"))) out.push(e.id);
+        if (e && ((isNazi && e.faction != "nazis") || (!isNazi && e.faction == "nazis")) && gameState.animatedUnits[e.id] == null) out.push(e.id);
     }
     return out;
 }
@@ -159,7 +159,7 @@ function getAttackSupportCandidates(defenderIds, faction) {
         const neigh = getHexNeighbors(d.row, d.col);
         for (const [r, c] of neigh) {
             const u = unitAt(r, c);
-            if (u && ((isNazi && u.faction != "nazis") || (!isNazi && u.faction == "nazis"))) set.add(u.id);
+            if (u && ((isNazi && u.faction != "nazis") || (!isNazi && u.faction == "nazis")) && gameState.animatedUnits[u.id] == null) set.add(u.id);
         }
     }
     return [...set];
@@ -216,6 +216,13 @@ async function playCombatAnimation(attackerIds, defenderIds, attackerCas, defend
     const A = buildFirePairs(attackerIds, defenderIds);
     const D = buildFirePairs(defenderIds, attackerIds);
 
+    attackerIds.forEach(id => {
+        gameState.animatedUnits[id] = true;
+    });
+    defenderIds.forEach(id => {
+        gameState.animatedUnits[id] = true;
+    });
+
     const doomed = new Map();
 
     [...attackerCas, ...defenderCas].forEach(c => {
@@ -246,6 +253,12 @@ async function playCombatAnimation(attackerIds, defenderIds, attackerCas, defend
         moveMap();
         updateUnits();
     }
+    attackerIds.forEach(id => {
+        gameState.animatedUnits[id] = null;
+    });
+    defenderIds.forEach(id => {
+        gameState.animatedUnits[id] = null;
+    });
 }
 
 async function resolveCurrentCombat(primaryId) {
@@ -361,7 +374,7 @@ function selectCasualties(units, lossLevels) {
 
         if (u.levels - lossLevels > 0) {
             result.push({ id: u.id, loseLevel: true });
-        } else if (u.levels - lossLevels <= 0) {
+        } else {
             result.push({ id: u.id, die: true });
         }
     }

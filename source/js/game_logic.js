@@ -221,28 +221,33 @@ $(document).ready(function () {
     if (gameState.phase !== 'combat') {
         sendLog("You can only engage in combat during the COMBAT phase.");
     }else{
-      startCombat(selectedUnitId);
+      if(gameState.animatedUnits[selectedUnitId] == null){
+        startCombat(selectedUnitId);
 
-      updateDebugMap();
-      moveMap();
-      updateUnits();
+        updateDebugMap();
+        moveMap();
+        updateUnits();
 
-      if(gameState.combat != null){ 
-        let attackCandidates = getAttackSupportCandidates(gameState.combat.defenders, gameState.activePlayer);
-        let attackers = [];
-        for (const [id, selected] of Object.entries(selectedUnitsIds)) {
-          if(selected == "SELECTED" && attackCandidates.includes(id)) attackers.push(id);
+        if(gameState.combat != null){ 
+          let attackCandidates = getAttackSupportCandidates(gameState.combat.defenders, gameState.activePlayer);
+          let attackers = [];
+          for (const [id, selected] of Object.entries(selectedUnitsIds)) {
+            if(selected == "SELECTED" && attackCandidates.includes(id)) attackers.push(id);
+          }
+
+          gameState.combat.attackers = attackers;
+
+          resolveCurrentCombat(selectedUnitId);
+          gameState.combat = null;
         }
 
-        gameState.combat.attackers = attackers;
+        updateDebugMap();
+        moveMap();
+        updateUnits();
 
-        resolveCurrentCombat(selectedUnitId);
-        gameState.combat = null;
+        selectedUnitId = null;
+        selectedUnitsIds = {};
       }
-
-      updateDebugMap();
-      moveMap();
-      updateUnits();
     }
   });
 
