@@ -19,7 +19,9 @@ function resolveCombat(aIds, dIds, attackType) {
     const out = CRT[rk][fin];
 
     const result = { attackerLossLevels: 0, defenderLossLevels: 0, retreat: false, disrupted: false, raw: { a, d, rk, die, mod, fin, out } };
+    
     console.log(out);
+    
     if (out === '-') { }
     else if (out === 'RD') { result.retreat = true; result.disrupted = true; }
     else if (out.endsWith('A')) result.attackerLossLevels = parseInt(out[0]);
@@ -183,7 +185,7 @@ function buildFirePairs(fromIds, toIds) {
     return shuffle(pairs);
 }
 
-async function resolveAnimatedShot(pair, doomed, remainingShots, success) {
+async function resolveAnimatedShot(pair, doomed, remainingShots, success, loss) {
     const { from, to } = pair;
 
     if (!gameState.units[from] || !gameState.units[to]) return;
@@ -195,12 +197,15 @@ async function resolveAnimatedShot(pair, doomed, remainingShots, success) {
 
     if (shotsLeft === 0 && doomed.has(to)) {
         const fate = doomed.get(to);
+
+        console.log(fate);
+
         const u = gameState.units[to];
 
         if (!u) return;
 
         if (fate.loseLevel) {
-            u.levels = 1;
+            u.levels -= loss;
         } else if (fate.die) {
             if (to === selectedUnitId) selectedUnitId = null;
             explodeUnit(to);
@@ -230,30 +235,33 @@ async function playCombatAnimation(attackerIds, defenderIds, attackerCas, defend
     while (i < A.length || i < D.length) {
 
         if (i < A.length) {
-            await resolveAnimatedShot(A[i], doomed, remainingShots, lossPool.defender > 0);
+            await resolveAnimatedShot(A[i], doomed, remainingShots, lossPool.defender > 0, lossPool.defender);
         }
 
         if (i < D.length) {
-            await resolveAnimatedShot(D[i], doomed, remainingShots, lossPool.attacker > 0);
+            await resolveAnimatedShot(D[i], doomed, remainingShots, lossPool.attacker > 0, lossPool.attacker);
         }
 
         i++;
+
+        updateDebugMap();
+        moveMap();
+        updateUnits();
     }
 }
 
-async function resolveCurrentCombat() {
+async function resolveCurrentCombat(primaryId) {
     const { attackers, defenders } = gameState.combat;
     
     const combat_result = resolveCombat(attackers, defenders, 'medium');
 
     sendLog(`Started combat.`);
-    console.log(combat_result);
 
     const lossPool = {
         attacker: combat_result.result.attackerLossLevels,
         defender: combat_result.result.defenderLossLevels
     };
-    const attackerCasualties = selectCasualties(attackers, combat_result.result.attackerLossLevels);
+    const attackerCasualties = selectCasualties([primaryId], combat_result.result.attackerLossLevels);
     const defenderCasualties = selectCasualties(defenders, combat_result.result.defenderLossLevels);
 
     if(!combat_result.result.retreat) await playCombatAnimation(attackers, defenders, attackerCasualties, defenderCasualties, lossPool);
@@ -345,7 +353,6 @@ async function animateAttack(attackerId, defenderId, success) {
 
 function selectCasualties(units, lossLevels) {
     const result = [];
-    let remaining = lossLevels;
 
     const sorted = [...units]
         .map(u => gameState.units[u])
@@ -353,14 +360,11 @@ function selectCasualties(units, lossLevels) {
         .sort((a, b) => (b.levels || 0) - (a.levels || 0));
 
     for (const u of sorted) {
-        if (remaining <= 0) break;
 
-        if (u.levels === 2) {
+        if (u.levels - lossLevels > 0) {
             result.push({ id: u.id, loseLevel: true });
-            remaining -= 1;
-        } else if (u.levels === 1) {
+        } else if (u.levels - lossLevels <= 0) {
             result.push({ id: u.id, die: true });
-            remaining -= 1;
         }
     }
 

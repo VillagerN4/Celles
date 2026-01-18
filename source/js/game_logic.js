@@ -223,6 +223,10 @@ $(document).ready(function () {
     }else{
       startCombat(selectedUnitId);
 
+      updateDebugMap();
+      moveMap();
+      updateUnits();
+
       if(gameState.combat != null){ 
         let attackCandidates = getAttackSupportCandidates(gameState.combat.defenders, gameState.faction);
         let attackers = [];
@@ -232,12 +236,13 @@ $(document).ready(function () {
 
         gameState.combat.attackers = attackers;
 
-        resolveCurrentCombat();
+        resolveCurrentCombat(selectedUnitId);
         gameState.combat = null;
       }
 
       updateDebugMap();
       moveMap();
+      updateUnits();
     }
   });
 
