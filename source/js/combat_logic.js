@@ -27,13 +27,8 @@ function resolveCombat(aIds, dIds, attackType) {
     else if (out.endsWith('A')) result.attackerLossLevels = parseInt(out[0]);
     else if (out.endsWith('D')) result.defenderLossLevels = parseInt(out[0]);
 
-    if (result.retreat) {
-        const all = [...A, ...D];
-        for (const u of all) {
-            if (!u) continue;
-            // attemptRetreat(u, 2, u.row, u.col);
-        }
-    }
+    handleRetreat(result, A, D);
+
 
     A.forEach(u => { if (u) u.used = true; });
     D.forEach(u => { if (u) u.used = true; });
@@ -56,57 +51,59 @@ function applySingleLoss(u) {
     return false;
 }
 
-function attemptRetreat(unit, steps, fromRow, fromCol) {
-    if (!unit) return false;
-    if (!gameState.units[unit.id]) return false;
-
-    const enemyZoc = getZOCForFaction(unit.faction === 'nazis' ? 'allies' : 'nazis');
-    let curRow = unit.row, curCol = unit.col;
-
-    for (let step = 0; step < steps; step++) {
-        const candidates = getHexNeighbors(curRow, curCol).filter(([r, c]) => {
-            const occ = unitAt(r, c);
-            if (occ && occ.faction !== unit.faction) return false;
-            return true;
-        });
-
-        if (candidates.length === 0) {
-            delete gameState.units[unit.id];
-            return false;
+async function handleRetreat(result, A, D){
+    async function retreatAttackers(){
+        for (const u of A) {
+            if (!u) continue;
+            attemptRetreat(u, 2, u.row, u.col);
+    
+            await new Promise(r => setTimeout(r, 1000 + Math.floor(Math.random()*1500)));
         }
-
-        const scored = candidates.map(([r, c]) => {
-            let score = 0;
-            if (enemyZoc.has(r + ':' + c)) score += 100;
-            const occ = unitAt(r, c);
-            if (occ && occ.faction === unit.faction) score += 10;
-            const dr = r - fromRow;
-            const dc = c - fromCol;
-            if (!matchesPreferredDirection(unit.faction, dr, dc)) score += 20;
-            const dist = Math.abs(r - fromRow) + Math.abs(c - fromCol);
-            score -= dist;
-            return { r, c, score };
-        });
-
-        scored.sort((x, y) => x.score - y.score);
-        const pick = scored[0];
-        if (!pick) { delete gameState.units[unit.id]; return false; }
-
-        const enteringZOC = enemyZoc.has(pick.r + ':' + pick.c);
-        if (enteringZOC) {
-            if (unit.disrupted) {
-                if (unit.levels === 1) { delete gameState.units[unit.id]; return false; }
-                unit.levels = Math.max(1, unit.levels - 1);
-            } else {
-                unit.disrupted = true;
-            }
+    }
+    async function retreatDefenders(){
+        for (const u of D) {
+            if (!u) continue;
+            attemptRetreat(u, 2, u.row, u.col);
+    
+            await new Promise(r => setTimeout(r, 1000 + Math.floor(Math.random()*1500)));
         }
-
-        unit.row = pick.r;
-        unit.col = pick.c;
-        curRow = pick.r; curCol = pick.c;
     }
 
+    if (result.retreat) {
+        
+        retreatAttackers();
+        await new Promise(r => setTimeout(r, 100 + Math.floor(Math.random()*300)));
+        retreatDefenders();
+        
+    }
+}
+
+async function attemptRetreat(unit, steps, fromRow, fromCol) {
+    if (!unit || !gameState.units[unit.id]) return false;
+
+    const path = buildRetreatPath(unit, steps, fromRow, fromCol);
+    if (!path) {
+        explodeUnit(unit.id);
+        delete gameState.units[unit.id];
+        return false;
+    }
+
+    const enemyZoc = getZOCForFaction(
+        unit.faction === 'nazis' ? 'allies' : 'nazis'
+    );
+
+    for (const [r, c] of path) {
+        if (enemyZoc.has(r + ':' + c)) {
+            if (unit.disrupted && unit.levels === 1) {
+                explodeUnit(unit.id);
+                delete gameState.units[unit.id];
+                return false;
+            }
+            unit.disrupted = true;
+        }
+    }
+
+    await executeForcedPath(unit.id, path);
     return true;
 }
 
@@ -206,6 +203,7 @@ async function resolveAnimatedShot(pair, doomed, remainingShots, success, loss) 
             u.levels -= loss;
         } else if (fate.die) {
             if (to === selectedUnitId) selectedUnitId = null;
+            selectedUnitsIds[to] = null;
             explodeUnit(to);
             delete gameState.units[to];
         }

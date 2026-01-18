@@ -222,8 +222,6 @@ async function executeMovementPath(unitId, path) {
             lastAction = "mid";
         }
 
-        console.log(pathCost);
-
         await tweenOffsetProgress(u, (lastAction=="start" ? 5000 * unitSpeedModifier : 10000 * unitSpeedModifier), lastAction=="end" ? "start" : (lastAction=="mid" ? "end" : (lastAction=="both" ? "inout" : "mid")));
 
         if(lastAction=="end"){
@@ -363,4 +361,127 @@ function matchesPreferredDirection(faction, dr, dc) {
     }
 
     return false;
+}
+
+function buildRetreatPath(unit, steps, fromRow, fromCol) {
+    const enemyZoc = getZOCForFaction(unit.faction === 'nazis' ? 'allies' : 'nazis');
+
+    let curRow = unit.row;
+    let curCol = unit.col;
+    const path = [];
+
+    for (let step = 0; step < steps; step++) {
+        const candidates = getHexNeighbors(curRow, curCol).filter(([r, c]) => {
+            const occ = unitAt(r, c);
+            if (occ && occ.faction !== unit.faction) return false;
+            return true;
+        });
+
+        if (candidates.length === 0) return null;
+
+        const scored = candidates.map(([r, c]) => {
+            let score = 0;
+            if (enemyZoc.has(r + ':' + c)) score += 100;
+            const occ = unitAt(r, c);
+            if (occ && occ.faction === unit.faction) score += 10;
+
+            const dr = r - fromRow;
+            const dc = c - fromCol;
+            if (!matchesPreferredDirection(unit.faction, dr, dc)) score += 20;
+
+            const dist = Math.abs(r - fromRow) + Math.abs(c - fromCol);
+            score -= dist;
+
+            return { r, c, score };
+        });
+
+        scored.sort((a, b) => a.score - b.score);
+        const pick = scored[0];
+        if (!pick) return null;
+
+        path.push([pick.r, pick.c]);
+        curRow = pick.r;
+        curCol = pick.c;
+    }
+
+    return path;
+}
+
+async function executeForcedPath(unitId, path) {
+    const u = gameState.units[unitId];
+    if (!u || !path || path.length === 0) return false;
+
+    $("#unit_" + unitId + "_turret").addClass("rotating");
+    gameState.animatedUnits[unitId] = path;
+    let lastAction = "end";
+
+    u.startMoveSound();
+
+    for (let i = 0; i < path.length; i++) {
+        const [r, c] = path[i];
+        const pr = (i === 0) ? u.row : path[i - 1][0];
+        const pc = (i === 0) ? u.col : path[i - 1][1];
+        const nr = (i === path.length-1) ? r : path[i + 1][0];
+        const nc = (i === path.length-1) ? c : path[i + 1][1];
+
+        const edge = getMovementDirection(pr, pc, r, c);
+        const nedge = getMovementDirection(r, c, nr, nc);
+        let deltaRotation = shortestRotation(u.currentRotation, edge);
+        let deltaTurretRotation = shortestRotation(u.currentTurretRotation, edge);
+        let nextDelta = shortestRotation(u.currentRotation + deltaRotation, nedge);
+        
+
+        if (deltaRotation !== 0) {
+            applyRotation(unitId, u.currentRotation + deltaRotation, "_hull");
+            applyRotation(unitId, u.currentTurretRotation + deltaTurretRotation, "_turret");
+            await tweenOffsetProgress(u, 8000 * unitSpeedModifier, "mid");
+        }
+
+        if(i==path.length-1){
+            if(path.length < 2){
+                u.quickMoveSound();
+            }else{
+                u.stopMoveSound();
+            }
+        }
+
+        u.row_offset = r - pr;
+        u.col_offset = c - pc;
+        u.offsetProgress = 1;
+
+        if((nextDelta!=0 || i > (path.length-2)) && lastAction=="end"){
+            lastAction = "both";
+        }
+
+        if((nextDelta!=0 || i > (path.length-2)) && lastAction == "start"){ 
+            lastAction = "mid";
+        }
+
+        await tweenOffsetProgress(u, (lastAction=="start" ? 5000 * unitSpeedModifier : 10000 * unitSpeedModifier), lastAction=="end" ? "start" : (lastAction=="mid" ? "end" : (lastAction=="both" ? "inout" : "mid")));
+        
+        if(lastAction=="end"){
+            lastAction = "start";
+        }
+
+        if(lastAction=="both"){
+            lastAction = "end";
+        }
+
+        if(lastAction=="mid"){
+            lastAction = "end";
+        }
+
+        u.row = r;
+        u.col = c;
+        u.row_offset = 0;
+        u.col_offset = 0;
+        u.offsetProgress = 0;
+    }
+
+    u.stopMoveSound();
+    $("#unit_" + unitId + "_turret").removeClass("rotating");
+    gameState.animatedUnits[unitId] = null;
+
+    updateUnits();
+    return true;
 }
