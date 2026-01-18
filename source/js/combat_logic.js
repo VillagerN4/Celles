@@ -1,7 +1,7 @@
 function resolveCombat(aIds, dIds, attackType) {
     const A = aIds.map(id => gameState.units[id]).filter(Boolean);
     const D = dIds.map(id => gameState.units[id]).filter(Boolean);
-    if (!A.length || !D.length) return { ok: false, msg: 'Brak jednostek' };
+    if (!A.length || !D.length) return { ok: false, msg: 'Brak jednostek'};
 
     const a = A.reduce((s, u) => s + u.attack, 0);
     const d = D.reduce((s, u) => s + u.defense, 0);
@@ -19,20 +19,17 @@ function resolveCombat(aIds, dIds, attackType) {
     const out = CRT[rk][fin];
 
     const result = { attackerLossLevels: 0, defenderLossLevels: 0, retreat: false, disrupted: false, raw: { a, d, rk, die, mod, fin, out } };
-
+    console.log(out);
     if (out === '-') { }
+    else if (out === 'RD') { result.retreat = true; result.disrupted = true; }
     else if (out.endsWith('A')) result.attackerLossLevels = parseInt(out[0]);
     else if (out.endsWith('D')) result.defenderLossLevels = parseInt(out[0]);
-    else if (out === 'RD') { result.retreat = true; result.disrupted = true; }
-
-    applyLossesToUnits(A, result.attackerLossLevels);
-    applyLossesToUnits(D, result.defenderLossLevels);
 
     if (result.retreat) {
         const all = [...A, ...D];
         for (const u of all) {
             if (!u) continue;
-            attemptRetreat(u, 2, u.row, u.col);
+            // attemptRetreat(u, 2, u.row, u.col);
         }
     }
 
@@ -42,15 +39,19 @@ function resolveCombat(aIds, dIds, attackType) {
     return { ok: true, result };
 }
 
-function applyLossesToUnits(units, levels) {
-    let remaining = levels;
-    const sorted = [...units].sort((a, b) => (b.levels || 0) - (a.levels || 0));
-    for (const u of sorted) {
-        if (remaining <= 0) break;
-        if (!u) continue;
-        if (u.levels === 2) { u.levels = 1; remaining -= 1; }
-        else if (u.levels === 1) {if(u.id == selectedUnitId){selectedUnitId = null;} selectedUnitsIds[u.id] = null; explodeUnit(u.id); delete gameState.units[u.id]; remaining -= 1; }
+function applySingleLoss(u) {
+    if (u.levels === 2) {
+        u.levels = 1;
+        return true;
     }
+    if (u.levels === 1) {
+        if (u.id === selectedUnitId) selectedUnitId = null;
+        selectedUnitsIds[u.id] = null;
+        explodeUnit(u.id);
+        delete gameState.units[u.id];
+        return true;
+    }
+    return false;
 }
 
 function attemptRetreat(unit, steps, fromRow, fromCol) {
@@ -162,17 +163,102 @@ function getAttackSupportCandidates(defenderIds, faction) {
     return [...set];
 }
 
+function buildFirePairs(fromIds, toIds) {
+    const pairs = [];
+
+    for (const aId of fromIds) {
+        const a = gameState.units[aId];
+        if (!a) continue;
+
+        for (const dId of toIds) {
+            const d = gameState.units[dId];
+            if (!d) continue;
+
+            if (areAdjacent(a.row, a.col, d.row, d.col)) {
+                pairs.push({ from: aId, to: dId });
+            }
+        }
+    }
+
+    return shuffle(pairs);
+}
+
+async function resolveAnimatedShot(pair, doomed, remainingShots, success) {
+    const { from, to } = pair;
+
+    if (!gameState.units[from] || !gameState.units[to]) return;
+
+    await animateAttack(from, to, success);
+
+    const shotsLeft = remainingShots.get(to) - 1;
+    remainingShots.set(to, shotsLeft);
+
+    if (shotsLeft === 0 && doomed.has(to)) {
+        const fate = doomed.get(to);
+        const u = gameState.units[to];
+
+        if (!u) return;
+
+        if (fate.loseLevel) {
+            u.levels = 1;
+        } else if (fate.die) {
+            if (to === selectedUnitId) selectedUnitId = null;
+            explodeUnit(to);
+            delete gameState.units[to];
+        }
+    }
+}
+
+async function playCombatAnimation(attackerIds, defenderIds, attackerCas, defenderCas, lossPool) {
+    const A = buildFirePairs(attackerIds, defenderIds);
+    const D = buildFirePairs(defenderIds, attackerIds);
+
+    const doomed = new Map();
+
+    [...attackerCas, ...defenderCas].forEach(c => {
+        doomed.set(c.id, c);
+    });
+
+    const remainingShots = new Map();
+
+    [...A, ...D].forEach(({ to }) => {
+        remainingShots.set(to, (remainingShots.get(to) || 0) + 1);
+    });
+
+    let i = 0;
+
+    while (i < A.length || i < D.length) {
+
+        if (i < A.length) {
+            await resolveAnimatedShot(A[i], doomed, remainingShots, lossPool.defender > 0);
+        }
+
+        if (i < D.length) {
+            await resolveAnimatedShot(D[i], doomed, remainingShots, lossPool.attacker > 0);
+        }
+
+        i++;
+    }
+}
+
 async function resolveCurrentCombat() {
     const { attackers, defenders } = gameState.combat;
-
-    for (const aId of attackers) {
-        const target = defenders[Math.floor(Math.random() * defenders.length)];
-        if (!target) continue;
-
-        await animateAttack(aId, target);
-    }
     
-    resolveCombat(attackers, defenders, 'medium');
+    const combat_result = resolveCombat(attackers, defenders, 'medium');
+
+    sendLog(`Started combat.`);
+    console.log(combat_result);
+
+    const lossPool = {
+        attacker: combat_result.result.attackerLossLevels,
+        defender: combat_result.result.defenderLossLevels
+    };
+    const attackerCasualties = selectCasualties(attackers, combat_result.result.attackerLossLevels);
+    const defenderCasualties = selectCasualties(defenders, combat_result.result.defenderLossLevels);
+
+    if(!combat_result.result.retreat) await playCombatAnimation(attackers, defenders, attackerCasualties, defenderCasualties, lossPool);
+
+    sendLog(`Finished combat.`);
 
     gameState.combat = null;
 }
@@ -205,7 +291,7 @@ async function rotateTurretToTarget(attacker, defenderId) {
     await new Promise(r => setTimeout(r, 10));
 }
 
-async function fireWeapon(attacker) {
+async function fireWeapon(attacker, defenderId, success) {
     const recoil = 2 * zoom;
     const id = attacker.id;
     const rot = attacker.currentTurretRotation;
@@ -223,6 +309,7 @@ async function fireWeapon(attacker) {
     });
 
     applyTurretTransform(id, rot, recoil);
+    shootShell(id, recoil);
 
     await new Promise(r => setTimeout(r, 10));
 
@@ -233,6 +320,8 @@ async function fireWeapon(attacker) {
 
     await new Promise(r => setTimeout(r, 120));
 
+    explodeAtUnit(defenderId, success, rot);
+
     applyTurretTransform(id, rot, 0);
 
     await new Promise(r => setTimeout(r, 1200));
@@ -240,15 +329,48 @@ async function fireWeapon(attacker) {
     $("#unit_" + attacker.id + "_turret").removeClass("firing");
 }
 
-async function animateAttack(attackerId, defenderId) {
+async function animateAttack(attackerId, defenderId, success) {
     const attacker = gameState.units[attackerId];
     const defender = gameState.units[defenderId];
 
     if (!attacker || !defender) return;
+    if (!gameState.units[attackerId] || !gameState.units[defenderId]) return;
 
     await rotateTurretToTarget(attacker, defenderId);
 
     await new Promise(r => setTimeout(r, 1200));
 
-    await fireWeapon(attacker);
+    await fireWeapon(attacker, defenderId, success);
+}
+
+function selectCasualties(units, lossLevels) {
+    const result = [];
+    let remaining = lossLevels;
+
+    const sorted = [...units]
+        .map(u => gameState.units[u])
+        .filter(Boolean)
+        .sort((a, b) => (b.levels || 0) - (a.levels || 0));
+
+    for (const u of sorted) {
+        if (remaining <= 0) break;
+
+        if (u.levels === 2) {
+            result.push({ id: u.id, loseLevel: true });
+            remaining -= 1;
+        } else if (u.levels === 1) {
+            result.push({ id: u.id, die: true });
+            remaining -= 1;
+        }
+    }
+
+    return result;
+}
+
+function countIncomingShots(firePairs) {
+    const map = new Map();
+    for (const { to } of firePairs) {
+        map.set(to, (map.get(to) || 0) + 1);
+    }
+    return map;
 }

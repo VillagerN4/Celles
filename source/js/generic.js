@@ -149,3 +149,7 @@ function tweenOffsetProgress(u, duration, fade = "mid") {
         requestAnimationFrame(step);
     });
 }
+
+function shuffle(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+}

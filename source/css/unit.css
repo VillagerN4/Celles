@@ -31,5 +31,13 @@
 }
 
 .explosion_display{
+    z-index: 130;
+}
+
+.shoot_explosion_display{
     z-index: 120;
+}
+
+.hit_explosion_display{
+    z-index: 125;
 }

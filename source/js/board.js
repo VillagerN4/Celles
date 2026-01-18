@@ -472,6 +472,10 @@ function createCellEdgeDetail(x, y, class_name, parent, sprite, edge, r, c) {
     }).appendTo(parent);
 }
 
+function areAdjacent(r1, c1, r2, c2) {
+    const neighbors = getHexNeighbors(r1, c1);
+    return neighbors.some(([r, c]) => r === r2 && c === c2);
+}
 
 function getHexNeighbors(r, c) {
     const even = [[-1, 0], [-1, 1], [0, 1], [1, 0], [0, -1], [-1, -1]];
